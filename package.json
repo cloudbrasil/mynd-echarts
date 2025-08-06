@@ -29,8 +29,10 @@
     "build:lib": "vite build --mode lib",
     "build:lib:check": "vue-tsc --noEmit && vite build --mode lib",
     "build:demo": "DEMO_BUILD=true vite build",
+    "build:vercel": "node scripts/build-demo.js",
     "build:examples": "vite build --config vite.examples.config.ts",
     "build:types": "vue-tsc --declaration --emitDeclarationOnly --outDir dist",
+    "build:vitest-ui": "node build-vitest-ui.js",
     "preview": "vite preview",
     "preview:demo": "vite preview --outDir dist-demo",
     "preview:examples": "vite preview --config vite.examples.config.ts",
@@ -82,7 +84,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/abernardobr/mynd-echarts.git"
+    "url": "git+https://github.com/cloudbrasil/mynd-echarts.git"
   },
   "keywords": [
     "vue",
@@ -97,7 +99,7 @@
   "author": "Alberto Bernardo <alberto@myndware.io>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/abernardobr/mynd-echarts/issues"
+    "url": "https://github.com/cloudbrasil/mynd-echarts/issues"
   },
-  "homepage": "https://github.com/abernardobr/mynd-echarts#readme"
+  "homepage": "https://github.com/cloudbrasil/mynd-echarts#readme"
 }

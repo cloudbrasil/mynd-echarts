@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-demo
+dist-vitest-ui
 dist-ssr
 coverage
 *.local
@@ -41,3 +42,6 @@ coverage/
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+
+# Vercel
+.vercel

@@ -50,8 +50,8 @@ export function isEChartsOption(value: any): value is EChartsOption {
  * @param series - Series to check
  * @returns True if series is a LineSeriesOption
  */
-export function isLineSeries(series: SeriesOption): series is LineSeriesOption {
-  return series.type === 'line'
+export function isLineSeries(series: any): series is LineSeriesOption {
+  return series?.type === 'line'
 }
 
 /**
@@ -59,8 +59,8 @@ export function isLineSeries(series: SeriesOption): series is LineSeriesOption {
  * @param series - Series to check
  * @returns True if series is a BarSeriesOption
  */
-export function isBarSeries(series: SeriesOption): series is BarSeriesOption {
-  return series.type === 'bar'
+export function isBarSeries(series: any): series is BarSeriesOption {
+  return series?.type === 'bar'
 }
 
 /**
@@ -68,8 +68,8 @@ export function isBarSeries(series: SeriesOption): series is BarSeriesOption {
  * @param series - Series to check
  * @returns True if series is a PieSeriesOption
  */
-export function isPieSeries(series: SeriesOption): series is PieSeriesOption {
-  return series.type === 'pie'
+export function isPieSeries(series: any): series is PieSeriesOption {
+  return series?.type === 'pie'
 }
 
 /**
@@ -77,8 +77,8 @@ export function isPieSeries(series: SeriesOption): series is PieSeriesOption {
  * @param series - Series to check
  * @returns True if series is a ScatterSeriesOption
  */
-export function isScatterSeries(series: SeriesOption): series is ScatterSeriesOption {
-  return series.type === 'scatter' || series.type === 'effectScatter'
+export function isScatterSeries(series: any): series is ScatterSeriesOption {
+  return series?.type === 'scatter' || series?.type === 'effectScatter'
 }
 
 /**
@@ -86,8 +86,8 @@ export function isScatterSeries(series: SeriesOption): series is ScatterSeriesOp
  * @param series - Series to check
  * @returns True if series is a RadarSeriesOption
  */
-export function isRadarSeries(series: SeriesOption): series is RadarSeriesOption {
-  return series.type === 'radar'
+export function isRadarSeries(series: any): series is RadarSeriesOption {
+  return series?.type === 'radar'
 }
 
 /**
@@ -95,8 +95,8 @@ export function isRadarSeries(series: SeriesOption): series is RadarSeriesOption
  * @param series - Series to check
  * @returns True if series is a GaugeSeriesOption
  */
-export function isGaugeSeries(series: SeriesOption): series is GaugeSeriesOption {
-  return series.type === 'gauge'
+export function isGaugeSeries(series: any): series is GaugeSeriesOption {
+  return series?.type === 'gauge'
 }
 
 /**

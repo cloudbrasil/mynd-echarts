@@ -28,14 +28,16 @@ import type {
   ThemeRiverSeriesOption,
   PictorialBarSeriesOption,
   CustomSeriesOption,
-  XAxisComponentOption,
-  YAxisComponentOption,
   GridComponentOption,
   TooltipComponentOption,
   LegendComponentOption,
   TitleComponentOption,
   DataZoomComponentOption
 } from './echarts'
+
+// Define axis types that are not directly exported
+export type XAxisComponentOption = any
+export type YAxisComponentOption = any
 
 /**
  * Utility type to extract series types

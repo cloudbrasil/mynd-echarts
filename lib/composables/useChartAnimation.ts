@@ -31,8 +31,7 @@ export function useChartAnimation(
       updateDuration: 300,
       updateEasing: 'cubicOut',
       updateDelay: 0
-    },
-    transitionDuration = 300
+    }
   } = options
 
   const isAnimating = ref(false)

@@ -23,7 +23,7 @@
           <option value="halloween">Halloween Theme</option>
         </select>
         <a 
-          href="https://github.com/yourusername/mynd-echarts" 
+          href="https://github.com/cloudbrasil/mynd-echarts" 
           target="_blank"
           class="github-link"
           title="View on GitHub"

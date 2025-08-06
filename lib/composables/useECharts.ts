@@ -91,7 +91,7 @@ export function useECharts(
     }
 
     // Initialize chart with merged options including locale
-    chartInstance.value = echarts.init(el, currentTheme.value, {
+    chartInstance.value = echarts.init(el, currentTheme.value as any, {
       renderer,
       locale: currentLocale.value,
       ...initOptions
@@ -197,7 +197,7 @@ export function useECharts(
 
   const on = (eventName: string, handler: Function) => {
     if (chartInstance.value && !chartInstance.value.isDisposed()) {
-      chartInstance.value.on(eventName, handler)
+      chartInstance.value.on(eventName, handler as any)
       // Track handler for cleanup
       if (!eventHandlers.has(eventName)) {
         eventHandlers.set(eventName, [])
@@ -209,7 +209,7 @@ export function useECharts(
   const off = (eventName: string, handler?: Function) => {
     if (chartInstance.value && !chartInstance.value.isDisposed()) {
       if (handler) {
-        chartInstance.value.off(eventName, handler)
+        chartInstance.value.off(eventName, handler as any)
         // Remove from tracked handlers
         const handlers = eventHandlers.get(eventName)
         if (handlers) {

@@ -33,7 +33,10 @@
       "Bash(grep:*)",
       "Bash(npm pack:*)",
       "Bash(npm whoami:*)",
-      "Bash(npm publish:*)"
+      "Bash(npm publish:*)",
+      "Bash(chmod:*)",
+      "Bash(bash:*)",
+      "Bash(vercel:*)"
     ],
     "deny": []
   }

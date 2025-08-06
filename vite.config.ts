@@ -1,16 +1,14 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
-import dts from 'vite-plugin-dts'
 
 export default defineConfig(({ mode, command }) => {
-  const isLibBuild = mode === 'lib' || (command === 'build' && !process.env.DEMO_BUILD)
+  const isLibBuild = mode === 'lib' || (command === 'build' && !process.env.DEMO_BUILD && mode !== 'production')
   
   return {
     plugins: [
-      vue(),
-      false
-    ].filter(Boolean),
+      vue()
+    ],
     resolve: {
       alias: {
         '@': resolve(__dirname, './src'),
@@ -25,8 +23,7 @@ export default defineConfig(({ mode, command }) => {
           if (format === 'es') return 'mynd-echarts.js'
           if (format === 'cjs') return 'mynd-echarts.cjs'
           return `mynd-echarts.${format}.js`
-        },
-        formats: ['es', 'cjs', 'umd']
+        }
       },
       rollupOptions: {
         external: ['vue', 'echarts', 'echarts/core', 'echarts/charts', 'echarts/components', 'echarts/renderers'],
@@ -71,9 +68,19 @@ export default defineConfig(({ mode, command }) => {
       // Demo build configuration
       outDir: 'dist-demo',
       sourcemap: true,
+      chunkSizeWarningLimit: 1000, // Increase warning limit to 1MB
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'index.html')
+        },
+        output: {
+          manualChunks: {
+            'echarts-core': ['echarts/core'],
+            'echarts-charts': ['echarts/charts'],
+            'echarts-components': ['echarts/components'],
+            'echarts-renderers': ['echarts/renderers'],
+            'vendor': ['vue', 'vue-router']
+          }
         }
       }
     },

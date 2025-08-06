@@ -1,75 +1,8 @@
 import { onUnmounted, type Ref } from 'vue'
 import type { ECharts } from 'echarts'
+import type { ChartEventHandler, ChartEventMap } from '../types/component'
 
-export type ChartEventHandler = (params: any) => void
-
-export interface ChartEventMap {
-  // Mouse events
-  click?: ChartEventHandler
-  dblclick?: ChartEventHandler
-  mousedown?: ChartEventHandler
-  mousemove?: ChartEventHandler
-  mouseup?: ChartEventHandler
-  mouseover?: ChartEventHandler
-  mouseout?: ChartEventHandler
-  globalout?: ChartEventHandler
-  contextmenu?: ChartEventHandler
-  
-  // Action events
-  highlight?: ChartEventHandler
-  downplay?: ChartEventHandler
-  selectchanged?: ChartEventHandler
-  
-  // Legend events
-  legendselectchanged?: ChartEventHandler
-  legendselected?: ChartEventHandler
-  legendunselected?: ChartEventHandler
-  legendselectall?: ChartEventHandler
-  legendinverseselect?: ChartEventHandler
-  legendscroll?: ChartEventHandler
-  
-  // Data events
-  datazoom?: ChartEventHandler
-  datarangeselected?: ChartEventHandler
-  
-  // Roam events
-  graphroam?: ChartEventHandler
-  georoam?: ChartEventHandler
-  treeroam?: ChartEventHandler
-  
-  // Timeline events
-  timelinechanged?: ChartEventHandler
-  timelineplaychanged?: ChartEventHandler
-  
-  // Toolbox events
-  restore?: ChartEventHandler
-  dataviewchanged?: ChartEventHandler
-  magictypechanged?: ChartEventHandler
-  
-  // Pie events
-  pieselectchanged?: ChartEventHandler
-  pieselected?: ChartEventHandler
-  pieunselected?: ChartEventHandler
-  
-  // Map events
-  mapselected?: ChartEventHandler
-  mapunselected?: ChartEventHandler
-  
-  // Axis events
-  axisareaselected?: ChartEventHandler
-  
-  // Brush events
-  brush?: ChartEventHandler
-  brushEnd?: ChartEventHandler
-  brushselected?: ChartEventHandler
-  
-  // Rendering events
-  rendered?: ChartEventHandler
-  finished?: ChartEventHandler
-  
-  // Other events
-  globalcursortaken?: ChartEventHandler
-}
+export { ChartEventHandler, ChartEventMap }
 
 export function useChartEvents(
   chartInstance: Ref<ECharts | undefined>,

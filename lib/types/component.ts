@@ -8,10 +8,31 @@ import type {
   ECharts, 
   EChartsOption, 
   SetOptionOpts,
-  EChartsInitOpts,
-  AnimationEasing,
-  ZRColor
+  EChartsInitOpts
 } from './echarts'
+
+// Define types that are not directly exported by ECharts
+export type AnimationEasing = 'linear' | 'quadraticIn' | 'quadraticOut' | 'quadraticInOut' | 
+  'cubicIn' | 'cubicOut' | 'cubicInOut' | 'quarticIn' | 'quarticOut' | 'quarticInOut' |
+  'quinticIn' | 'quinticOut' | 'quinticInOut' | 'sinusoidalIn' | 'sinusoidalOut' | 'sinusoidalInOut' |
+  'exponentialIn' | 'exponentialOut' | 'exponentialInOut' | 'circularIn' | 'circularOut' | 'circularInOut' |
+  'elasticIn' | 'elasticOut' | 'elasticInOut' | 'backIn' | 'backOut' | 'backInOut' |
+  'bounceIn' | 'bounceOut' | 'bounceInOut'
+
+export type ZRColor = string | {
+  type: 'linear' | 'radial'
+  x?: number
+  y?: number
+  x2?: number
+  y2?: number
+  r?: number
+  r2?: number
+  colorStops: Array<{
+    offset: number
+    color: string
+  }>
+  global?: boolean
+}
 
 /**
  * Props interface for the MyndEcharts component

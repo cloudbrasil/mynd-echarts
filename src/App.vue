@@ -4,7 +4,7 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-content">
-        <div class="logo-section">
+        <div class="logo-section" @click="activeView = 'showcase'" role="button" tabindex="0" @keydown.enter="activeView = 'showcase'">
           <img :src="logoImage" alt="mynd-echarts" class="logo-image" />
         </div>
         <nav class="header-nav">
@@ -24,6 +24,9 @@
             <span class="material-icons">description</span>
             Docs
           </button>
+          <button @click="toggleTheme" class="theme-toggle-btn" :title="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+            <span class="material-icons">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
+          </button>
           <button @click="openGitHub" class="github-btn">
             <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
               <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
@@ -38,6 +41,65 @@
     <main class="app-main">
       <!-- Showcase View -->
       <div v-if="activeView === 'showcase'" class="showcase-view">
+        <!-- MyndAgents CTA Section -->
+        <div class="myndagents-cta">
+          <div class="cta-backdrop"></div>
+          <div class="cta-glow"></div>
+          <div class="cta-content">
+            <div class="cta-left">
+              <div class="cta-badge">
+                <span class="badge-text">ENTERPRISE AI</span>
+              </div>
+              <h3 class="cta-title">
+                <span class="title-line">Custom AI Agents</span>
+                <span class="title-highlight">for Enterprise</span>
+              </h3>
+              <p class="cta-subtitle">
+                From Hype to Infrastructure
+              </p>
+              <div class="cta-features">
+                <div class="feature-item">
+                  <span class="feature-dot"></span>
+                  <span>Production Ready</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-dot"></span>
+                  <span>Scalable Solutions</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-dot"></span>
+                  <span>24/7 Support</span>
+                </div>
+              </div>
+              <button @click="goToMyndAgents" class="cta-button">
+                <span class="button-bg"></span>
+                <span class="button-content">
+                  Discover MyndAgents
+                </span>
+              </button>
+            </div>
+            <div class="cta-right" @click="goToMyndAgents">
+              <div class="logo-container">
+                <div class="logo-glow"></div>
+                <div class="logo-ring ring-1"></div>
+                <div class="logo-ring ring-2"></div>
+                <div class="logo-ring ring-3"></div>
+                <img 
+                  :src="myndAgentsLogo" 
+                  alt="MyndAgents" 
+                  class="myndagents-logo"
+                />
+                <div class="floating-particles">
+                  <span class="particle particle-1"></span>
+                  <span class="particle particle-2"></span>
+                  <span class="particle particle-3"></span>
+                  <span class="particle particle-4"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="showcase-header">
           <h2>Chart Gallery</h2>
           <p>Explore various chart types with live examples</p>
@@ -376,6 +438,8 @@ watch(isDarkMode, (newValue) => {
 // Computed logo based on theme
 const logoImage = computed(() => isDarkMode.value ? '/logo_white.png' : '/logo.png')
 
+const myndAgentsLogo = computed(() => isDarkMode.value ? '/logo_myndagents_vertical_black.png' : '/logo_myndagents_vertical.png')
+
 // Categories
 const categories = [
   { id: 'all', name: 'All Charts', icon: 'category' },
@@ -579,7 +643,11 @@ const getTemplatesByCategory = (category: string) => {
 }
 
 const openGitHub = () => {
-  window.open('https://github.com/yourusername/mynd-echarts', '_blank')
+  window.open('https://github.com/cloudbrasil/mynd-echarts', '_blank')
+}
+
+const goToMyndAgents = () => {
+  window.open('https://myndagents.com', '_blank')
 }
 
 const selectDocSection = (sectionId: string) => {
@@ -718,6 +786,25 @@ onUnmounted(() => {
 .logo-section {
   display: flex;
   align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  outline: none;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.logo-section:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.logo-section:active {
+  transform: scale(0.98);
+}
+
+.logo-section:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
 .logo-image {
@@ -760,6 +847,73 @@ onUnmounted(() => {
   color: var(--text-primary);
 }
 
+/* Theme Toggle Button */
+.theme-toggle-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+  overflow: hidden;
+}
+
+.theme-toggle-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #6366f1, #fbbf24);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 50%;
+}
+
+.theme-toggle-btn:hover::before {
+  opacity: 0.15;
+}
+
+.theme-toggle-btn:hover {
+  transform: rotate(180deg) scale(1.1);
+  border-color: var(--primary-color);
+}
+
+.theme-toggle-btn .material-icons {
+  position: relative;
+  z-index: 1;
+  font-size: 20px;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle-btn:hover .material-icons {
+  color: var(--primary-color);
+}
+
+/* Dark mode specific theme toggle */
+.dark-mode .theme-toggle-btn {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+.dark-mode .theme-toggle-btn .material-icons {
+  color: #fbbf24;
+}
+
+.dark-mode .theme-toggle-btn:hover {
+  border-color: #fbbf24;
+  background: rgba(251, 191, 36, 0.2);
+}
+
+.dark-mode .theme-toggle-btn:hover .material-icons {
+  color: #f59e0b;
+}
+
+/* GitHub Button */
 .github-btn {
   display: flex;
   align-items: center;
@@ -781,6 +935,431 @@ onUnmounted(() => {
   width: 100%;
   margin: 0 auto;
   padding: 2rem;
+}
+
+/* MyndAgents CTA Section - Modern Card Design */
+.myndagents-cta {
+  position: relative;
+  margin-bottom: 3rem;
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(135deg, 
+    rgba(99, 102, 241, 0.05) 0%, 
+    rgba(168, 85, 247, 0.05) 50%, 
+    rgba(236, 72, 153, 0.05) 100%);
+  backdrop-filter: blur(10px);
+  animation: cardEntrance 0.8s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.cta-backdrop {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, 
+    rgba(99, 102, 241, 0.1) 0%, 
+    rgba(168, 85, 247, 0.08) 50%, 
+    rgba(236, 72, 153, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.myndagents-cta:hover .cta-backdrop {
+  opacity: 1;
+}
+
+.cta-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: -50%;
+  background: radial-gradient(circle at 30% 50%, 
+    rgba(99, 102, 241, 0.3) 0%, 
+    transparent 50%);
+  animation: glowRotate 15s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes glowRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.cta-content {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 3rem;
+  padding: 3rem;
+  align-items: center;
+}
+
+/* Left Section */
+.cta-left {
+  animation: slideInLeft 0.8s cubic-bezier(0.23, 1, 0.320, 1) 0.2s both;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.cta-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1.2rem;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15));
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  animation: fadeInDown 0.8s cubic-bezier(0.23, 1, 0.320, 1) 0.1s both;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.badge-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cta-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 0 1rem 0;
+}
+
+.title-line {
+  display: block;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+.title-highlight {
+  display: block;
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cta-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin: 0 0 2rem 0;
+  opacity: 0.9;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+.cta-features {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.320, 1) both;
+}
+
+.feature-item:nth-child(1) { animation-delay: 0.3s; }
+.feature-item:nth-child(2) { animation-delay: 0.4s; }
+.feature-item:nth-child(3) { animation-delay: 0.5s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feature-dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.4rem;
+  animation: dotPulse 3s infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { 
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Modern Button */
+.cta-button {
+  position: relative;
+  display: inline-flex;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.125rem;
+  font-weight: 600;
+  overflow: hidden;
+  border-radius: 12px;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+.button-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+  border-radius: 12px;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.button-content {
+  position: relative;
+  display: block;
+  padding: 1rem 2.5rem;
+  color: white;
+  z-index: 1;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.cta-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+}
+
+.cta-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Right Section - Logo */
+.cta-right {
+  animation: slideInRight 0.8s cubic-bezier(0.23, 1, 0.320, 1) 0.4s both;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.logo-container {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  cursor: pointer;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+.logo-container:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.logo-glow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, 
+    rgba(168, 85, 247, 0.4) 0%, 
+    transparent 70%);
+  filter: blur(20px);
+  animation: pulseGlow 3s infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.logo-ring {
+  position: absolute;
+  inset: 0;
+  border: 2px solid;
+  border-radius: 50%;
+  opacity: 0.3;
+}
+
+.ring-1 {
+  border-color: #6366f1;
+  animation: ringRotate 10s linear infinite;
+}
+
+.ring-2 {
+  inset: 10px;
+  border-color: #a855f7;
+  animation: ringRotate 15s linear infinite reverse;
+}
+
+.ring-3 {
+  inset: 20px;
+  border-color: #ec4899;
+  animation: ringRotate 20s linear infinite;
+}
+
+@keyframes ringRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.myndagents-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: 120px;
+  max-width: 100px;
+  object-fit: contain;
+  z-index: 2;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(-50%, -50%); }
+  50% { transform: translate(-50%, -55%); }
+}
+
+.floating-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  border-radius: 50%;
+  animation: particleFloat 8s infinite;
+}
+
+.particle-1 {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.particle-2 {
+  top: 80%;
+  left: 20%;
+  animation-delay: 2s;
+}
+
+.particle-3 {
+  top: 30%;
+  right: 10%;
+  animation-delay: 4s;
+}
+
+.particle-4 {
+  bottom: 20%;
+  right: 20%;
+  animation-delay: 6s;
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translate(0, 0) scale(0);
+    opacity: 0;
+  }
+  10% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  90% {
+    transform: translate(100px, -100px) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(150px, -150px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Dark mode adjustments */
+.dark-mode .myndagents-cta {
+  background: linear-gradient(135deg, 
+    rgba(99, 102, 241, 0.08) 0%, 
+    rgba(168, 85, 247, 0.08) 50%, 
+    rgba(236, 72, 153, 0.08) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.dark-mode .cta-badge {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.3));
+  border-color: rgba(168, 85, 247, 0.5);
+}
+
+.dark-mode .logo-glow {
+  background: radial-gradient(circle, 
+    rgba(168, 85, 247, 0.6) 0%, 
+    transparent 70%);
 }
 
 /* Showcase View */
@@ -1302,6 +1881,45 @@ onUnmounted(() => {
   
   .app-main {
     padding: 1rem;
+  }
+  
+  /* MyndAgents CTA Mobile */
+  .cta-content {
+    grid-template-columns: 1fr;
+    padding: 2rem;
+    gap: 2rem;
+  }
+  
+  .cta-title {
+    font-size: 1.75rem;
+  }
+  
+  .cta-subtitle {
+    font-size: 1rem;
+  }
+  
+  .cta-features {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .cta-button {
+    width: 100%;
+  }
+  
+  .button-content {
+    justify-content: center;
+  }
+  
+  .logo-container {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+  }
+  
+  .myndagents-logo {
+    height: 100px;
+    width: auto;
   }
   
   .playground-layout {
