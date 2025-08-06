@@ -2,7 +2,7 @@
 
 A powerful Vue 3 wrapper component for Apache ECharts with full TypeScript support.
 
-[![npm version](https://badge.fury.io/js/@abernardobr%2Fmynd-echarts.svg)](https://www.npmjs.com/package/@abernardobr/mynd-echarts)
+[![npm version](https://badge.fury.io/js/@docbrasil%2Fmynd-echarts.svg)](https://www.npmjs.com/package/@docbrasil/mynd-echarts)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## 🌟 Features
@@ -19,10 +19,10 @@ A powerful Vue 3 wrapper component for Apache ECharts with full TypeScript suppo
 
 ```bash
 # npm
-npm install @abernardobr/mynd-echarts echarts
+npm install @docbrasil/mynd-echarts echarts
 
 # yarn
-yarn add @abernardobr/mynd-echarts echarts
+yarn add @docbrasil/mynd-echarts echarts
 ```
 
 ## 🚀 Quick Start
@@ -34,8 +34,8 @@ yarn add @abernardobr/mynd-echarts echarts
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MyndEcharts } from '@abernardobr/mynd-echarts'
-import type { EChartsOption } from '@abernardobr/mynd-echarts'
+import { MyndEcharts } from '@docbrasil/mynd-echarts'
+import type { EChartsOption } from '@docbrasil/mynd-echarts'
 
 const theme = ref('light')
 
@@ -110,7 +110,7 @@ myChart.dispose()
 </template>
 
 <script setup>
-import { MyndEcharts } from '@abernardobr/mynd-echarts'
+import { MyndEcharts } from '@docbrasil/mynd-echarts'
 
 const options = {
   xAxis: {
@@ -140,8 +140,8 @@ const options = {
 
 ### Basic Setup
 ```typescript
-import { MyndEcharts } from '@abernardobr/mynd-echarts'
-import type { EChartsOption, LineSeriesOption } from '@abernardobr/mynd-echarts'
+import { MyndEcharts } from '@docbrasil/mynd-echarts'
+import type { EChartsOption, LineSeriesOption } from '@docbrasil/mynd-echarts'
 
 // Fully typed options
 const options: EChartsOption = {
@@ -156,7 +156,7 @@ const options: EChartsOption = {
 ### Using with Refs
 ```typescript
 import { ref } from 'vue'
-import type { MyndEchartsProps } from '@abernardobr/mynd-echarts'
+import type { MyndEchartsProps } from '@docbrasil/mynd-echarts'
 
 const chartRef = ref<InstanceType<typeof MyndEcharts>>()
 
@@ -201,7 +201,7 @@ const chartOptions = computed<EChartsOption>(() => ({
 
 ### 2. Optimize Large Datasets
 ```vue
-<MyndEcharts 
+<MyndEcharts
   :options="options"
   :init-options="{ renderer: 'canvas' }"
   :lazy-update="true"
@@ -210,7 +210,7 @@ const chartOptions = computed<EChartsOption>(() => ({
 
 ### 3. Handle Loading States
 ```vue
-<MyndEcharts 
+<MyndEcharts
   :options="options"
   :loading="isLoading"
   :loading-options="{
@@ -241,7 +241,7 @@ See [DOCUMENTATION.md](./DOCUMENTATION.md#performance-optimization) for detailed
 
 ### Using Composables
 ```typescript
-import { useECharts, useChartTheme } from '@abernardobr/mynd-echarts'
+import { useECharts, useChartTheme } from '@docbrasil/mynd-echarts'
 
 const elementRef = ref<HTMLElement>()
 const { setOption, resize, dispose } = useECharts(elementRef, {
@@ -255,7 +255,7 @@ const { currentTheme, setTheme } = useChartTheme()
 ### Chart Interactions
 ```vue
 <template>
-  <MyndEcharts 
+  <MyndEcharts
     :options="options"
     @click="handleClick"
     @legendselectchanged="handleLegendChange"

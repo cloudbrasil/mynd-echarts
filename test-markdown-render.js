@@ -6,7 +6,7 @@ const testMarkdown = `
 ## Installation
 
 \`\`\`bash
-npm install @abernardobr/mynd-echarts echarts
+npm install @docbrasil/mynd-echarts echarts
 \`\`\`
 
 ## Basic Usage
@@ -17,7 +17,7 @@ npm install @abernardobr/mynd-echarts echarts
 </template>
 
 <script setup>
-import { MyndEcharts } from '@abernardobr/mynd-echarts'
+import { MyndEcharts } from '@docbrasil/mynd-echarts'
 
 const chartOptions = {
   xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed'] },
@@ -30,7 +30,7 @@ const chartOptions = {
 ### TypeScript Support
 
 \`\`\`typescript
-import type { EChartsOption } from '@abernardobr/mynd-echarts'
+import type { EChartsOption } from '@docbrasil/mynd-echarts'
 
 const options: EChartsOption = {
   title: { text: 'Sales Data' }

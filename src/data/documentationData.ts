@@ -22,10 +22,10 @@ export const documentationSections: DocSection[] = [
 
 \`\`\`bash
 # npm
-npm install @abernardobr/mynd-echarts echarts
+npm install @docbrasil/mynd-echarts echarts
 
 # yarn
-yarn add @abernardobr/mynd-echarts echarts
+yarn add @docbrasil/mynd-echarts echarts
 \`\`\`
 
 ## Basic Usage
@@ -36,7 +36,7 @@ yarn add @abernardobr/mynd-echarts echarts
 </template>
 
 <script setup>
-import { MyndEcharts } from '@abernardobr/mynd-echarts'
+import { MyndEcharts } from '@docbrasil/mynd-echarts'
 
 const chartOptions = {
   xAxis: {
@@ -90,7 +90,7 @@ const chartOptions = {
 Core composable for managing ECharts instances.
 
 \`\`\`typescript
-import { useECharts } from '@abernardobr/mynd-echarts'
+import { useECharts } from '@docbrasil/mynd-echarts'
 
 const { chartInstance, setOption, resize } = useECharts(elementRef, {
   theme: 'dark',
@@ -103,7 +103,7 @@ const { chartInstance, setOption, resize } = useECharts(elementRef, {
 Manage chart themes and theme switching.
 
 \`\`\`typescript
-import { useChartTheme } from '@abernardobr/mynd-echarts'
+import { useChartTheme } from '@docbrasil/mynd-echarts'
 
 const { currentTheme, setTheme } = useChartTheme({
   defaultTheme: 'light'
@@ -118,7 +118,7 @@ setTheme('dark')
 Control chart animations.
 
 \`\`\`typescript
-import { useChartAnimation } from '@abernardobr/mynd-echarts'
+import { useChartAnimation } from '@docbrasil/mynd-echarts'
 
 const { animationConfig } = useChartAnimation({
   duration: 1000,
@@ -141,7 +141,7 @@ import type {
   EChartsOption, 
   LineSeriesOption,
   BarSeriesOption 
-} from '@abernardobr/mynd-echarts'
+} from '@docbrasil/mynd-echarts'
 \`\`\`
 
 ## Typed Options
@@ -162,7 +162,7 @@ const options: EChartsOption = {
 ## Component Props Type
 
 \`\`\`typescript
-import type { MyndEchartsProps } from '@abernardobr/mynd-echarts'
+import type { MyndEchartsProps } from '@docbrasil/mynd-echarts'
 
 interface Props extends MyndEchartsProps {
   customProp?: string
@@ -172,7 +172,7 @@ interface Props extends MyndEchartsProps {
 ## Type Guards
 
 \`\`\`typescript
-import { isLineSeriesOption } from '@abernardobr/mynd-echarts'
+import { isLineSeriesOption } from '@docbrasil/mynd-echarts'
 
 if (isLineSeriesOption(series)) {
   series.smooth = true
@@ -196,7 +196,7 @@ if (isLineSeriesOption(series)) {
 ## Custom Themes
 
 \`\`\`typescript
-import { useChartTheme } from '@abernardobr/mynd-echarts'
+import { useChartTheme } from '@docbrasil/mynd-echarts'
 
 const { registerTheme } = useChartTheme()
 
@@ -307,7 +307,7 @@ chart.dispose()
 </template>
 
 <script setup>
-import { MyndEcharts } from '@abernardobr/mynd-echarts'
+import { MyndEcharts } from '@docbrasil/mynd-echarts'
 // No manual cleanup needed!
 </script>
 \`\`\`

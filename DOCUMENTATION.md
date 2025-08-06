@@ -161,13 +161,13 @@ chartRef.value.resize()
 Core composable for managing ECharts instances programmatically.
 
 ```typescript
-import { useECharts } from '@abernardobr/mynd-echarts'
+import { useECharts } from '@docbrasil/mynd-echarts'
 
-const { 
-  chartInstance, 
-  setOption, 
-  resize, 
-  dispose 
+const {
+  chartInstance,
+  setOption,
+  resize,
+  dispose
 } = useECharts(elementRef, {
   theme: 'dark',
   autoResize: true,
@@ -226,12 +226,12 @@ interface UseEChartsReturn {
 Manage chart themes and theme switching.
 
 ```typescript
-import { useChartTheme } from '@abernardobr/mynd-echarts'
+import { useChartTheme } from '@docbrasil/mynd-echarts'
 
-const { 
-  currentTheme, 
-  setTheme, 
-  registerTheme 
+const {
+  currentTheme,
+  setTheme,
+  registerTheme
 } = useChartTheme({
   defaultTheme: 'light',
   themes: [
@@ -272,12 +272,12 @@ interface UseChartThemeReturn {
 Control chart animations and transitions.
 
 ```typescript
-import { useChartAnimation } from '@abernardobr/mynd-echarts'
+import { useChartAnimation } from '@docbrasil/mynd-echarts'
 
-const { 
-  animationConfig, 
+const {
+  animationConfig,
   updateAnimation,
-  createStaggeredAnimation 
+  createStaggeredAnimation
 } = useChartAnimation({
   duration: 1000,
   easing: 'cubicOut'
@@ -306,12 +306,12 @@ interface UseChartAnimationOptions {
 Utilities for data transformation and manipulation.
 
 ```typescript
-import { useChartData } from '@abernardobr/mynd-echarts'
+import { useChartData } from '@docbrasil/mynd-echarts'
 
-const { 
-  transformData, 
+const {
+  transformData,
   normalizeData,
-  aggregateData 
+  aggregateData
 } = useChartData()
 
 // Transform flat data to hierarchical
@@ -334,7 +334,7 @@ const normalized = normalizeData(data, { min: 0, max: 100 })
 Build and validate chart options with TypeScript support.
 
 ```typescript
-import { useChartOptions } from '@abernardobr/mynd-echarts'
+import { useChartOptions } from '@docbrasil/mynd-echarts'
 
 const { buildOptions, validateOptions } = useChartOptions()
 
@@ -350,7 +350,7 @@ const options = buildOptions({
 Advanced resize handling with debouncing and performance optimization.
 
 ```typescript
-import { useChartResize } from '@abernardobr/mynd-echarts'
+import { useChartResize } from '@docbrasil/mynd-echarts'
 
 const { enableResize, disableResize } = useChartResize(chartInstance, {
   debounce: 200,
@@ -367,12 +367,12 @@ mynd-echarts provides comprehensive TypeScript support with full type definition
 ### Basic Types
 
 ```typescript
-import type { 
-  EChartsOption, 
+import type {
+  EChartsOption,
   ECharts,
   SeriesOption,
-  TitleComponentOption 
-} from '@abernardobr/mynd-echarts'
+  TitleComponentOption
+} from '@docbrasil/mynd-echarts'
 
 // Typed chart options
 const options: EChartsOption = {
@@ -389,7 +389,7 @@ const options: EChartsOption = {
 ### Component Props Type
 
 ```typescript
-import type { MyndEchartsProps } from '@abernardobr/mynd-echarts'
+import type { MyndEchartsProps } from '@docbrasil/mynd-echarts'
 
 // In your component
 defineProps<{
@@ -400,11 +400,11 @@ defineProps<{
 ### Type Guards
 
 ```typescript
-import { 
+import {
   isLineSeriesOption,
   isBarSeriesOption,
-  isPieSeriesOption 
-} from '@abernardobr/mynd-echarts'
+  isPieSeriesOption
+} from '@docbrasil/mynd-echarts'
 
 if (isLineSeriesOption(series)) {
   // TypeScript knows this is a LineSeriesOption
@@ -428,7 +428,7 @@ mynd-echarts includes built-in light and dark themes:
 Register custom themes:
 
 ```typescript
-import { useChartTheme } from '@abernardobr/mynd-echarts'
+import { useChartTheme } from '@docbrasil/mynd-echarts'
 
 const { registerTheme } = useChartTheme()
 
@@ -462,8 +462,8 @@ const toggleTheme = () => {
 ### 1. Use Canvas Renderer for Large Datasets
 
 ```vue
-<MyndEcharts 
-  :options="options" 
+<MyndEcharts
+  :options="options"
   renderer="canvas"
   :init-options="{ devicePixelRatio: 1 }"
 />
@@ -472,8 +472,8 @@ const toggleTheme = () => {
 ### 2. Enable Lazy Update
 
 ```vue
-<MyndEcharts 
-  :options="options" 
+<MyndEcharts
+  :options="options"
   :lazy-update="true"
   :not-merge="false"
 />
@@ -541,8 +541,8 @@ const options: EChartsOption = {
 
 ```vue
 <!-- Update without triggering animations -->
-<MyndEcharts 
-  :options="options" 
+<MyndEcharts
+  :options="options"
   :silent="true"
 />
 ```

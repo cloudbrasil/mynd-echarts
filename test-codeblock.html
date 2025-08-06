@@ -6,12 +6,12 @@
     <title>CodeBlock Test</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
+        body {
+            font-family: Arial, sans-serif;
             padding: 20px;
             background: #f5f5f5;
         }
-        
+
         /* CSS Variables for theming */
         :root {
             --bg-primary: #ffffff;
@@ -22,7 +22,7 @@
             --border-color: #e9ecef;
             --border-light: #e2e8f0;
         }
-        
+
         .test-container {
             max-width: 800px;
             margin: 0 auto;
@@ -31,21 +31,21 @@
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        
+
         h1 {
             color: #333;
             margin-bottom: 30px;
         }
-        
+
         .section {
             margin-bottom: 40px;
         }
-        
+
         .section h2 {
             color: #555;
             margin-bottom: 20px;
         }
-        
+
         #app {
             margin: 20px 0;
         }
@@ -54,22 +54,22 @@
 <body>
     <div class="test-container">
         <h1>CodeBlock Component Test</h1>
-        
+
         <div class="section">
             <h2>Test 1: Vue Code Block</h2>
             <div id="app-vue"></div>
         </div>
-        
+
         <div class="section">
             <h2>Test 2: TypeScript Code Block</h2>
             <div id="app-ts"></div>
         </div>
-        
+
         <div class="section">
             <h2>Test 3: JSON Code Block</h2>
             <div id="app-json"></div>
         </div>
-        
+
         <div class="section">
             <h2>Test 4: No Language Specified</h2>
             <div id="app-plain"></div>
@@ -79,7 +79,7 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
         const { createApp, h } = Vue;
-        
+
         // CodeBlock component definition
         const CodeBlock = {
             props: {
@@ -118,14 +118,14 @@
                 </div>
             `
         };
-        
+
         // Test data
         const vueCode = `<template>
   <MyndEcharts :options="chartOptions" />
 </template>
 
 <script setup>
-import { MyndEcharts } from '@abernardobr/mynd-echarts'
+import { MyndEcharts } from '@docbrasil/mynd-echarts'
 
 const chartOptions = {
   xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed'] },
@@ -133,14 +133,14 @@ const chartOptions = {
   series: [{ type: 'bar', data: [120, 200, 150] }]
 }
 <\/script>`;
-        
-        const tsCode = `import { useECharts } from '@abernardobr/mynd-echarts'
+
+        const tsCode = `import { useECharts } from '@docbrasil/mynd-echarts'
 
 const { chartInstance, setOption, resize } = useECharts(elementRef, {
   theme: 'dark',
   autoResize: true
 })`;
-        
+
         const jsonCode = `{
   "title": {
     "text": "Sales Data"
@@ -157,11 +157,11 @@ const { chartInstance, setOption, resize } = useECharts(elementRef, {
     "data": [120, 200, 150, 80, 70]
   }]
 }`;
-        
+
         const plainCode = `This is plain text code
 without any specific language highlighting
 but still properly formatted`;
-        
+
         // Create apps
         createApp({
             render: () => h(CodeBlock, {
@@ -169,28 +169,28 @@ but still properly formatted`;
                 language: 'vue'
             })
         }).mount('#app-vue');
-        
+
         createApp({
             render: () => h(CodeBlock, {
                 code: tsCode,
                 language: 'typescript'
             })
         }).mount('#app-ts');
-        
+
         createApp({
             render: () => h(CodeBlock, {
                 code: jsonCode,
                 language: 'json'
             })
         }).mount('#app-json');
-        
+
         createApp({
             render: () => h(CodeBlock, {
                 code: plainCode
             })
         }).mount('#app-plain');
     </script>
-    
+
     <style>
         /* CodeBlock styles */
         .code-block {
@@ -200,7 +200,7 @@ but still properly formatted`;
             overflow: hidden;
             background: var(--bg-primary, #ffffff);
         }
-        
+
         .code-header {
             display: flex;
             justify-content: space-between;
@@ -209,14 +209,14 @@ but still properly formatted`;
             background: var(--bg-tertiary, #f5f6fa);
             border-bottom: 1px solid var(--border-color, #e2e8f0);
         }
-        
+
         .code-language {
             font-size: 0.875rem;
             font-weight: 500;
             color: var(--text-secondary, #718096);
             text-transform: uppercase;
         }
-        
+
         .copy-button {
             display: flex;
             align-items: center;
@@ -232,30 +232,30 @@ but still properly formatted`;
             transition: all 0.2s ease;
             font-family: inherit;
         }
-        
+
         .copy-button:hover {
             background: var(--bg-secondary, #f8f9fa);
             border-color: var(--border-color, #e2e8f0);
             color: var(--text-primary, #2c3e50);
         }
-        
+
         .copy-button.copied {
             background: #10b981;
             border-color: #10b981;
             color: white;
         }
-        
+
         .copy-button .material-icons {
             font-size: 1rem;
         }
-        
+
         .code-content {
             margin: 0;
             padding: 1.5rem;
             overflow-x: auto;
             background: var(--bg-secondary, #f8f9fa);
         }
-        
+
         .code-content code {
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
             font-size: 0.9375rem;

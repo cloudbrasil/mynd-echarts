@@ -1,5 +1,5 @@
 {
-  "name": "@abernardobr/mynd-echarts",
+  "name": "@docbrasil/mynd-echarts",
   "version": "1.0.0",
   "description": "A full-featured Vue 3 wrapper for Apache ECharts with TypeScript support",
   "type": "module",

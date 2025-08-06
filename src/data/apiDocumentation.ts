@@ -876,7 +876,7 @@ chartRef.value.dispatchAction({
 
 <script setup>
 import { ref } from 'vue'
-import { MyndEcharts } from '@abernardobr/mynd-echarts'
+import { MyndEcharts } from '@docbrasil/mynd-echarts'
 
 const chartRef = ref()
 
