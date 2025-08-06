@@ -1,0 +1,8 @@
+dist/
+dist-demo/
+coverage/
+node_modules/
+*.min.js
+*.d.ts
+vite.config.ts
+vitest.config.ts

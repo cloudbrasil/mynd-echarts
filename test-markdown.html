@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        code { background: #f4f4f4; padding: 2px 4px; border-radius: 3px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .code-block { margin: 20px 0; border: 1px solid #ddd; border-radius: 5px; overflow: hidden; }
+        .code-block-header { background: #e9e9e9; padding: 10px; display: flex; justify-content: space-between; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h1>Testing Markdown Rendering</h1>
+    <div id="output"></div>
+
+    <script type="module">
+        // Simple markdown parser
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        const markdown = `
+# Props
+
+## Required Props
+
+### options
+- Type: \`EChartsOption\`
+- Required: Yes
+- Description: The main configuration object for ECharts.
+
+\`\`\`vue
+<template>
+  <MyndEcharts :options="chartOptions" />
+</template>
+
+<script setup>
+const chartOptions = {
+  title: { text: 'Sales Data' },
+  xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed'] },
+  yAxis: { type: 'value' },
+  series: [{ type: 'bar', data: [120, 200, 150] }]
+}
+<\/script>
+\`\`\`
+
+| Prop | Type | Default |
+|------|------|---------|
+| options | EChartsOption | required |
+| theme | string | 'default' |
+`;
+
+        // Parse the markdown
+        let html = markdown.trim();
+        let codeBlockId = 0;
+        
+        // Handle code blocks
+        html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+            const escaped = escapeHtml(code.trim());
+            const id = `code-${codeBlockId++}`;
+            return `<div class="code-block">
+                <div class="code-block-header">
+                    <span>${lang || 'plaintext'}</span>
+                    <button onclick="alert('Copy: ' + document.getElementById('${id}').textContent)">Copy</button>
+                </div>
+                <pre><code id="${id}">${escaped}</code></pre>
+            </div>`;
+        });
+        
+        // Headers
+        html = html.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
+        html = html.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
+        html = html.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
+        
+        // Inline code
+        html = html.replace(/\`([^\`]+)\`/g, '<code>$1</code>');
+        
+        // Lists
+        html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+        
+        // Simple table
+        html = html.replace(/\|(.+)\|\n\|[-:\s|]+\|\n((?:\|.+\|\n?)+)/g, (match, headers, rows) => {
+            const headerCells = headers.split('|').filter(Boolean).map(h => 
+                `<th>${h.trim()}</th>`
+            ).join('');
+            
+            const rowsHtml = rows.trim().split('\n').map(row => {
+                const cells = row.split('|').filter(Boolean).map(cell => 
+                    `<td>${cell.trim()}</td>`
+                ).join('');
+                return `<tr>${cells}</tr>`;
+            }).join('');
+            
+            return `<table><thead><tr>${headerCells}</tr></thead><tbody>${rowsHtml}</tbody></table>`;
+        });
+        
+        document.getElementById('output').innerHTML = html;
+    </script>
+</body>
+</html>

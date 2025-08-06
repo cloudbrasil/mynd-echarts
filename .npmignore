@@ -1,0 +1,48 @@
+# Source files
+src/
+examples/
+tests/
+coverage/
+dist-demo/
+
+# Configuration files
+*.config.ts
+*.config.js
+.env*
+.eslintrc*
+.prettierrc*
+tsconfig.json
+tsconfig.*.json
+vite.config.ts
+vitest.config.ts
+
+# Development files
+.vscode/
+.idea/
+*.log
+node_modules/
+
+# Git files
+.git/
+.gitignore
+
+# Documentation (keep README.md)
+DOCUMENTATION.md
+docs/
+
+# Test files
+__tests__/
+**/*.test.js
+**/*.test.ts
+**/*.spec.js
+**/*.spec.ts
+
+# Build artifacts that shouldn't be published
+*.tgz
+
+# Keep only essential files for publishing
+# Included by files array in package.json:
+# - dist/
+# - package.json
+# - README.md
+# - LICENSE

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Reactive Test</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/echarts@5/dist/echarts.min.js"></script>
+    <style>
+        body { margin: 20px; font-family: Arial, sans-serif; }
+        #chart { width: 600px; height: 400px; margin: 20px 0; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        .dark body { background: #333; color: #fff; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>ECharts Theme Test</h1>
+        <button @click="toggleTheme">Toggle Theme (Current: {{ theme }})</button>
+        <div id="chart" ref="chartRef"></div>
+    </div>
+
+    <script>
+        const { createApp, ref, watch, onMounted } = Vue;
+
+        // Register light and dark themes
+        echarts.registerTheme('light', {
+            textStyle: { color: '#333' },
+            title: { textStyle: { color: '#333' } },
+            legend: { textStyle: { color: '#333' } },
+            xAxis: { axisLabel: { color: '#666' } },
+            yAxis: { axisLabel: { color: '#666' } }
+        });
+
+        echarts.registerTheme('dark', {
+            textStyle: { color: '#eee' },
+            title: { textStyle: { color: '#eee' } },
+            legend: { textStyle: { color: '#ccc' } },
+            xAxis: { axisLabel: { color: '#ccc' } },
+            yAxis: { axisLabel: { color: '#ccc' } }
+        });
+
+        createApp({
+            setup() {
+                const theme = ref('light');
+                const chartRef = ref(null);
+                let chartInstance = null;
+
+                const options = {
+                    title: { text: 'Sample Chart', left: 'center' },
+                    tooltip: { trigger: 'axis' },
+                    xAxis: {
+                        type: 'category',
+                        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                    },
+                    yAxis: { type: 'value' },
+                    series: [{
+                        name: 'Sales',
+                        type: 'bar',
+                        data: [120, 200, 150, 80, 70, 110, 130]
+                    }]
+                };
+
+                const toggleTheme = () => {
+                    theme.value = theme.value === 'light' ? 'dark' : 'light';
+                };
+
+                watch(theme, (newTheme) => {
+                    console.log('Theme changed to:', newTheme);
+                    if (chartInstance) {
+                        // Save current options
+                        const currentOptions = chartInstance.getOption();
+                        
+                        // Dispose old instance
+                        chartInstance.dispose();
+                        
+                        // Create new instance with new theme
+                        chartInstance = echarts.init(chartRef.value, newTheme);
+                        
+                        // Restore options
+                        chartInstance.setOption(currentOptions);
+                    }
+                });
+
+                onMounted(() => {
+                    chartInstance = echarts.init(chartRef.value, theme.value);
+                    chartInstance.setOption(options);
+                });
+
+                return { theme, chartRef, toggleTheme };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
