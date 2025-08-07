@@ -155,6 +155,26 @@ export interface LocaleMessages {
     loading: string
     noData: string
   }
+  dataView: {
+    title: string
+    noData: string
+    downloadCSV: string
+    copyToClipboard: string
+    close: string
+    category: string
+    series: string
+    name: string
+    value: string
+    index: string
+  }
+  toolbox: {
+    saveAsImage: string
+    restore: string
+    dataView: string
+    dataZoom: string
+    magicType: string
+    brush: string
+  }
 }
 
 export type SupportedLocale = 

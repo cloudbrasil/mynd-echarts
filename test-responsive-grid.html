@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Responsive Grid Layout</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    .viewport-info {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 10px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .viewport-size {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4299e1;
+    }
+    
+    .breakpoint-indicator {
+      margin-top: 10px;
+      padding: 5px 15px;
+      display: inline-block;
+      border-radius: 20px;
+      font-weight: bold;
+      color: white;
+    }
+    
+    .desktop { background: #28a745; }
+    .tablet { background: #ffc107; color: #333; }
+    .mobile { background: #dc3545; }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    /* Mimicking the actual styles from App.vue */
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 40px;
+    }
+    
+    .showcase-card {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .showcase-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .chart-preview {
+      height: 200px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 48px;
+      font-weight: bold;
+    }
+    
+    .chart-info {
+      padding: 1rem;
+    }
+    
+    .chart-info h3 {
+      margin: 0 0 0.5rem 0;
+      color: #333;
+    }
+    
+    .chart-info p {
+      color: #666;
+      font-size: 14px;
+      margin: 0 0 0.5rem 0;
+    }
+    
+    .chart-type {
+      display: inline-block;
+      padding: 4px 8px;
+      background: #f0f0f0;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #555;
+    }
+    
+    /* Tablet breakpoint */
+    @media (max-width: 1024px) {
+      .showcase-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+    }
+    
+    /* Mobile breakpoint */
+    @media (max-width: 768px) {
+      .showcase-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      body {
+        padding: 10px;
+      }
+    }
+    
+    .test-controls {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .test-controls button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 4px;
+      background: #4299e1;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .test-controls button:hover {
+      background: #3182ce;
+    }
+    
+    .resize-frame {
+      margin: 20px auto;
+      border: 2px dashed #999;
+      padding: 20px;
+      background: white;
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <h1>Responsive Grid Layout Test</h1>
+  
+  <div class="viewport-info">
+    <div class="viewport-size" id="viewport-size">1200px</div>
+    <div id="breakpoint" class="breakpoint-indicator desktop">Desktop (2 columns)</div>
+  </div>
+  
+  <div class="test-controls">
+    <button onclick="setWidth('100%')">Full Width</button>
+    <button onclick="setWidth('1200px')">Desktop (1200px)</button>
+    <button onclick="setWidth('900px')">Tablet (900px)</button>
+    <button onclick="setWidth('600px')">Mobile (600px)</button>
+    <button onclick="setWidth('375px')">iPhone (375px)</button>
+  </div>
+  
+  <div id="resize-frame" class="resize-frame" style="width: 100%;">
+    <div class="container">
+      <h2 style="margin-bottom: 20px;">Showcase Grid</h2>
+      
+      <div class="showcase-grid">
+        <div class="showcase-card">
+          <div class="chart-preview">1</div>
+          <div class="chart-info">
+            <h3>Line Chart</h3>
+            <p>Shows trends over time</p>
+            <span class="chart-type">Basic Charts</span>
+          </div>
+        </div>
+        
+        <div class="showcase-card">
+          <div class="chart-preview">2</div>
+          <div class="chart-info">
+            <h3>Bar Chart</h3>
+            <p>Compare different categories</p>
+            <span class="chart-type">Basic Charts</span>
+          </div>
+        </div>
+        
+        <div class="showcase-card">
+          <div class="chart-preview">3</div>
+          <div class="chart-info">
+            <h3>Pie Chart</h3>
+            <p>Show proportions and percentages</p>
+            <span class="chart-type">Basic Charts</span>
+          </div>
+        </div>
+        
+        <div class="showcase-card">
+          <div class="chart-preview">4</div>
+          <div class="chart-info">
+            <h3>Scatter Plot</h3>
+            <p>Display correlation between variables</p>
+            <span class="chart-type">Statistical</span>
+          </div>
+        </div>
+        
+        <div class="showcase-card">
+          <div class="chart-preview">5</div>
+          <div class="chart-info">
+            <h3>Heatmap</h3>
+            <p>Visualize data density</p>
+            <span class="chart-type">Advanced</span>
+          </div>
+        </div>
+        
+        <div class="showcase-card">
+          <div class="chart-preview">6</div>
+          <div class="chart-info">
+            <h3>Radar Chart</h3>
+            <p>Multi-dimensional data comparison</p>
+            <span class="chart-type">Advanced</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function updateViewportInfo() {
+      const frame = document.getElementById('resize-frame');
+      const width = frame.offsetWidth;
+      const viewportSize = document.getElementById('viewport-size');
+      const breakpoint = document.getElementById('breakpoint');
+      
+      viewportSize.textContent = width + 'px';
+      
+      if (width > 1024) {
+        breakpoint.textContent = 'Desktop (2 columns)';
+        breakpoint.className = 'breakpoint-indicator desktop';
+      } else if (width > 768) {
+        breakpoint.textContent = 'Tablet (2 columns)';
+        breakpoint.className = 'breakpoint-indicator tablet';
+      } else {
+        breakpoint.textContent = 'Mobile (1 column)';
+        breakpoint.className = 'breakpoint-indicator mobile';
+      }
+    }
+    
+    function setWidth(width) {
+      const frame = document.getElementById('resize-frame');
+      frame.style.width = width;
+      updateViewportInfo();
+    }
+    
+    // Update on resize
+    window.addEventListener('resize', updateViewportInfo);
+    
+    // Initial update
+    updateViewportInfo();
+    
+    // Animate through different sizes
+    function animateResponsive() {
+      const sizes = ['100%', '1200px', '900px', '600px', '375px'];
+      let index = 0;
+      
+      const interval = setInterval(() => {
+        setWidth(sizes[index]);
+        index = (index + 1) % sizes.length;
+        
+        if (index === 0) {
+          clearInterval(interval);
+        }
+      }, 2000);
+    }
+    
+    // Add animate button
+    const controls = document.querySelector('.test-controls');
+    const animateBtn = document.createElement('button');
+    animateBtn.textContent = 'Animate Responsive';
+    animateBtn.onclick = animateResponsive;
+    animateBtn.style.background = '#9f7aea';
+    controls.appendChild(animateBtn);
+  </script>
+</body>
+</html>

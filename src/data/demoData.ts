@@ -28,8 +28,17 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Line Chart',
     description: 'Simple line chart with smooth curves',
     options: {
-      title: { text: 'Weekly Temperature', left: 'center' },
+      title: { text: 'Weekly Temperature', left: 'left', top: 10 },
       tooltip: { trigger: 'axis' },
+      grid: { top: 60, bottom: 60, left: 60, right: 60 },
+      toolbox: {
+        feature: {
+          saveAsImage: { show: true },
+          restore: { show: true },
+          dataZoom: { show: true },
+          magicType: { show: true, type: ['line', 'bar'] }
+        }
+      },
       xAxis: {
         type: 'category',
         data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -51,8 +60,18 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Area Chart',
     description: 'Line chart with gradient area fill',
     options: {
-      title: { text: 'Sales Trend', left: 'center' },
+      title: { text: 'Sales Trend', left: 'left', top: 10 },
       tooltip: { trigger: 'axis' },
+      grid: { top: 60, bottom: 60, left: 60, right: 60 },
+      toolbox: {
+        feature: {
+          saveAsImage: { show: true },
+          restore: { show: true },
+          dataView: { show: true },
+          dataZoom: { show: true },
+          magicType: { show: true, type: ['line', 'bar'] }
+        }
+      },
       xAxis: {
         type: 'category',
         data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
@@ -83,9 +102,19 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Stacked Line',
     description: 'Multiple lines stacked to show total',
     options: {
-      title: { text: 'Traffic Sources', left: 'center' },
+      title: { text: 'Traffic Sources', left: 'left', top: 10 },
       tooltip: { trigger: 'axis' },
+      grid: { top: 80, bottom: 60, left: 60, right: 60 },
       legend: { bottom: 0, data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine'] },
+      toolbox: {
+        feature: {
+          saveAsImage: { show: true },
+          restore: { show: true },
+          dataView: { show: true },
+          dataZoom: { show: true },
+          magicType: { show: true, type: ['line', 'bar', 'stack', 'tiled'] }
+        }
+      },
       xAxis: {
         type: 'category',
         data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -125,8 +154,17 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Bar Chart',
     description: 'Simple vertical bar chart',
     options: {
-      title: { text: 'Monthly Sales', left: 'center' },
+      title: { text: 'Monthly Sales', left: 'left', top: 10 },
       tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+      grid: { top: 60, bottom: 60, left: 60, right: 60 },
+      toolbox: {
+        feature: {
+          saveAsImage: { show: true },
+          restore: { show: true },
+          dataView: { show: true },
+          magicType: { show: true, type: ['line', 'bar', 'stack'] }
+        }
+      },
       xAxis: {
         type: 'category',
         data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
@@ -147,8 +185,9 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Horizontal Bar',
     description: 'Bar chart with horizontal orientation',
     options: {
-      title: { text: 'Top Programming Languages', left: 'center' },
+      title: { text: 'Top Programming Languages', left: 'left', top: 10 },
       tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+      grid: { top: 60, bottom: 60, left: 100, right: 60 },
       xAxis: { type: 'value' },
       yAxis: {
         type: 'category',
@@ -179,9 +218,10 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Stacked Bar',
     description: 'Multiple series stacked on top of each other',
     options: {
-      title: { text: 'Sales by Channel', left: 'center' },
+      title: { text: 'Sales by Channel', left: 'left', top: 10 },
       tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
       legend: { bottom: 0, data: ['Direct', 'Email', 'Affiliate'] },
+      grid: { top: 60, bottom: 40, left: 60, right: 60 },
       xAxis: {
         type: 'category',
         data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -218,7 +258,7 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Pie Chart',
     description: 'Simple pie chart with labels',
     options: {
-      title: { text: 'Browser Market Share', left: 'center' },
+      title: { text: 'Browser Market Share', left: 'left', top: 10 },
       tooltip: { trigger: 'item' },
       legend: { orient: 'vertical', left: 'left' },
       series: [{
@@ -249,7 +289,7 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Doughnut',
     description: 'Pie chart with hollow center',
     options: {
-      title: { text: 'Budget Distribution', left: 'center' },
+      title: { text: 'Budget Distribution', left: 'left', top: 10 },
       tooltip: { trigger: 'item' },
       legend: { bottom: 0 },
       series: [{
@@ -291,7 +331,7 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Rose Chart',
     description: 'Nightingale rose diagram',
     options: {
-      title: { text: 'Product Categories', left: 'center' },
+      title: { text: 'Product Categories', left: 'left', top: 10 },
       tooltip: { trigger: 'item' },
       legend: { bottom: 0 },
       series: [{
@@ -323,7 +363,8 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Scatter Plot',
     description: 'Simple scatter plot showing correlation',
     options: {
-      title: { text: 'Height vs Weight', left: 'center' },
+      title: { text: 'Height vs Weight', left: 'left', top: 10 },
+      grid: { top: 60, bottom: 60, left: 60, right: 60 },
       xAxis: { name: 'Height (cm)', nameLocation: 'middle', nameGap: 30 },
       yAxis: { name: 'Weight (kg)', nameLocation: 'middle', nameGap: 30 },
       series: [{
@@ -346,7 +387,8 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Bubble Chart',
     description: 'Scatter plot with variable bubble sizes',
     options: {
-      title: { text: 'Product Performance', left: 'center' },
+      title: { text: 'Product Performance', left: 'left', top: 10 },
+      grid: { top: 60, bottom: 60, left: 60, right: 60 },
       xAxis: { name: 'Price ($)', type: 'value', scale: true },
       yAxis: { name: 'Rating', type: 'value', scale: true },
       series: [{
@@ -383,7 +425,7 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Radar Chart',
     description: 'Multi-dimensional data visualization',
     options: {
-      title: { text: 'Skills Assessment', left: 'center' },
+      title: { text: 'Skills Assessment', left: 'left', top: 10 },
       legend: { bottom: 0, data: ['Current', 'Target'] },
       radar: {
         indicator: [
@@ -422,7 +464,7 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Heatmap',
     description: 'Data density visualization',
     options: {
-      title: { text: 'Activity Heatmap', left: 'center' },
+      title: { text: 'Activity Heatmap', left: 'left', top: 10 },
       tooltip: { position: 'top' },
       grid: { height: '50%', top: '10%' },
       xAxis: {
@@ -440,7 +482,7 @@ export const showcaseCharts: ChartDemo[] = [
         max: 100,
         calculable: true,
         orient: 'horizontal',
-        left: 'center',
+        left: 'left',
         bottom: '15%'
       },
       series: [{
@@ -469,7 +511,7 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Tree Diagram',
     description: 'Hierarchical data structure',
     options: {
-      title: { text: 'Organization Structure', left: 'center' },
+      title: { text: 'Organization Structure', left: 'left', top: 10 },
       tooltip: { trigger: 'item', triggerOn: 'mousemove' },
       series: [{
         type: 'tree',
@@ -522,7 +564,7 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Network Graph',
     description: 'Network relationship visualization',
     options: {
-      title: { text: 'Network Topology', left: 'center' },
+      title: { text: 'Network Topology', left: 'left', top: 10 },
       series: [{
         type: 'graph',
         layout: 'force',
@@ -566,7 +608,7 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Gauge',
     description: 'Performance meter visualization',
     options: {
-      title: { text: 'Performance Meter', left: 'center' },
+      title: { text: 'Performance Meter', left: 'left', top: 10 },
       series: [{
         name: 'Performance',
         type: 'gauge',
@@ -593,7 +635,7 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Funnel',
     description: 'Conversion funnel visualization',
     options: {
-      title: { text: 'Sales Funnel', left: 'center' },
+      title: { text: 'Sales Funnel', left: 'left', top: 10 },
       tooltip: { trigger: 'item', formatter: '{a} <br/>{b} : {c}%' },
       legend: { bottom: 0 },
       series: [{
@@ -626,10 +668,14 @@ export const showcaseCharts: ChartDemo[] = [
     type: 'Sankey',
     description: 'Flow visualization',
     options: {
-      title: { text: 'Energy Flow', left: 'center' },
+      title: { text: 'Energy Flow', left: 'left', top: 10 },
       series: [{
         type: 'sankey',
         layout: 'none',
+        top: 60,
+        bottom: 20,
+        left: 20,
+        right: 120,
         emphasis: { focus: 'adjacency' },
         data: [
           { name: 'Coal' },
@@ -659,70 +705,62 @@ export const advancedExamples: AdvancedExample[] = [
   {
     id: 'dashboard-1',
     name: 'Sales Dashboard',
-    description: 'Comprehensive sales dashboard with multiple metrics and interactive features',
+    description: 'Comprehensive sales dashboard with revenue and growth metrics',
     tags: ['dashboard', 'business', 'interactive'],
     options: {
       title: {
         text: 'Sales Performance Dashboard',
         subtext: 'Q4 2023',
-        left: 'center'
+        left: 'left',
+        top: 10
       },
-      tooltip: { trigger: 'axis' },
+      tooltip: { 
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross'
+        }
+      },
       legend: {
-        data: ['Revenue', 'Profit', 'Growth'],
-        bottom: 0
+        data: ['Revenue', 'Profit', 'Growth Rate'],
+        bottom: 10
       },
-      grid: [
-        { left: '3%', top: '15%', width: '45%', height: '35%' },
-        { right: '3%', top: '15%', width: '45%', height: '35%' },
-        { left: '3%', bottom: '8%', width: '45%', height: '35%' },
-        { right: '3%', bottom: '8%', width: '45%', height: '35%' }
-      ],
-      xAxis: [
-        { type: 'category', gridIndex: 0, data: ['Q1', 'Q2', 'Q3', 'Q4'] },
-        { type: 'category', gridIndex: 1, data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'] },
-        { type: 'value', gridIndex: 2, name: 'Revenue' },
-        { type: 'category', gridIndex: 3, data: ['Product A', 'Product B', 'Product C', 'Product D'] }
-      ],
+      grid: {
+        top: 80,
+        bottom: 80,
+        left: 80,
+        right: 80,
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
       yAxis: [
-        { type: 'value', gridIndex: 0, name: 'Revenue ($M)' },
-        { type: 'value', gridIndex: 1, name: 'Units Sold' },
-        { type: 'value', gridIndex: 2, name: 'Profit Margin (%)' },
-        { type: 'value', gridIndex: 3 }
+        {
+          type: 'value',
+          name: 'Revenue ($M)',
+          position: 'left',
+          axisLabel: {
+            formatter: '${value}M'
+          }
+        },
+        {
+          type: 'value',
+          name: 'Growth Rate (%)',
+          position: 'right',
+          axisLabel: {
+            formatter: '{value}%'
+          }
+        }
       ],
       series: [
         {
           name: 'Revenue',
           type: 'bar',
-          xAxisIndex: 0,
-          yAxisIndex: 0,
-          data: [120, 132, 101, 134],
-          itemStyle: { color: '#5470c6' }
-        },
-        {
-          name: 'Units',
-          type: 'line',
-          xAxisIndex: 1,
-          yAxisIndex: 1,
-          data: [820, 932, 901, 934, 1290, 1330],
-          smooth: true,
-          itemStyle: { color: '#91cc75' }
-        },
-        {
-          name: 'Profit vs Revenue',
-          type: 'scatter',
-          xAxisIndex: 2,
-          yAxisIndex: 2,
-          data: [[10, 15], [20, 22], [30, 28], [40, 35], [50, 42]],
-          symbolSize: 20,
-          itemStyle: { color: '#fac858' }
-        },
-        {
-          name: 'Product Sales',
-          type: 'bar',
-          xAxisIndex: 3,
-          yAxisIndex: 3,
-          data: [320, 302, 301, 334],
+          data: [120, 132, 101, 134, 90, 230, 210, 182, 191, 234, 260, 280],
           itemStyle: {
             color: {
               type: 'linear',
@@ -734,6 +772,42 @@ export const advancedExamples: AdvancedExample[] = [
               ]
             }
           }
+        },
+        {
+          name: 'Profit',
+          type: 'bar',
+          data: [80, 88, 67, 89, 60, 153, 140, 121, 127, 156, 173, 186],
+          itemStyle: {
+            color: {
+              type: 'linear',
+              x: 0, y: 0, x2: 0, y2: 1,
+              colorStops: [
+                { offset: 0, color: '#90ec7d' },
+                { offset: 0.5, color: '#73c0de' },
+                { offset: 1, color: '#73c0de' }
+              ]
+            }
+          }
+        },
+        {
+          name: 'Growth Rate',
+          type: 'line',
+          yAxisIndex: 1,
+          data: [10, 10.2, -5.3, 32.7, -11.2, 155.6, -8.7, -13.5, 4.9, 22.3, 11.1, 7.7],
+          smooth: true,
+          itemStyle: { color: '#fac858' },
+          lineStyle: { width: 3 },
+          markPoint: {
+            data: [
+              { type: 'max', name: 'Max' },
+              { type: 'min', name: 'Min' }
+            ]
+          },
+          markLine: {
+            data: [
+              { type: 'average', name: 'Average' }
+            ]
+          }
         }
       ]
     }
@@ -744,9 +818,15 @@ export const advancedExamples: AdvancedExample[] = [
     description: 'Live data streaming visualization with dynamic updates',
     tags: ['realtime', 'monitoring', 'animated'],
     options: {
-      title: { text: 'System Performance Monitor', left: 'center' },
+      title: { text: 'System Performance Monitor', left: 'left', top: 10 },
       tooltip: { trigger: 'axis', axisPointer: { animation: false } },
       legend: { data: ['CPU', 'Memory', 'Network'], bottom: 0 },
+      grid: {
+        top: 60,
+        bottom: 60,
+        left: 60,
+        right: 60
+      },
       xAxis: {
         type: 'time',
         splitLine: { show: false }
@@ -787,87 +867,110 @@ export const advancedExamples: AdvancedExample[] = [
   },
   {
     id: 'geo-1',
-    name: 'Geographic Analysis',
-    description: 'Map visualization with data points and heatmap overlay',
-    tags: ['map', 'geographic', 'heatmap'],
+    name: 'Regional Sales Heatmap',
+    description: 'Sales performance visualization by region and quarter',
+    tags: ['heatmap', 'geographic', 'sales'],
     options: {
-      title: { text: 'Sales by Region', left: 'center' },
-      tooltip: { trigger: 'item' },
+      title: { text: 'Sales by Region', left: 'left', top: 10 },
+      tooltip: { 
+        trigger: 'item',
+        formatter: (params: any) => {
+          const value = params.value
+          if (value && value.length === 3) {
+            return `${params.name}<br/>Quarter: Q${value[0] + 1}<br/>Sales: $${value[2]}k`
+          }
+          return params.name
+        }
+      },
+      grid: {
+        top: 100,
+        bottom: 100,
+        left: 150,
+        right: 100
+      },
+      xAxis: {
+        type: 'category',
+        data: ['Q1', 'Q2', 'Q3', 'Q4'],
+        splitArea: { show: true }
+      },
+      yAxis: {
+        type: 'category',
+        data: ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego'],
+        splitArea: { show: true }
+      },
       visualMap: {
         min: 0,
         max: 1000,
-        left: 'left',
-        top: 'bottom',
-        text: ['High', 'Low'],
         calculable: true,
+        orient: 'horizontal',
+        left: 'left',
+        bottom: 20,
         inRange: {
           color: ['#e0f3f8', '#abd9e9', '#74add1', '#4575b4', '#313695']
         }
       },
       series: [{
         name: 'Sales',
-        type: 'scatter',
-        coordinateSystem: 'geo',
+        type: 'heatmap',
         data: [
-          { name: 'New York', value: [40.7128, -74.0060, 850] },
-          { name: 'Los Angeles', value: [34.0522, -118.2437, 720] },
-          { name: 'Chicago', value: [41.8781, -87.6298, 680] },
-          { name: 'Houston', value: [29.7604, -95.3698, 550] },
-          { name: 'Phoenix', value: [33.4484, -112.0740, 480] }
+          [0, 0, 850], [1, 0, 920], [2, 0, 780], [3, 0, 890],
+          [0, 1, 720], [1, 1, 680], [2, 1, 750], [3, 1, 810],
+          [0, 2, 680], [1, 2, 620], [2, 2, 700], [3, 2, 650],
+          [0, 3, 550], [1, 3, 580], [2, 3, 520], [3, 3, 600],
+          [0, 4, 480], [1, 4, 450], [2, 4, 490], [3, 4, 510],
+          [0, 5, 420], [1, 5, 440], [2, 5, 410], [3, 5, 430],
+          [0, 6, 380], [1, 6, 360], [2, 6, 390], [3, 6, 370],
+          [0, 7, 320], [1, 7, 340], [2, 7, 310], [3, 7, 330]
         ],
-        symbolSize: (val: any) => val[2] / 30,
-        encode: { value: 2 },
         label: {
-          formatter: '{b}',
-          position: 'right',
-          show: true
+          show: true,
+          formatter: (params: any) => `$${params.value[2]}`
         },
-        itemStyle: { color: '#5470c6' }
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }
       }]
     }
   },
   {
     id: 'financial-1',
     name: 'Stock Analysis',
-    description: 'Candlestick chart with volume and technical indicators',
+    description: 'Candlestick chart with moving averages',
     tags: ['financial', 'stocks', 'candlestick'],
     options: {
-      title: { text: 'Stock Price Analysis', left: 'center' },
-      tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
-      legend: { data: ['Stock Price', 'MA5', 'MA20', 'Volume'], bottom: 0 },
-      grid: [
-        { left: '10%', right: '8%', height: '50%' },
-        { left: '10%', right: '8%', top: '65%', height: '20%' }
-      ],
-      xAxis: [
-        {
-          type: 'category',
-          data: generateDates(30),
-          scale: true,
-          boundaryGap: false,
-          axisLine: { onZero: false },
-          splitLine: { show: false },
-          min: 'dataMin',
-          max: 'dataMax'
-        },
-        {
-          type: 'category',
-          gridIndex: 1,
-          data: generateDates(30),
-          scale: true,
-          boundaryGap: false,
-          axisLine: { onZero: false },
-          axisTick: { show: false },
-          splitLine: { show: false },
-          axisLabel: { show: false },
-          min: 'dataMin',
-          max: 'dataMax'
+      title: { text: 'Stock Price Analysis', left: 'left', top: 10 },
+      tooltip: { 
+        trigger: 'axis', 
+        axisPointer: { 
+          type: 'cross' 
         }
-      ],
-      yAxis: [
-        { scale: true, splitArea: { show: true } },
-        { scale: true, gridIndex: 1, splitNumber: 2, axisLabel: { show: false }, axisLine: { show: false }, axisTick: { show: false }, splitLine: { show: false } }
-      ],
+      },
+      legend: { 
+        data: ['Stock Price', 'MA5', 'MA20'], 
+        bottom: 10 
+      },
+      grid: {
+        top: 80,
+        bottom: 80,
+        left: 80,
+        right: 80,
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: generateDates(30),
+        scale: true,
+        boundaryGap: false,
+        axisLine: { onZero: false },
+        splitLine: { show: false }
+      },
+      yAxis: {
+        scale: true,
+        splitArea: { show: true }
+      },
       series: [
         {
           name: 'Stock Price',
@@ -878,6 +981,17 @@ export const advancedExamples: AdvancedExample[] = [
             color0: '#26a69a',
             borderColor: '#ef5350',
             borderColor0: '#26a69a'
+          },
+          markPoint: {
+            data: [
+              { type: 'max', name: 'Max', valueDim: 'highest' },
+              { type: 'min', name: 'Min', valueDim: 'lowest' }
+            ]
+          },
+          markLine: {
+            data: [
+              { type: 'average', name: 'Average', valueDim: 'close' }
+            ]
           }
         },
         {
@@ -885,21 +999,26 @@ export const advancedExamples: AdvancedExample[] = [
           type: 'line',
           data: generateMA(5),
           smooth: true,
-          lineStyle: { opacity: 0.5 }
+          lineStyle: { 
+            opacity: 0.7,
+            width: 2
+          },
+          itemStyle: {
+            color: '#ffa726'
+          }
         },
         {
           name: 'MA20',
           type: 'line',
           data: generateMA(20),
           smooth: true,
-          lineStyle: { opacity: 0.5 }
-        },
-        {
-          name: 'Volume',
-          type: 'bar',
-          xAxisIndex: 1,
-          yAxisIndex: 1,
-          data: generateVolumeData()
+          lineStyle: { 
+            opacity: 0.7,
+            width: 2
+          },
+          itemStyle: {
+            color: '#66bb6a'
+          }
         }
       ]
     }

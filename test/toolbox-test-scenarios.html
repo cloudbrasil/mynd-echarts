@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyndEcharts Toolbox Test Scenarios</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    h2 {
+      margin: 30px 0 15px;
+      color: #555;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 5px;
+    }
+
+    .test-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .test-case {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 15px;
+    }
+
+    .test-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ddd;
+    }
+
+    .status-pass { background: #4caf50; }
+    .status-fail { background: #f44336; }
+    .status-warning { background: #ff9800; }
+
+    .test-description {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 15px;
+      padding: 8px;
+      background: #f9f9f9;
+      border-left: 3px solid #2196f3;
+    }
+
+    .test-container {
+      border: 2px dashed #ccc;
+      background: #fafafa;
+      position: relative;
+      min-height: 300px;
+    }
+
+    /* Test Scenario Styles */
+    .scenario-overflow-hidden {
+      overflow: hidden;
+      height: 350px;
+    }
+
+    .scenario-absolute {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 300px;
+    }
+
+    .scenario-transform {
+      transform: scale(0.95) rotate(0.5deg);
+      transform-origin: center;
+    }
+
+    .scenario-flexbox {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 350px;
+    }
+
+    .scenario-flexbox .chart-wrapper {
+      flex: 1;
+      height: 100%;
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 350px;
+      place-items: stretch;
+    }
+
+    .scenario-nested {
+      position: relative;
+      overflow: auto;
+      height: 350px;
+    }
+
+    .scenario-nested-inner {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      transform: translateZ(0);
+    }
+
+    .scenario-small {
+      width: 300px;
+      height: 200px;
+    }
+
+    .scenario-responsive {
+      width: 100%;
+      height: 40vh;
+      min-height: 250px;
+      max-height: 400px;
+    }
+
+    /* Debug Mode Indicator */
+    .debug-info {
+      margin-top: 10px;
+      padding: 10px;
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: monospace;
+    }
+
+    .controls {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .controls button {
+      margin-right: 10px;
+      padding: 8px 16px;
+      background: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .controls button:hover {
+      background: #1976d2;
+    }
+
+    .controls label {
+      margin-left: 20px;
+      cursor: pointer;
+    }
+
+    .legend {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      padding: 10px;
+      background: white;
+      border-radius: 4px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+    }
+
+    .chart-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <h1>MyndEcharts Toolbox Test Scenarios</h1>
+  
+  <div class="legend">
+    <div class="legend-item">
+      <div class="status-indicator status-pass"></div>
+      <span>Toolbox displays correctly</span>
+    </div>
+    <div class="legend-item">
+      <div class="status-indicator status-warning"></div>
+      <span>Minor issues (may need manual fix)</span>
+    </div>
+    <div class="legend-item">
+      <div class="status-indicator status-fail"></div>
+      <span>Toolbox overlap detected</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button onclick="runAllTests()">Run All Tests</button>
+    <button onclick="refreshAllCharts()">Refresh Toolbox</button>
+    <button onclick="toggleDebugMode()">Toggle Debug Mode</button>
+    <label>
+      <input type="checkbox" id="debugCheckbox" onchange="toggleDebugMode()">
+      Enable Debug Mode
+    </label>
+  </div>
+
+  <h2>Container Scenarios</h2>
+  <div class="test-grid">
+    <!-- Test Case 1: Overflow Hidden -->
+    <div class="test-case">
+      <div class="test-title">
+        <div class="status-indicator" id="status-overflow"></div>
+        Container with overflow: hidden
+      </div>
+      <div class="test-description">
+        Tests if toolbox remains visible when parent has overflow:hidden.
+        Common in modal dialogs and cards.
+      </div>
+      <div class="test-container scenario-overflow-hidden">
+        <div id="chart-overflow" class="chart-wrapper"></div>
+      </div>
+      <div class="debug-info" id="debug-overflow" style="display:none"></div>
+    </div>
+
+    <!-- Test Case 2: Absolute Position -->
+    <div class="test-case">
+      <div class="test-title">
+        <div class="status-indicator" id="status-absolute"></div>
+        Container with position: absolute
+      </div>
+      <div class="test-description">
+        Tests toolbox in absolutely positioned containers.
+        Common in overlays and floating panels.
+      </div>
+      <div class="test-container" style="height: 350px; position: relative;">
+        <div class="scenario-absolute">
+          <div id="chart-absolute" class="chart-wrapper"></div>
+        </div>
+      </div>
+      <div class="debug-info" id="debug-absolute" style="display:none"></div>
+    </div>
+
+    <!-- Test Case 3: Transform -->
+    <div class="test-case">
+      <div class="test-title">
+        <div class="status-indicator" id="status-transform"></div>
+        Container with transform
+      </div>
+      <div class="test-description">
+        Tests toolbox with CSS transforms applied.
+        Can affect positioning calculations.
+      </div>
+      <div class="test-container scenario-transform">
+        <div id="chart-transform" class="chart-wrapper"></div>
+      </div>
+      <div class="debug-info" id="debug-transform" style="display:none"></div>
+    </div>
+
+    <!-- Test Case 4: Flexbox -->
+    <div class="test-case">
+      <div class="test-title">
+        <div class="status-indicator" id="status-flexbox"></div>
+        Container inside flexbox
+      </div>
+      <div class="test-description">
+        Tests toolbox in flex containers.
+        Very common in modern layouts.
+      </div>
+      <div class="test-container scenario-flexbox">
+        <div id="chart-flexbox" class="chart-wrapper"></div>
+      </div>
+      <div class="debug-info" id="debug-flexbox" style="display:none"></div>
+    </div>
+
+    <!-- Test Case 5: Grid -->
+    <div class="test-case">
+      <div class="test-title">
+        <div class="status-indicator" id="status-grid"></div>
+        Container inside grid
+      </div>
+      <div class="test-description">
+        Tests toolbox in CSS grid layouts.
+        Increasingly common in dashboards.
+      </div>
+      <div class="test-container scenario-grid">
+        <div id="chart-grid" class="chart-wrapper"></div>
+      </div>
+      <div class="debug-info" id="debug-grid" style="display:none"></div>
+    </div>
+
+    <!-- Test Case 6: Nested Complex -->
+    <div class="test-case">
+      <div class="test-title">
+        <div class="status-indicator" id="status-nested"></div>
+        Nested containers (complex)
+      </div>
+      <div class="test-description">
+        Tests deeply nested containers with multiple positioning contexts.
+        Worst-case scenario.
+      </div>
+      <div class="test-container scenario-nested">
+        <div class="scenario-nested-inner">
+          <div id="chart-nested" class="chart-wrapper"></div>
+        </div>
+      </div>
+      <div class="debug-info" id="debug-nested" style="display:none"></div>
+    </div>
+
+    <!-- Test Case 7: Small Container -->
+    <div class="test-case">
+      <div class="test-title">
+        <div class="status-indicator" id="status-small"></div>
+        Small container (300x200)
+      </div>
+      <div class="test-description">
+        Tests toolbox in constrained space.
+        May cause icon overlap.
+      </div>
+      <div class="test-container scenario-small">
+        <div id="chart-small" class="chart-wrapper"></div>
+      </div>
+      <div class="debug-info" id="debug-small" style="display:none"></div>
+    </div>
+
+    <!-- Test Case 8: Responsive -->
+    <div class="test-case">
+      <div class="test-title">
+        <div class="status-indicator" id="status-responsive"></div>
+        Responsive container
+      </div>
+      <div class="test-description">
+        Tests toolbox with viewport-based sizing.
+        Should adapt to window resize.
+      </div>
+      <div class="test-container scenario-responsive">
+        <div id="chart-responsive" class="chart-wrapper"></div>
+      </div>
+      <div class="debug-info" id="debug-responsive" style="display:none"></div>
+    </div>
+  </div>
+
+  <h2>Test Results Summary</h2>
+  <div id="results-summary" style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+    <p>Run tests to see results...</p>
+  </div>
+
+  <script type="module">
+    import { createApp, h } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+    import * as echarts from 'https://unpkg.com/echarts@5/dist/echarts.esm.js'
+    
+    // Note: In a real test, you would import MyndEcharts from your built library
+    // import { MyndEcharts } from '../dist/mynd-echarts.esm.js'
+    
+    // For this example, we'll use vanilla ECharts to demonstrate the test structure
+    window.echarts = echarts;
+    
+    // Chart options with toolbox
+    const getChartOptions = (title) => ({
+      title: {
+        text: title,
+        left: 'center',
+        top: 10
+      },
+      toolbox: {
+        show: true,
+        orient: 'horizontal',
+        right: 10,
+        top: 10,
+        itemSize: 15,
+        itemGap: 10,
+        feature: {
+          saveAsImage: { show: true },
+          restore: { show: true },
+          dataView: { show: true },
+          dataZoom: { show: true },
+          magicType: {
+            show: true,
+            type: ['line', 'bar']
+          }
+        }
+      },
+      tooltip: {
+        trigger: 'axis'
+      },
+      xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [{
+        name: 'Test Data',
+        type: 'bar',
+        data: [120, 200, 150, 80, 70, 110, 130]
+      }]
+    });
+
+    // Test scenarios
+    const scenarios = [
+      'overflow', 'absolute', 'transform', 'flexbox',
+      'grid', 'nested', 'small', 'responsive'
+    ];
+
+    const charts = {};
+    let debugMode = false;
+
+    // Initialize all charts
+    function initCharts() {
+      scenarios.forEach(scenario => {
+        const container = document.getElementById(`chart-${scenario}`);
+        if (container) {
+          const chart = echarts.init(container);
+          chart.setOption(getChartOptions(`${scenario.charAt(0).toUpperCase() + scenario.slice(1)} Test`));
+          charts[scenario] = chart;
+          
+          // Add resize observer
+          if (window.ResizeObserver) {
+            const resizeObserver = new ResizeObserver(() => {
+              chart.resize();
+              setTimeout(() => checkToolbox(scenario), 100);
+            });
+            resizeObserver.observe(container);
+          }
+        }
+      });
+    }
+
+    // Check toolbox positioning
+    function checkToolbox(scenario) {
+      const chart = charts[scenario];
+      if (!chart) return;
+
+      const dom = chart.getDom();
+      const toolboxElements = dom.querySelectorAll('[id*="toolbox"] > g');
+      const statusEl = document.getElementById(`status-${scenario}`);
+      const debugEl = document.getElementById(`debug-${scenario}`);
+      
+      let status = 'pass';
+      let debugInfo = [];
+
+      if (toolboxElements.length > 0) {
+        const measurements = [];
+        let hasOverlap = false;
+
+        toolboxElements.forEach((el, index) => {
+          const bbox = el.getBBox();
+          measurements.push({
+            index,
+            x: bbox.x,
+            y: bbox.y,
+            width: bbox.width,
+            height: bbox.height
+          });
+
+          if (index > 0) {
+            const prev = measurements[index - 1];
+            if (Math.abs(prev.y - bbox.y) < 5 && prev.x + prev.width > bbox.x) {
+              hasOverlap = true;
+            }
+          }
+        });
+
+        if (hasOverlap) {
+          status = 'fail';
+          debugInfo.push('⚠️ Overlap detected between toolbox icons');
+        } else if (measurements.length < 3) {
+          status = 'warning';
+          debugInfo.push('⚡ Some toolbox features may not be visible');
+        } else {
+          debugInfo.push('✅ Toolbox rendering correctly');
+        }
+
+        debugInfo.push(`Icons found: ${measurements.length}`);
+        debugInfo.push(`Container: ${dom.offsetWidth}x${dom.offsetHeight}px`);
+      } else {
+        status = 'fail';
+        debugInfo.push('❌ No toolbox elements found');
+      }
+
+      // Update status indicator
+      statusEl.className = `status-indicator status-${status}`;
+      
+      // Update debug info
+      if (debugMode) {
+        debugEl.style.display = 'block';
+        debugEl.innerHTML = debugInfo.join('<br>');
+      } else {
+        debugEl.style.display = 'none';
+      }
+
+      return status;
+    }
+
+    // Run all tests
+    window.runAllTests = function() {
+      const results = {
+        pass: 0,
+        warning: 0,
+        fail: 0
+      };
+
+      scenarios.forEach(scenario => {
+        const status = checkToolbox(scenario);
+        if (status === 'pass') results.pass++;
+        else if (status === 'warning') results.warning++;
+        else results.fail++;
+      });
+
+      // Update summary
+      const summary = document.getElementById('results-summary');
+      summary.innerHTML = `
+        <h3>Test Results</h3>
+        <p>✅ Passed: ${results.pass}/${scenarios.length}</p>
+        <p>⚡ Warnings: ${results.warning}/${scenarios.length}</p>
+        <p>❌ Failed: ${results.fail}/${scenarios.length}</p>
+        <p style="margin-top: 10px; color: #666; font-size: 12px;">
+          ${new Date().toLocaleString()}
+        </p>
+      `;
+    };
+
+    // Refresh all charts
+    window.refreshAllCharts = function() {
+      Object.values(charts).forEach(chart => {
+        chart.resize();
+      });
+      setTimeout(runAllTests, 200);
+    };
+
+    // Toggle debug mode
+    window.toggleDebugMode = function() {
+      debugMode = document.getElementById('debugCheckbox').checked;
+      runAllTests();
+    };
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      Object.values(charts).forEach(chart => chart.resize());
+    });
+
+    // Initialize on load
+    window.addEventListener('load', () => {
+      initCharts();
+      setTimeout(runAllTests, 500);
+    });
+  </script>
+</body>
+</html>

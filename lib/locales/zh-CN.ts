@@ -156,5 +156,25 @@ export const zhCN: LocaleMessages = {
   chart: {
     loading: '加载中...',
     noData: '暂无数据'
+  },
+  dataView: {
+    title: '数据视图',
+    noData: '无可用数据显示',
+    downloadCSV: '下载 CSV',
+    copyToClipboard: '复制到剪贴板',
+    close: '关闭',
+    category: '类别',
+    series: '系列',
+    name: '名称',
+    value: '数值',
+    index: '索引'
+  },
+  toolbox: {
+    saveAsImage: '保存为图片',
+    restore: '还原',
+    dataView: '数据视图',
+    dataZoom: '缩放',
+    magicType: '切换图表类型',
+    brush: '刷选'
   }
 }

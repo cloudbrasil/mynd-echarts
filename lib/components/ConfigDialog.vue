@@ -538,13 +538,16 @@ const expandedSections = reactive({
   language: false
 })
 
-// Check if chart has axis (for non-pie, non-radar charts)
-const hasAxis = computed(() => {
-  const series = props.options.series
+// Helper function to check if chart has axis
+const checkHasAxis = (options: any): boolean => {
+  const series = options?.series
   if (!series) return true
   const seriesArray = Array.isArray(series) ? series : [series]
   return !seriesArray.some((s: any) => s.type === 'pie' || s.type === 'radar' || s.type === 'gauge')
-})
+}
+
+// Check if chart has axis (for non-pie, non-radar charts)
+const hasAxis = computed(() => checkHasAxis(props.options))
 
 // Initialize with default options structure
 const createDefaultOptions = (): any => {
@@ -612,37 +615,27 @@ const createDefaultOptions = (): any => {
     animationEasing: 'cubicOut'
   }
   
-  // Only add axis defaults if the chart type uses axes
-  if (hasAxis.value) {
-    defaults.xAxis = {
-      name: '',
-      type: 'category',
-      axisLine: { show: true },
-      splitLine: { show: false }
-    }
-    defaults.yAxis = {
-      name: '',
-      type: 'value',
-      axisLine: { show: true },
-      splitLine: { show: true }
-    }
+  // Always initialize axis defaults (they will be hidden if not needed)
+  defaults.xAxis = {
+    name: '',
+    type: 'category',
+    axisLine: { show: true },
+    splitLine: { show: false },
+    data: []
+  }
+  defaults.yAxis = {
+    name: '',
+    type: 'value',
+    axisLine: { show: true },
+    splitLine: { show: true }
   }
   
   // Ensure nested objects exist
+  if (!defaults.title) {
+    defaults.title = { text: '', subtext: '' }
+  }
   if (!defaults.title.textStyle) {
     defaults.title.textStyle = { color: '#333333', fontSize: 18 }
-  }
-  if (!defaults.xAxis.axisLine) {
-    defaults.xAxis.axisLine = { show: true }
-  }
-  if (!defaults.xAxis.splitLine) {
-    defaults.xAxis.splitLine = { show: false }
-  }
-  if (!defaults.yAxis.axisLine) {
-    defaults.yAxis.axisLine = { show: true }
-  }
-  if (!defaults.yAxis.splitLine) {
-    defaults.yAxis.splitLine = { show: true }
   }
   
   return defaults

@@ -1,19 +1,25 @@
-export const apiDocumentation = {
-  examples: `
-# Examples
+# MyndEcharts API Documentation
+
+MyndEcharts is a Vue 3 component wrapper for Apache ECharts, providing a declarative and reactive interface for creating interactive charts.
+
+## Installation
+
+```bash
+npm install @docbrasil/mynd-echarts
+```
 
 ## Setup in Your Project
 
 ### 1. Import Styles (Important!)
 
-\`\`\`javascript
+```javascript
 // In your main.js or App.vue
 import '@docbrasil/mynd-echarts/dist/style.css'
-\`\`\`
+```
 
 ### 2. Global Registration
 
-\`\`\`javascript
+```javascript
 // main.js
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -23,11 +29,11 @@ import '@docbrasil/mynd-echarts/dist/style.css'
 const app = createApp(App)
 app.component('MyndEcharts', MyndEcharts)
 app.mount('#app')
-\`\`\`
+```
 
 ### 3. Local Registration
 
-\`\`\`vue
+```vue
 <template>
   <MyndEcharts :options="chartOptions" />
 </template>
@@ -43,13 +49,13 @@ const chartOptions = {
   series: [{ type: 'bar', data: [120, 200, 150] }]
 }
 </script>
-\`\`\`
+```
 
 ## Common Examples
 
 ### Basic Bar Chart
 
-\`\`\`vue
+```vue
 <template>
   <div class="chart-container">
     <MyndEcharts 
@@ -91,11 +97,11 @@ const barChartOptions = {
   }]
 }
 </script>
-\`\`\`
+```
 
 ### Line Chart with Multiple Series
 
-\`\`\`vue
+```vue
 <template>
   <MyndEcharts 
     :options="lineChartOptions"
@@ -143,11 +149,11 @@ const lineChartOptions = {
   ]
 }
 </script>
-\`\`\`
+```
 
 ### Pie Chart with Custom Theme
 
-\`\`\`vue
+```vue
 <template>
   <MyndEcharts 
     :options="pieChartOptions"
@@ -199,11 +205,11 @@ const pieChartOptions = {
   }]
 }
 </script>
-\`\`\`
+```
 
 ### Dynamic Updates with Reactive Data
 
-\`\`\`vue
+```vue
 <template>
   <div>
     <MyndEcharts 
@@ -271,11 +277,11 @@ const addSeries = () => {
   }
 }
 </script>
-\`\`\`
+```
 
 ### Chart with Fixed Toolbox (Prevents Overlap Issues)
 
-\`\`\`vue
+```vue
 <template>
   <MyndEcharts 
     :options="chartWithToolbox"
@@ -324,11 +330,11 @@ const handleOverlap = (event) => {
   chartRef.value?.refreshToolbox()
 }
 </script>
-\`\`\`
+```
 
 ### Responsive Chart with Auto-Resize
 
-\`\`\`vue
+```vue
 <template>
   <div class="responsive-container">
     <MyndEcharts 
@@ -375,11 +381,11 @@ const responsiveChart = {
   max-height: 600px;
 }
 </style>
-\`\`\`
+```
 
 ### Loading State with Custom Options
 
-\`\`\`vue
+```vue
 <template>
   <MyndEcharts 
     :options="chartOptions"
@@ -431,11 +437,11 @@ onMounted(async () => {
   isLoading.value = false
 })
 </script>
-\`\`\`
+```
 
 ### Connected Charts (Synchronized)
 
-\`\`\`vue
+```vue
 <template>
   <div class="charts-grid">
     <MyndEcharts 
@@ -488,11 +494,11 @@ const chart2Options = {
   gap: 20px;
 }
 </style>
-\`\`\`
+```
 
 ### Export Chart as Image
 
-\`\`\`vue
+```vue
 <template>
   <div>
     <MyndEcharts 
@@ -566,11 +572,11 @@ const exportHighRes = () => {
   gap: 10px;
 }
 </style>
-\`\`\`
+```
 
 ### Dark Mode Support
 
-\`\`\`vue
+```vue
 <template>
   <div :class="{ 'dark-mode': isDarkMode }">
     <button @click="toggleTheme">Toggle Theme</button>
@@ -642,195 +648,18 @@ const toggleTheme = () => {
   padding: 20px;
 }
 </style>
-\`\`\`
+```
 
-### Complex Dashboard Example
-
-\`\`\`vue
-<template>
-  <div class="dashboard">
-    <h1>Analytics Dashboard</h1>
-    
-    <div class="metrics-row">
-      <div class="metric-card">
-        <h3>Total Sales</h3>
-        <div class="metric-value">$125,430</div>
-      </div>
-      <div class="metric-card">
-        <h3>Growth Rate</h3>
-        <div class="metric-value">+23.5%</div>
-      </div>
-      <div class="metric-card">
-        <h3>Active Users</h3>
-        <div class="metric-value">8,234</div>
-      </div>
-    </div>
-
-    <div class="charts-row">
-      <div class="chart-card">
-        <MyndEcharts 
-          :options="salesTrendChart"
-          :auto-resize="true"
-        />
-      </div>
-      <div class="chart-card">
-        <MyndEcharts 
-          :options="categoryChart"
-          :auto-resize="true"
-        />
-      </div>
-    </div>
-
-    <div class="chart-card full-width">
-      <MyndEcharts 
-        :options="detailedChart"
-        :auto-resize="true"
-        toolbox-mode="fixed"
-      />
-    </div>
-  </div>
-</template>
-
-<script setup>
-import { MyndEcharts } from '@docbrasil/mynd-echarts'
-
-const salesTrendChart = {
-  title: { text: 'Sales Trend' },
-  tooltip: { trigger: 'axis' },
-  xAxis: {
-    type: 'category',
-    data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
-  },
-  yAxis: { type: 'value' },
-  series: [{
-    type: 'line',
-    data: [65, 78, 82, 91, 102, 125],
-    smooth: true,
-    areaStyle: {
-      opacity: 0.3
-    }
-  }]
-}
-
-const categoryChart = {
-  title: { text: 'Sales by Category' },
-  tooltip: { trigger: 'item' },
-  series: [{
-    type: 'pie',
-    radius: ['40%', '70%'],
-    data: [
-      { value: 35, name: 'Electronics' },
-      { value: 30, name: 'Clothing' },
-      { value: 20, name: 'Food' },
-      { value: 15, name: 'Other' }
-    ]
-  }]
-}
-
-const detailedChart = {
-  title: { text: 'Detailed Performance Metrics' },
-  tooltip: { trigger: 'axis' },
-  legend: {
-    data: ['Revenue', 'Profit', 'Expenses']
-  },
-  toolbox: {
-    feature: {
-      dataView: { show: true },
-      magicType: { show: true, type: ['line', 'bar'] },
-      restore: { show: true },
-      saveAsImage: { show: true }
-    }
-  },
-  xAxis: {
-    type: 'category',
-    data: ['Q1', 'Q2', 'Q3', 'Q4']
-  },
-  yAxis: { type: 'value' },
-  series: [
-    {
-      name: 'Revenue',
-      type: 'bar',
-      data: [250, 300, 280, 320]
-    },
-    {
-      name: 'Profit',
-      type: 'bar',
-      data: [50, 80, 60, 95]
-    },
-    {
-      name: 'Expenses',
-      type: 'bar',
-      data: [200, 220, 220, 225]
-    }
-  ]
-}
-</script>
-
-<style scoped>
-.dashboard {
-  padding: 20px;
-  background: #f5f5f5;
-}
-
-.metrics-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.metric-card {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.metric-value {
-  font-size: 32px;
-  font-weight: bold;
-  color: #5470c6;
-  margin-top: 10px;
-}
-
-.charts-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.chart-card {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  min-height: 400px;
-}
-
-.chart-card.full-width {
-  grid-column: 1 / -1;
-}
-
-@media (max-width: 768px) {
-  .charts-row {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
-\`\`\`
-`,
-  props: `
 # Props
 
 ## Required Props
 
 ### options
-- **Type**: \`EChartsOption\`
+- **Type**: `EChartsOption`
 - **Required**: Yes
 - **Description**: The main configuration object for ECharts. This prop contains all the settings for your chart including data, series, axes, tooltips, etc.
 
-\`\`\`vue
+```vue
 <template>
   <MyndEcharts :options="chartOptions" />
 </template>
@@ -843,28 +672,28 @@ const chartOptions = {
   series: [{ type: 'bar', data: [120, 200, 150] }]
 }
 </script>
-\`\`\`
+```
 
 ## Style Props
 
 ### style
-- **Type**: \`CSSProperties\`
-- **Default**: \`{}\`
+- **Type**: `CSSProperties`
+- **Default**: `{}`
 - **Description**: Custom inline styles to apply to the chart container.
 
-\`\`\`vue
+```vue
 <MyndEcharts 
   :options="options" 
   :style="{ width: '100%', height: '400px' }" 
 />
-\`\`\`
+```
 
 ### className
-- **Type**: \`string | string[] | Record<string, boolean>\`
-- **Default**: \`''\`
+- **Type**: `string | string[] | Record<string, boolean>`
+- **Default**: `''`
 - **Description**: CSS class name(s) to apply to the chart container. Supports multiple formats.
 
-\`\`\`vue
+```vue
 <!-- String -->
 <MyndEcharts :options="options" class-name="chart-container" />
 
@@ -873,16 +702,16 @@ const chartOptions = {
 
 <!-- Object -->
 <MyndEcharts :options="options" :class-name="{ active: isActive, 'full-width': true }" />
-\`\`\`
+```
 
 ## Theme Props
 
 ### theme
-- **Type**: \`string | object\`
-- **Default**: \`'default'\`
+- **Type**: `string | object`
+- **Default**: `'default'`
 - **Description**: Chart theme. Can be a built-in theme name ('light', 'dark') or a custom theme object.
 
-\`\`\`vue
+```vue
 <!-- Built-in theme -->
 <MyndEcharts :options="options" theme="dark" />
 
@@ -895,28 +724,28 @@ const customTheme = {
   backgroundColor: '#f5f5f5'
 }
 </script>
-\`\`\`
+```
 
 ## Loading Props
 
 ### loading
-- **Type**: \`boolean\`
-- **Default**: \`false\`
+- **Type**: `boolean`
+- **Default**: `false`
 - **Description**: Shows a loading animation overlay on the chart.
 
-\`\`\`vue
+```vue
 <MyndEcharts 
   :options="options" 
   :loading="isLoading" 
 />
-\`\`\`
+```
 
 ### loadingOptions
-- **Type**: \`object\`
-- **Default**: \`{}\`
+- **Type**: `object`
+- **Default**: `{}`
 - **Description**: Configuration for the loading animation.
 
-\`\`\`typescript
+```typescript
 interface LoadingOptions {
   text?: string        // Loading text
   color?: string       // Spinner color
@@ -928,9 +757,9 @@ interface LoadingOptions {
   spinnerRadius?: number // Spinner size
   lineWidth?: number    // Spinner line width
 }
-\`\`\`
+```
 
-\`\`\`vue
+```vue
 <MyndEcharts 
   :options="options" 
   :loading="isLoading"
@@ -943,29 +772,29 @@ interface LoadingOptions {
     showSpinner: true
   }"
 />
-\`\`\`
+```
 
 ## Rendering Props
 
 ### renderer
-- **Type**: \`'canvas' | 'svg'\`
-- **Default**: \`'canvas'\`
+- **Type**: `'canvas' | 'svg'`
+- **Default**: `'canvas'`
 - **Description**: Rendering mode. Canvas is better for performance with large datasets, SVG is better for print quality.
 
-\`\`\`vue
+```vue
 <!-- Use SVG for better print quality -->
 <MyndEcharts :options="options" renderer="svg" />
 
 <!-- Use canvas for large datasets -->
 <MyndEcharts :options="options" renderer="canvas" />
-\`\`\`
+```
 
 ### initOptions
-- **Type**: \`object\`
-- **Default**: \`{}\`
+- **Type**: `object`
+- **Default**: `{}`
 - **Description**: Additional initialization options for the chart instance.
 
-\`\`\`typescript
+```typescript
 interface InitOptions {
   devicePixelRatio?: number    // Device pixel ratio for high DPI screens
   renderer?: 'canvas' | 'svg'  // Renderer type
@@ -974,9 +803,9 @@ interface InitOptions {
   locale?: string              // Locale for internationalization
   useDirtyRect?: boolean       // Enable dirty rectangle optimization
 }
-\`\`\`
+```
 
-\`\`\`vue
+```vue
 <MyndEcharts 
   :options="options"
   :init-options="{
@@ -985,58 +814,58 @@ interface InitOptions {
     useDirtyRect: true
   }"
 />
-\`\`\`
+```
 
 ## Update Props
 
 ### notMerge
-- **Type**: \`boolean\`
-- **Default**: \`false\`
+- **Type**: `boolean`
+- **Default**: `false`
 - **Description**: Whether to merge new options with existing ones. When true, completely replaces the options.
 
-\`\`\`vue
+```vue
 <!-- Merge with existing options (default) -->
 <MyndEcharts :options="options" />
 
 <!-- Replace options completely -->
 <MyndEcharts :options="options" :not-merge="true" />
-\`\`\`
+```
 
 ### lazyUpdate
-- **Type**: \`boolean\`
-- **Default**: \`false\`
+- **Type**: `boolean`
+- **Default**: `false`
 - **Description**: Enable lazy update for better performance when updating frequently.
 
-\`\`\`vue
+```vue
 <MyndEcharts 
   :options="options" 
   :lazy-update="true" 
 />
-\`\`\`
+```
 
 ### silent
-- **Type**: \`boolean\`
-- **Default**: \`false\`
+- **Type**: `boolean`
+- **Default**: `false`
 - **Description**: Update options without animation.
 
-\`\`\`vue
+```vue
 <MyndEcharts 
   :options="options" 
   :silent="true" 
 />
-\`\`\`
+```
 
 ## Toolbox Props
 
 ### toolboxMode
-- **Type**: \`'auto' | 'fixed' | 'disabled'\`
-- **Default**: \`'auto'\`
+- **Type**: `'auto' | 'fixed' | 'disabled'`
+- **Default**: `'auto'`
 - **Description**: Controls how the toolbox is rendered and positioned.
-  - \`'auto'\`: Use options from chart configuration
-  - \`'fixed'\`: Force specific positioning with static values
-  - \`'disabled'\`: Don't render toolbox
+  - `'auto'`: Use options from chart configuration
+  - `'fixed'`: Force specific positioning with static values
+  - `'disabled'`: Don't render toolbox
 
-\`\`\`vue
+```vue
 <!-- Auto mode (default) -->
 <MyndEcharts :options="options" />
 
@@ -1045,14 +874,14 @@ interface InitOptions {
 
 <!-- Disable toolbox -->
 <MyndEcharts :options="options" toolbox-mode="disabled" />
-\`\`\`
+```
 
 ### toolboxPosition
-- **Type**: \`{ right?: number, left?: number, top?: number, bottom?: number }\`
-- **Default**: \`{ right: 10, top: 10 }\`
+- **Type**: `{ right?: number, left?: number, top?: number, bottom?: number }`
+- **Default**: `{ right: 10, top: 10 }`
 - **Description**: Toolbox position with numeric values only for JSON serialization.
 
-\`\`\`vue
+```vue
 <!-- Custom toolbox position -->
 <MyndEcharts 
   :options="options"
@@ -1065,27 +894,27 @@ interface InitOptions {
   :options="options"
   :toolbox-position="{ left: 10, top: 10 }"
 />
-\`\`\`
+```
 
 ### fixToolboxOverlap
-- **Type**: \`boolean\`
-- **Default**: \`true\`
+- **Type**: `boolean`
+- **Default**: `true`
 - **Description**: Automatically fix toolbox icon overlap issues using static configuration.
 
-\`\`\`vue
+```vue
 <!-- Enable overlap fix (default) -->
 <MyndEcharts :options="options" />
 
 <!-- Disable overlap fix -->
 <MyndEcharts :options="options" :fix-toolbox-overlap="false" />
-\`\`\`
+```
 
 ### debugToolbox
-- **Type**: \`boolean\`
-- **Default**: \`false\`
+- **Type**: `boolean`
+- **Default**: `false`
 - **Description**: Enable debug mode for toolbox troubleshooting. When enabled, logs configuration details, DOM measurements, and adds visual indicators.
 
-\`\`\`vue
+```vue
 <!-- Enable debug mode -->
 <MyndEcharts 
   :options="options"
@@ -1094,44 +923,43 @@ interface InitOptions {
   @toolbox-overlap-detected="onOverlapDetected"
   @toolbox-fixed="onToolboxFixed"
 />
-\`\`\`
+```
 
 ## Other Props
 
 ### autoResize
-- **Type**: \`boolean\`
-- **Default**: \`true\`
+- **Type**: `boolean`
+- **Default**: `true`
 - **Description**: Automatically resize the chart when the container size changes using ResizeObserver.
 
-\`\`\`vue
+```vue
 <!-- Enable auto resize (default) -->
 <MyndEcharts :options="options" />
 
 <!-- Disable auto resize -->
 <MyndEcharts :options="options" :auto-resize="false" />
-\`\`\`
+```
 
 ### group
-- **Type**: \`string\`
-- **Default**: \`undefined\`
+- **Type**: `string`
+- **Default**: `undefined`
 - **Description**: Group name for connecting multiple charts. Charts in the same group will be synchronized.
 
-\`\`\`vue
+```vue
 <!-- Connect multiple charts -->
 <MyndEcharts :options="options1" group="sales-charts" />
 <MyndEcharts :options="options2" group="sales-charts" />
-\`\`\`
-`,
-  events: `
+```
+
 # Events
 
 ## Chart Lifecycle Events
 
 ### @ready
-- **Payload**: \`ECharts\` instance
+- **Payload**: `ECharts` instance
 - **Description**: Emitted when the chart instance is initialized and ready to use.
 
-\`\`\`vue
+```vue
 <template>
   <MyndEcharts :options="options" @ready="handleReady" />
 </template>
@@ -1145,7 +973,7 @@ const handleReady = (instance) => {
   })
 }
 </script>
-\`\`\`
+```
 
 ### @rendered
 - **Payload**: Event params
@@ -1158,10 +986,10 @@ const handleReady = (instance) => {
 ## Mouse Events
 
 ### @click
-- **Payload**: \`{ componentType, seriesType, seriesIndex, dataIndex, data, value, name }\`
+- **Payload**: `{ componentType, seriesType, seriesIndex, dataIndex, data, value, name }`
 - **Description**: Mouse click event on chart elements.
 
-\`\`\`vue
+```vue
 <template>
   <MyndEcharts :options="options" @click="handleClick" />
 </template>
@@ -1173,7 +1001,7 @@ const handleClick = (params) => {
   console.log('Series:', params.seriesName)
 }
 </script>
-\`\`\`
+```
 
 ### @dblclick
 - **Payload**: Same as click event
@@ -1207,7 +1035,7 @@ const handleClick = (params) => {
 - **Payload**: Mouse event params
 - **Description**: Right-click context menu event.
 
-\`\`\`vue
+```vue
 <template>
   <MyndEcharts :options="options" @contextmenu="handleContextMenu" />
 </template>
@@ -1220,23 +1048,23 @@ const handleContextMenu = (params) => {
   showCustomMenu(params)
 }
 </script>
-\`\`\`
+```
 
 ## Data Selection Events
 
 ### @highlight
-- **Payload**: \`{ type, seriesIndex, dataIndex }\`
+- **Payload**: `{ type, seriesIndex, dataIndex }`
 - **Description**: Data highlighted (hover).
 
 ### @downplay
-- **Payload**: \`{ type, seriesIndex, dataIndex }\`
+- **Payload**: `{ type, seriesIndex, dataIndex }`
 - **Description**: Data downplayed (unhover).
 
 ### @selectchanged
-- **Payload**: \`{ type, selected }\`
+- **Payload**: `{ type, selected }`
 - **Description**: Data selection changed.
 
-\`\`\`vue
+```vue
 <MyndEcharts 
   :options="options" 
   @selectchanged="handleSelectionChange" 
@@ -1247,15 +1075,15 @@ const handleSelectionChange = (params) => {
   console.log('Selected data:', params.selected)
 }
 </script>
-\`\`\`
+```
 
 ## Legend Events
 
 ### @legendselectchanged
-- **Payload**: \`{ type, name, selected }\`
+- **Payload**: `{ type, name, selected }`
 - **Description**: Legend selection state changed.
 
-\`\`\`vue
+```vue
 <MyndEcharts 
   :options="options" 
   @legendselectchanged="handleLegendChange" 
@@ -1268,35 +1096,35 @@ const handleLegendChange = (params) => {
   console.log('All selections:', params.selected)
 }
 </script>
-\`\`\`
+```
 
 ### @legendselected
-- **Payload**: \`{ type, name, selected }\`
+- **Payload**: `{ type, name, selected }`
 - **Description**: Legend item selected.
 
 ### @legendunselected
-- **Payload**: \`{ type, name, selected }\`
+- **Payload**: `{ type, name, selected }`
 - **Description**: Legend item unselected.
 
 ### @legendselectall
-- **Payload**: \`{ type, selected }\`
+- **Payload**: `{ type, selected }`
 - **Description**: All legend items selected.
 
 ### @legendinverseselect
-- **Payload**: \`{ type, selected }\`
+- **Payload**: `{ type, selected }`
 - **Description**: Legend selection inverted.
 
 ### @legendscroll
-- **Payload**: \`{ type, scrollDataIndex, legendId }\`
+- **Payload**: `{ type, scrollDataIndex, legendId }`
 - **Description**: Legend scrolled.
 
 ## Data Zoom Events
 
 ### @datazoom
-- **Payload**: \`{ type, start, end, startValue, endValue }\`
+- **Payload**: `{ type, start, end, startValue, endValue }`
 - **Description**: Data zoom changed.
 
-\`\`\`vue
+```vue
 <MyndEcharts 
   :options="options" 
   @datazoom="handleDataZoom" 
@@ -1310,87 +1138,147 @@ const handleDataZoom = (params) => {
   }
 }
 </script>
-\`\`\`
+```
 
 ### @datarangeselected
-- **Payload**: \`{ type, selected, selectedValue }\`
+- **Payload**: `{ type, selected, selectedValue }`
 - **Description**: Visual map range selected.
 
 ## Special Chart Events
 
 ### @graphroam
-- **Payload**: \`{ type, zoom, center }\`
+- **Payload**: `{ type, zoom, center }`
 - **Description**: Graph chart roamed (panned/zoomed).
 
 ### @georoam
-- **Payload**: \`{ type, zoom, center }\`
+- **Payload**: `{ type, zoom, center }`
 - **Description**: Geo/map chart roamed.
 
 ### @treeroam
-- **Payload**: \`{ type, zoom, center }\`
+- **Payload**: `{ type, zoom, center }`
 - **Description**: Tree chart roamed.
 
 ### @timelinechanged
-- **Payload**: \`{ type, currentIndex }\`
+- **Payload**: `{ type, currentIndex }`
 - **Description**: Timeline current time changed.
 
 ### @timelineplaychanged
-- **Payload**: \`{ type, playState }\`
+- **Payload**: `{ type, playState }`
 - **Description**: Timeline play state changed.
 
 ## Toolbox Events
 
 ### @restore
-- **Payload**: \`{ type }\`
+- **Payload**: `{ type }`
 - **Description**: Restore button clicked in toolbox.
 
 ### @dataviewchanged
-- **Payload**: \`{ type }\`
+- **Payload**: `{ type }`
 - **Description**: Data view changed in toolbox.
 
 ### @magictypechanged
-- **Payload**: \`{ type, currentType }\`
+- **Payload**: `{ type, currentType }`
 - **Description**: Chart type changed via magic type in toolbox.
+
+### @toolbox-rendered
+- **Payload**: `{ dom: HTMLElement, config: any }`
+- **Description**: Emitted when toolbox is rendered in the DOM. Only emitted when `debugToolbox` is true.
+
+```vue
+<MyndEcharts 
+  :options="options"
+  :debug-toolbox="true"
+  @toolbox-rendered="onToolboxRendered"
+/>
+
+<script setup>
+const onToolboxRendered = (event) => {
+  console.log('Toolbox rendered with config:', event.config)
+  console.log('DOM element:', event.dom)
+}
+</script>
+```
+
+### @toolbox-overlap-detected
+- **Payload**: `{ elements: number, measurements: any }`
+- **Description**: Emitted when toolbox icon overlap is detected. Only emitted when `debugToolbox` is true.
+
+```vue
+<MyndEcharts 
+  :options="options"
+  :debug-toolbox="true"
+  @toolbox-overlap-detected="onOverlapDetected"
+/>
+
+<script setup>
+const onOverlapDetected = (event) => {
+  console.warn('Toolbox overlap detected!')
+  console.log('Number of elements:', event.elements)
+  console.log('Measurements:', event.measurements)
+  // Could trigger manual fix
+  chartRef.value?.refreshToolbox()
+}
+</script>
+```
+
+### @toolbox-fixed
+- **Payload**: `{ method: string, success: boolean }`
+- **Description**: Emitted after a toolbox fix is applied. Only emitted when `debugToolbox` is true.
+
+```vue
+<MyndEcharts 
+  :options="options"
+  :debug-toolbox="true"
+  @toolbox-fixed="onToolboxFixed"
+/>
+
+<script setup>
+const onToolboxFixed = (event) => {
+  console.log(`Toolbox fix ${event.success ? 'succeeded' : 'failed'}`)
+  console.log('Method used:', event.method)
+}
+</script>
+```
 
 ## Pie Chart Events
 
 ### @pieselectchanged
-- **Payload**: \`{ type, seriesId, selected }\`
+- **Payload**: `{ type, seriesId, selected }`
 - **Description**: Pie slice selection changed.
 
 ### @pieselected
-- **Payload**: \`{ type, seriesId, dataIndex, name }\`
+- **Payload**: `{ type, seriesId, dataIndex, name }`
 - **Description**: Pie slice selected.
 
 ### @pieunselected
-- **Payload**: \`{ type, seriesId, dataIndex, name }\`
+- **Payload**: `{ type, seriesId, dataIndex, name }`
 - **Description**: Pie slice unselected.
 
 ## Map Events
 
 ### @mapselected
-- **Payload**: \`{ type, seriesId, name, selected }\`
+- **Payload**: `{ type, seriesId, name, selected }`
 - **Description**: Map area selected.
 
 ### @mapunselected
-- **Payload**: \`{ type, seriesId, name, selected }\`
+- **Payload**: `{ type, seriesId, name, selected }`
 - **Description**: Map area unselected.
 
 ## Brush Events
 
 ### @brush
-- **Payload**: \`{ type, areas, brushId }\`
+- **Payload**: `{ type, areas, brushId }`
 - **Description**: Brush action happening.
 
 ### @brushEnd
-- **Payload**: \`{ type, areas, brushId }\`
+- **Payload**: `{ type, areas, brushId }`
 - **Description**: Brush action ended.
 
 ### @brushselected
-- **Payload**: \`{ type, batch }\`
+- **Payload**: `{ type, batch }`
 - **Description**: Data selected by brush.
 
-\`\`\`vue
+```vue
 <MyndEcharts 
   :options="options" 
   @brushselected="handleBrushSelect" 
@@ -1404,24 +1292,23 @@ const handleBrushSelect = (params) => {
   })
 }
 </script>
-\`\`\`
+```
 
 ## Other Events
 
 ### @axisareaselected
-- **Payload**: \`{ type, intervalIds, axisId, axisIndex }\`
+- **Payload**: `{ type, intervalIds, axisId, axisIndex }`
 - **Description**: Parallel axis area selected.
 
 ### @globalcursortaken
-- **Payload**: \`{ type, key }\`
+- **Payload**: `{ type, key }`
 - **Description**: Global cursor taken.
-`,
-  methods: `
+
 # Instance Methods
 
 Access these methods through a template ref:
 
-\`\`\`vue
+```vue
 <template>
   <MyndEcharts ref="chartRef" :options="options" />
 </template>
@@ -1436,18 +1323,18 @@ onMounted(() => {
   const instance = chartRef.value
 })
 </script>
-\`\`\`
+```
 
 ## Chart Control Methods
 
 ### setOption(options, opts?)
 - **Parameters**: 
-  - \`options: EChartsOption\` - Chart configuration
-  - \`opts?: SetOptionOpts\` - Update options
-- **Returns**: \`void\`
+  - `options: EChartsOption` - Chart configuration
+  - `opts?: SetOptionOpts` - Update options
+- **Returns**: `void`
 - **Description**: Update chart options. This is the main method for updating your chart.
 
-\`\`\`typescript
+```typescript
 interface SetOptionOpts {
   notMerge?: boolean    // Don't merge with previous options
   lazyUpdate?: boolean  // Delay update for performance
@@ -1459,9 +1346,9 @@ interface SetOptionOpts {
     duration?: number
   }
 }
-\`\`\`
+```
 
-\`\`\`javascript
+```javascript
 // Basic update
 chartRef.value.setOption({
   series: [{
@@ -1478,23 +1365,23 @@ chartRef.value.setOption(newOptions, {
 chartRef.value.setOption(options, {
   silent: true
 })
-\`\`\`
+```
 
 ### getOption()
-- **Returns**: \`any\` - Current chart options
+- **Returns**: `any` - Current chart options
 - **Description**: Get the current chart configuration.
 
-\`\`\`javascript
+```javascript
 const currentOptions = chartRef.value.getOption()
 console.log('Current title:', currentOptions.title[0].text)
-\`\`\`
+```
 
 ### resize(opts?)
-- **Parameters**: \`opts?: { width?: number, height?: number, silent?: boolean }\`
-- **Returns**: \`void\`
+- **Parameters**: `opts?: { width?: number, height?: number, silent?: boolean }`
+- **Returns**: `void`
 - **Description**: Manually trigger chart resize.
 
-\`\`\`javascript
+```javascript
 // Auto-detect size
 chartRef.value.resize()
 
@@ -1508,85 +1395,152 @@ chartRef.value.resize({
 chartRef.value.resize({
   silent: true
 })
-\`\`\`
+```
 
 ### clear()
-- **Returns**: \`void\`
+- **Returns**: `void`
 - **Description**: Clear all components and data. The chart becomes blank.
 
-\`\`\`javascript
+```javascript
 // Clear the chart
 chartRef.value.clear()
 
 // Then set new options
 chartRef.value.setOption(newOptions)
-\`\`\`
+```
 
 ### dispose()
-- **Returns**: \`void\`
-- **Description**: Dispose the chart instance. Releases all resources.
+- **Returns**: `void`
+- **Description**: Dispose the chart instance. Releases all resources and cleans up observers.
 
-\`\`\`javascript
+```javascript
 // Clean up when done
 chartRef.value.dispose()
-\`\`\`
+```
+
+## Toolbox Control Methods
+
+### refreshToolbox()
+- **Returns**: `boolean` - Success status
+- **Description**: Manually refresh toolbox layout by directly manipulating DOM elements. Useful when automatic fixes don't work.
+
+```javascript
+// Manually fix toolbox issues
+const success = chartRef.value.refreshToolbox()
+if (success) {
+  console.log('Toolbox refreshed successfully')
+} else {
+  console.log('Failed to refresh toolbox')
+}
+
+// Use in response to overlap detection
+const onOverlapDetected = () => {
+  chartRef.value.refreshToolbox()
+}
+```
+
+### fixToolboxPosition()
+- **Returns**: `Promise<void>`
+- **Description**: Apply toolbox position fixes using static configuration. This method is called automatically but can be triggered manually.
+
+```javascript
+// Manually trigger toolbox position fix
+await chartRef.value.fixToolboxPosition()
+
+// Use after dynamic content changes
+onMounted(async () => {
+  await nextTick()
+  await chartRef.value.fixToolboxPosition()
+})
+```
+
+### getChartInstance()
+- **Returns**: `ECharts | undefined`
+- **Description**: Get the raw ECharts instance for advanced manipulation. Returns undefined if chart is not initialized.
+
+```javascript
+// Get raw ECharts instance
+const chart = chartRef.value.getChartInstance()
+if (chart) {
+  // Use any ECharts API directly
+  const option = chart.getOption()
+  chart.setOption({
+    ...option,
+    // Custom modifications
+  })
+  
+  // Access ECharts methods not exposed by wrapper
+  chart.on('georoam', (params) => {
+    console.log('Geo roam:', params)
+  })
+}
+```
+
+### openConfig()
+- **Returns**: `void`
+- **Description**: Open the configuration dialog for interactive chart customization.
+
+```javascript
+// Open config dialog programmatically
+chartRef.value.openConfig()
+```
 
 ## Chart Information Methods
 
 ### getWidth()
-- **Returns**: \`number\` - Chart width in pixels
+- **Returns**: `number` - Chart width in pixels
 - **Description**: Get current chart width.
 
-\`\`\`javascript
+```javascript
 const width = chartRef.value.getWidth()
 console.log('Chart width:', width)
-\`\`\`
+```
 
 ### getHeight()
-- **Returns**: \`number\` - Chart height in pixels
+- **Returns**: `number` - Chart height in pixels
 - **Description**: Get current chart height.
 
-\`\`\`javascript
+```javascript
 const height = chartRef.value.getHeight()
 console.log('Chart height:', height)
-\`\`\`
+```
 
 ### getDom()
-- **Returns**: \`HTMLElement\` - Chart container element
+- **Returns**: `HTMLElement` - Chart container element
 - **Description**: Get the DOM container of the chart.
 
-\`\`\`javascript
+```javascript
 const dom = chartRef.value.getDom()
 console.log('Container:', dom)
-\`\`\`
+```
 
 ### isDisposed()
-- **Returns**: \`boolean\`
+- **Returns**: `boolean`
 - **Description**: Check if the chart instance has been disposed.
 
-\`\`\`javascript
+```javascript
 if (!chartRef.value.isDisposed()) {
   chartRef.value.setOption(options)
 }
-\`\`\`
+```
 
 ## Export Methods
 
 ### getDataURL(opts?)
-- **Parameters**: \`opts?: DataURLOpts\`
-- **Returns**: \`string\` - Base64 data URL
+- **Parameters**: `opts?: DataURLOpts`
+- **Returns**: `string` - Base64 data URL
 - **Description**: Export chart as image data URL.
 
-\`\`\`typescript
+```typescript
 interface DataURLOpts {
   type?: 'png' | 'jpeg' | 'svg'  // Image format
   pixelRatio?: number             // Resolution multiplier
   backgroundColor?: string        // Background color
   excludeComponents?: string[]    // Components to exclude
 }
-\`\`\`
+```
 
-\`\`\`javascript
+```javascript
 // Basic export
 const dataURL = chartRef.value.getDataURL()
 
@@ -1602,14 +1556,14 @@ const link = document.createElement('a')
 link.download = 'chart.png'
 link.href = hdURL
 link.click()
-\`\`\`
+```
 
 ### getConnectedDataURL(opts?)
-- **Parameters**: \`opts?: DataURLOpts\`
-- **Returns**: \`string\` - Base64 data URL
+- **Parameters**: `opts?: DataURLOpts`
+- **Returns**: `string` - Base64 data URL
 - **Description**: Export all connected charts as a single image.
 
-\`\`\`javascript
+```javascript
 // Connect charts first
 echarts.connect(['chart1', 'chart2'])
 
@@ -1618,18 +1572,18 @@ const dataURL = chartRef.value.getConnectedDataURL({
   type: 'png',
   pixelRatio: 2
 })
-\`\`\`
+```
 
 ## Coordinate Methods
 
 ### convertToPixel(finder, value)
 - **Parameters**: 
-  - \`finder: string | object\` - Component finder
-  - \`value: any\` - Logical value
-- **Returns**: \`number | number[]\` - Pixel coordinates
+  - `finder: string | object` - Component finder
+  - `value: any` - Logical value
+- **Returns**: `number | number[]` - Pixel coordinates
 - **Description**: Convert data value to pixel coordinates.
 
-\`\`\`javascript
+```javascript
 // Convert data point to pixel position
 const pixel = chartRef.value.convertToPixel('grid', [3, 120])
 console.log('Pixel position:', pixel) // [x, y]
@@ -1639,16 +1593,16 @@ const pixel2 = chartRef.value.convertToPixel(
   { seriesIndex: 0 }, 
   [dataIndex, value]
 )
-\`\`\`
+```
 
 ### convertFromPixel(finder, value)
 - **Parameters**: 
-  - \`finder: string | object\` - Component finder
-  - \`value: number[]\` - Pixel coordinates
-- **Returns**: \`any\` - Data value
+  - `finder: string | object` - Component finder
+  - `value: number[]` - Pixel coordinates
+- **Returns**: `any` - Data value
 - **Description**: Convert pixel coordinates to data value.
 
-\`\`\`javascript
+```javascript
 // Get data value from mouse position
 const handleMouseMove = (e) => {
   const rect = chartRef.value.getDom().getBoundingClientRect()
@@ -1656,16 +1610,16 @@ const handleMouseMove = (e) => {
   const dataValue = chartRef.value.convertFromPixel('grid', point)
   console.log('Data at cursor:', dataValue)
 }
-\`\`\`
+```
 
 ### containPixel(finder, value)
 - **Parameters**: 
-  - \`finder: string | object\` - Component finder
-  - \`value: number[]\` - Pixel coordinates
-- **Returns**: \`boolean\`
+  - `finder: string | object` - Component finder
+  - `value: number[]` - Pixel coordinates
+- **Returns**: `boolean`
 - **Description**: Check if pixel is inside a component area.
 
-\`\`\`javascript
+```javascript
 // Check if mouse is over the grid
 const isInGrid = chartRef.value.containPixel('grid', [x, y])
 
@@ -1674,16 +1628,16 @@ const isInSeries = chartRef.value.containPixel(
   { seriesIndex: 0, dataIndex: 5 }, 
   [x, y]
 )
-\`\`\`
+```
 
 ## Action Methods
 
 ### dispatchAction(action)
-- **Parameters**: \`action: any\` - Action object
-- **Returns**: \`void\`
+- **Parameters**: `action: any` - Action object
+- **Returns**: `void`
 - **Description**: Trigger chart actions programmatically.
 
-\`\`\`javascript
+```javascript
 // Highlight a data point
 chartRef.value.dispatchAction({
   type: 'highlight',
@@ -1710,11 +1664,11 @@ chartRef.value.dispatchAction({
   start: 20,
   end: 80
 })
-\`\`\`
+```
 
 ## Common Action Types
 
-\`\`\`javascript
+```javascript
 // Tooltip actions
 { type: 'showTip', seriesIndex, dataIndex }
 { type: 'hideTip' }
@@ -1748,11 +1702,11 @@ chartRef.value.dispatchAction({
 { type: 'brush', areas }
 { type: 'brushSelect', brushIndex, range }
 { type: 'brushEnd' }
-\`\`\`
+```
 
 ## Full Example
 
-\`\`\`vue
+```vue
 <template>
   <div>
     <MyndEcharts ref="chartRef" :options="options" @ready="onReady" />
@@ -1823,6 +1777,4 @@ const clearChart = () => {
   chartRef.value.clear()
 }
 </script>
-\`\`\`
-`
-}
+```

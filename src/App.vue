@@ -1,41 +1,13 @@
 <template>
   <div id="app">
     <ToastContainer />
-    <!-- Header -->
-    <header class="app-header">
-      <div class="header-content">
-        <div class="logo-section" @click="activeView = 'showcase'" role="button" tabindex="0" @keydown.enter="activeView = 'showcase'">
-          <img :src="logoImage" alt="mynd-echarts" class="logo-image" />
-        </div>
-        <nav class="header-nav">
-          <button @click="activeView = 'showcase'" :class="{ active: activeView === 'showcase' }">
-            <span class="material-icons">palette</span>
-            Showcase
-          </button>
-          <button @click="activeView = 'playground'" :class="{ active: activeView === 'playground' }">
-            <span class="material-icons">science</span>
-            Playground
-          </button>
-          <button @click="activeView = 'examples'" :class="{ active: activeView === 'examples' }">
-            <span class="material-icons">library_books</span>
-            Examples
-          </button>
-          <button @click="activeView = 'documentation'" :class="{ active: activeView === 'documentation' }">
-            <span class="material-icons">description</span>
-            Docs
-          </button>
-          <button @click="toggleTheme" class="theme-toggle-btn" :title="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
-            <span class="material-icons">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
-          </button>
-          <button @click="openGitHub" class="github-btn">
-            <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-            </svg>
-            GitHub
-          </button>
-        </nav>
-      </div>
-    </header>
+    <!-- Header Component -->
+    <AppHeader 
+      :active-view="activeView" 
+      :is-dark-mode="isDarkMode"
+      @navigate="activeView = $event"
+      @toggle-theme="toggleTheme"
+    />
 
     <!-- Main Content -->
     <main class="app-main">
@@ -123,20 +95,27 @@
             v-for="chart in filteredCharts" 
             :key="chart.id"
             class="showcase-card"
-            @click="selectChart(chart)"
           >
             <div class="chart-preview">
               <MyndEcharts
                 :options="chart.options"
                 :theme="currentTheme"
-                style="height: 200px"
+                style="height: 100%; width: 100%; min-height: 400px"
                 :key="`${chart.id}-${themeKey}`"
+                :show-toolbox="true"
+                :toolbox-style="'toolbar'"
               />
             </div>
             <div class="chart-info">
               <h3>{{ chart.name }}</h3>
               <p>{{ chart.description }}</p>
-              <span class="chart-type">{{ chart.type }}</span>
+              <div class="chart-info-footer">
+                <span :class="['chart-type', `chart-type-${chart.category}`]">{{ chart.type }}</span>
+                <button @click="selectChart(chart)" class="try-playground-btn">
+                  <span class="material-icons">science</span>
+                  Try in Playground
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -225,6 +204,8 @@
                 :options="previewOptions"
                 :theme="currentTheme"
                 v-model:locale="chartLocale"
+                :show-toolbox="true"
+                :toolbox-style="'menu'"
                 :key="previewKey"
                 :auto-resize="true"
                 @ready="handleChartReady"
@@ -252,8 +233,10 @@
               <MyndEcharts
                 :options="example.options"
                 :theme="currentTheme"
-                style="height: 300px"
+                style="height: 600px; width: 100%; max-width: 1400px"
                 :key="`${example.id}-${themeKey}`"
+                :show-toolbox="true"
+                :toolbox-style="'toolbar'"
               />
             </div>
             <div class="example-info">
@@ -359,6 +342,7 @@
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { MyndEcharts, useChartTheme, ToastContainer, useToast } from '@lib/index'
 import type { EChartsOption } from 'echarts'
+import AppHeader from './components/AppHeader.vue'
 import { showcaseCharts, chartCategories, advancedExamples } from './data/demoData'
 import { documentationSections } from './data/documentationData'
 import { apiDocumentation } from './data/apiDocumentation'
@@ -642,9 +626,6 @@ const getTemplatesByCategory = (category: string) => {
   return showcaseCharts.filter(c => c.category === category)
 }
 
-const openGitHub = () => {
-  window.open('https://github.com/cloudbrasil/mynd-echarts', '_blank')
-}
 
 const goToMyndAgents = () => {
   window.open('https://myndagents.com', '_blank')
@@ -757,184 +738,46 @@ onUnmounted(() => {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   color: var(--text-primary);
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
   background: var(--bg-secondary);
   transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Header Styles */
-.app-header {
-  background: var(--bg-primary);
-  border-bottom: 1px solid var(--border-color);
-  box-shadow: var(--shadow);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  transition: all 0.3s ease;
-}
-
-.header-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo-section {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-  outline: none;
-  border-radius: 8px;
-  padding: 4px;
-}
-
-.logo-section:hover {
-  transform: scale(1.05);
-  opacity: 0.9;
-}
-
-.logo-section:active {
-  transform: scale(0.98);
-}
-
-.logo-section:focus-visible {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
-}
-
-.logo-image {
-  height: 50px;
-  width: auto;
-  object-fit: contain;
-}
-
-.header-nav {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.header-nav button {
-  padding: 0.5rem 1rem;
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  font-weight: 500;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.header-nav button .material-icons {
-  font-size: 1.125rem;
-}
-
-.header-nav button:hover {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-}
-
-.header-nav button.active {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-}
-
-/* Theme Toggle Button */
-.theme-toggle-btn {
   position: relative;
-  width: 40px;
-  height: 40px;
-  padding: 0 !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-light);
-  border-radius: 50%;
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
-  overflow: hidden;
 }
 
-.theme-toggle-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, #6366f1, #fbbf24);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  border-radius: 50%;
-}
-
-.theme-toggle-btn:hover::before {
-  opacity: 0.15;
-}
-
-.theme-toggle-btn:hover {
-  transform: rotate(180deg) scale(1.1);
-  border-color: var(--primary-color);
-}
-
-.theme-toggle-btn .material-icons {
+/* Force all direct children except header to lower z-index */
+#app > *:not(.app-header) {
   position: relative;
   z-index: 1;
-  font-size: 20px;
-  color: var(--text-primary);
-  transition: all 0.3s ease;
 }
 
-.theme-toggle-btn:hover .material-icons {
-  color: var(--primary-color);
+/* Ensure all views have proper spacing from fixed header */
+.showcase-view,
+.playground-view,
+.examples-view,
+.documentation-view {
+  animation: fadeIn 0.5s ease;
 }
 
-/* Dark mode specific theme toggle */
-.dark-mode .theme-toggle-btn {
-  background: rgba(251, 191, 36, 0.1);
-  border-color: rgba(251, 191, 36, 0.3);
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.dark-mode .theme-toggle-btn .material-icons {
-  color: #fbbf24;
-}
-
-.dark-mode .theme-toggle-btn:hover {
-  border-color: #fbbf24;
-  background: rgba(251, 191, 36, 0.2);
-}
-
-.dark-mode .theme-toggle-btn:hover .material-icons {
-  color: #f59e0b;
-}
-
-/* GitHub Button */
-.github-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-left: 1rem;
-  padding: 0.5rem 1rem !important;
-  background: #24292e !important;
-  color: white !important;
-}
-
-.github-btn:hover {
-  background: #1a1e22 !important;
-}
 
 /* Main Content */
 .app-main {
-  flex: 1;
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
   padding: 2rem;
+  padding-top: 100px; /* Add space for fixed header */
+  position: relative;
+  z-index: 1;
 }
 
 /* MyndAgents CTA Section - Modern Card Design */
@@ -943,6 +786,7 @@ onUnmounted(() => {
   margin-bottom: 3rem;
   border-radius: 24px;
   overflow: hidden;
+  z-index: 1;
   background: linear-gradient(135deg, 
     rgba(99, 102, 241, 0.05) 0%, 
     rgba(168, 85, 247, 0.05) 50%, 
@@ -1419,7 +1263,7 @@ onUnmounted(() => {
 
 .showcase-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
 }
 
@@ -1428,18 +1272,16 @@ onUnmounted(() => {
   border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow);
-  cursor: pointer;
   transition: all 0.2s;
-}
-
-.showcase-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
 }
 
 .chart-preview {
   padding: 1rem;
   background: var(--bg-secondary);
+  min-height: 450px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .chart-info {
@@ -1459,14 +1301,115 @@ onUnmounted(() => {
   line-height: 1.5;
 }
 
+.chart-info-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.try-playground-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.try-playground-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.try-playground-btn .material-icons {
+  font-size: 1rem;
+}
+
 .chart-type {
   display: inline-block;
-  padding: 0.25rem 0.75rem;
-  background: var(--bg-tertiary);
-  color: var(--text-secondary);
+  padding: 0.375rem 0.875rem;
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
   border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-type::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.chart-type:hover::before {
+  left: 100%;
+}
+
+/* Chart type badge colors */
+.chart-type-line {
+  background: #6366f1;
+  color: white;
+}
+
+.chart-type-bar {
+  background: #ec4899;
+  color: white;
+}
+
+.chart-type-pie {
+  background: #06b6d4;
+  color: white;
+}
+
+.chart-type-scatter {
+  background: #10b981;
+  color: white;
+}
+
+.chart-type-radar {
+  background: #f59e0b;
+  color: white;
+}
+
+.chart-type-heatmap {
+  background: #ef4444;
+  color: white;
+}
+
+.chart-type-tree {
+  background: #8b5cf6;
+  color: white;
+}
+
+.chart-type-graph {
+  background: #f97316;
+  color: white;
+}
+
+.chart-type-other {
+  background: #6b7280;
+  color: white;
+}
+
+/* Dark mode adjustments */
+.dark-mode .chart-type {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Playground View */
@@ -1490,7 +1433,7 @@ onUnmounted(() => {
   display: grid;
   grid-template-rows: 1fr 1fr;
   gap: 1.5rem;
-  height: calc(100vh - 300px);
+  height: calc(100vh - 250px); /* Adjusted for fixed header */
   min-height: 800px;
 }
 
@@ -1687,8 +1630,11 @@ onUnmounted(() => {
 
 .examples-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  grid-template-columns: 1fr;
   gap: 2rem;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 2rem;
 }
 
 .example-card {
@@ -1696,11 +1642,16 @@ onUnmounted(() => {
   border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow);
+  width: 100%;
 }
 
 .example-preview {
-  padding: 1.5rem;
+  padding: 2rem;
   background: var(--bg-secondary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 650px;
 }
 
 .example-info {
@@ -1866,6 +1817,12 @@ onUnmounted(() => {
   .preview-panel {
     min-height: 350px;
   }
+  
+  /* Keep 2 columns on tablets but make them smaller */
+  .showcase-grid,
+  .examples-grid {
+    gap: 1rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1874,13 +1831,34 @@ onUnmounted(() => {
     gap: 1rem;
   }
   
-  .showcase-grid,
-  .examples-grid {
+  .showcase-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .chart-info-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .try-playground-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .examples-grid {
+    padding: 0 1rem;
+    gap: 1.5rem;
+  }
+  
+  .example-preview {
+    padding: 1rem;
+    min-height: 450px;
   }
   
   .app-main {
     padding: 1rem;
+    margin-top: 70px; /* Add space for fixed header on mobile */
   }
   
   /* MyndAgents CTA Mobile */
@@ -1955,7 +1933,7 @@ onUnmounted(() => {
 
 /* Documentation Styles */
 .documentation-view {
-  height: calc(100vh - 120px);
+  height: calc(100vh - 160px); /* Adjusted for fixed header */
   overflow: hidden;
 }
 

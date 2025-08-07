@@ -156,5 +156,25 @@ export const ptBR: LocaleMessages = {
   chart: {
     loading: 'Carregando...',
     noData: 'Sem dados'
+  },
+  dataView: {
+    title: 'Visualização de Dados',
+    noData: 'Nenhum dado disponível para exibir',
+    downloadCSV: 'Baixar CSV',
+    copyToClipboard: 'Copiar para Área de Transferência',
+    close: 'Fechar',
+    category: 'Categoria',
+    series: 'Série',
+    name: 'Nome',
+    value: 'Valor',
+    index: 'Índice'
+  },
+  toolbox: {
+    saveAsImage: 'Salvar como Imagem',
+    restore: 'Restaurar',
+    dataView: 'Visualização de Dados',
+    dataZoom: 'Zoom',
+    magicType: 'Alterar Tipo de Gráfico',
+    brush: 'Seleção com Pincel'
   }
 }

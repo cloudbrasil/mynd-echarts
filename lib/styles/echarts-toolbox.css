@@ -1,0 +1,82 @@
+/* ECharts Toolbox CSS Fixes */
+/* These styles ensure proper display of ECharts toolbox icons */
+
+/* Ensure toolbox container uses flexbox layout */
+.ec-toolbox-feature {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* Fix for toolbox feature items */
+div[_echarts_instance_] .echarts-toolbox-feature > div {
+  display: inline-block !important;
+  vertical-align: middle !important;
+  margin: 0 5px !important;
+}
+
+/* Ensure toolbox icons display horizontally */
+div[_echarts_instance_] .echarts-toolbox-feature {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+}
+
+/* Fix icon positioning */
+div[_echarts_instance_] .echarts-toolbox-feature > * {
+  display: inline-flex !important;
+  position: relative !important;
+  cursor: pointer;
+}
+
+/* Additional specificity for external usage */
+.echarts-for-react div[_echarts_instance_] .echarts-toolbox-feature,
+.mynd-echarts-wrapper div[_echarts_instance_] .echarts-toolbox-feature,
+.mynd-echarts-container div[_echarts_instance_] .echarts-toolbox-feature,
+.mynd-echarts-chart div[_echarts_instance_] .echarts-toolbox-feature {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 8px !important;
+}
+
+/* Ensure proper icon size and spacing */
+div[_echarts_instance_] path[d*="M"],
+div[_echarts_instance_] rect {
+  pointer-events: all;
+}
+
+/* Fix for SVG container within toolbox */
+div[_echarts_instance_] svg {
+  overflow: visible !important;
+}
+
+/* Ensure toolbox group maintains horizontal layout */
+div[_echarts_instance_] g[id*="toolbox"] > g {
+  display: inline-block !important;
+}
+
+/* Override any conflicting styles from parent containers */
+.vue-echarts div[_echarts_instance_] .echarts-toolbox-feature,
+[class*="echarts"] div[_echarts_instance_] .echarts-toolbox-feature {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+}
+
+/* Ensure icons don't stack vertically */
+div[_echarts_instance_] .echarts-toolbox-feature > div,
+div[_echarts_instance_] .echarts-toolbox-feature > span {
+  float: none !important;
+  display: inline-block !important;
+  width: auto !important;
+  height: auto !important;
+  margin-right: 10px !important;
+}
+
+/* Last icon shouldn't have margin */
+div[_echarts_instance_] .echarts-toolbox-feature > div:last-child,
+div[_echarts_instance_] .echarts-toolbox-feature > span:last-child {
+  margin-right: 0 !important;
+}

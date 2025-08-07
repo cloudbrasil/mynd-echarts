@@ -156,5 +156,25 @@ export const en: LocaleMessages = {
   chart: {
     loading: 'Loading...',
     noData: 'No data'
+  },
+  dataView: {
+    title: 'Data View',
+    noData: 'No data available to display',
+    downloadCSV: 'Download CSV',
+    copyToClipboard: 'Copy to Clipboard',
+    close: 'Close',
+    category: 'Category',
+    series: 'Series',
+    name: 'Name',
+    value: 'Value',
+    index: 'Index'
+  },
+  toolbox: {
+    saveAsImage: 'Save as Image',
+    restore: 'Restore',
+    dataView: 'Data View',
+    dataZoom: 'Zoom',
+    magicType: 'Switch Chart Type',
+    brush: 'Brush Select'
   }
 }
