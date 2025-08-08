@@ -1,6 +1,6 @@
 {
   "name": "@docbrasil/mynd-echarts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A full-featured Vue 3 wrapper for Apache ECharts with TypeScript support",
   "type": "module",
   "main": "./dist/mynd-echarts.cjs",
