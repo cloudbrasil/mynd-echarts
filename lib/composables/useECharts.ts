@@ -1,6 +1,59 @@
 import { ref, unref, watchEffect, watch, computed, isRef, onUnmounted, nextTick, type Ref, type ComputedRef } from 'vue'
-import * as echarts from 'echarts'
-import type { EChartsOption, ECharts, SetOptionOpts } from 'echarts'
+// ECharts v6 modular imports and registration
+import type { ECharts, SetOptionOpts, EChartsOption } from 'echarts'
+import {
+  use as echartsUse,
+  init as echartsInit,
+  connect as echartsConnect,
+  disconnect as echartsDisconnect,
+  registerTheme as echartsRegisterTheme,
+  registerMap as echartsRegisterMap
+} from 'echarts/core'
+import { CanvasRenderer, SVGRenderer } from 'echarts/renderers'
+import {
+  GridComponent,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  ToolboxComponent,
+  DataZoomComponent,
+  DatasetComponent,
+  TransformComponent,
+  AxisPointerComponent,
+  BrushComponent
+} from 'echarts/components'
+// ECharts 5 axis components
+import {
+  LineChart,
+  BarChart,
+  ScatterChart,
+  CandlestickChart,
+  EffectScatterChart
+} from 'echarts/charts'
+
+// Register required charts, components, axes, and renderers
+echartsUse([
+  // Charts
+  LineChart,
+  BarChart,
+  ScatterChart,
+  CandlestickChart,
+  EffectScatterChart,
+  // Components
+  GridComponent,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  ToolboxComponent,
+  DataZoomComponent,
+  DatasetComponent,
+  TransformComponent,
+  AxisPointerComponent,
+  BrushComponent,
+  // Renderers
+  CanvasRenderer,
+  SVGRenderer
+])
 import { debounce } from '../utils'
 
 export interface UseEChartsOptions {
@@ -91,7 +144,7 @@ export function useECharts(
     }
 
     // Initialize chart with merged options including locale
-    chartInstance.value = echarts.init(el, currentTheme.value as any, {
+    chartInstance.value = echartsInit(el, currentTheme.value as any, {
       renderer,
       locale: currentLocale.value,
       ...initOptions
@@ -242,20 +295,20 @@ export function useECharts(
 
   const connect = (group: string | ECharts[]) => {
     if (chartInstance.value) {
-      echarts.connect(group)
+      echartsConnect(group)
     }
   }
 
   const disconnect = (group: string) => {
-    echarts.disconnect(group)
+    echartsDisconnect(group)
   }
 
   const registerTheme = (name: string, theme: object) => {
-    echarts.registerTheme(name, theme)
+    echartsRegisterTheme(name, theme)
   }
 
   const registerMap = (mapName: string, geoJson: any, specialAreas?: any) => {
-    echarts.registerMap(mapName, geoJson, specialAreas)
+    echartsRegisterMap(mapName, geoJson, specialAreas)
   }
 
   const dispose = () => {

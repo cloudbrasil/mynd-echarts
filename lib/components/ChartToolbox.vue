@@ -12,6 +12,7 @@
       >
         <span class="material-icons">{{ tool.icon }}</span>
       </button>
+      <!-- Zoom bar moved below chart -->
     </div>
 
     <!-- Menu Style -->
@@ -60,6 +61,7 @@ const emit = defineEmits<{
 }>()
 
 const isMenuOpen = ref(false)
+// zoom bar now handled by parent
 
 // Get locale messages
 const messages = computed(() => getLocale(props.locale as SupportedLocale))
@@ -118,10 +120,8 @@ const allTools = computed(() => [
     key: 'dataZoom',
     icon: 'zoom_in',
     title: t('dataZoom'),
-    supportedTypes: ['line', 'bar', 'area', 'scatter'],
-    action: () => {
-      emit('action', 'dataZoom')
-    }
+    supportedTypes: ['line', 'bar', 'area', 'scatter', 'candlestick', 'boxplot'],
+    action: () => emit('action', 'dataZoom')
   },
   {
     key: 'magicType',
@@ -209,6 +209,7 @@ const handleToolAction = (key: string) => {
   closeMenu()
 }
 
+
 // Menu controls
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
@@ -279,6 +280,21 @@ onUnmounted(() => {
 
 .toolbox-btn .material-icons {
   font-size: 18px;
+}
+
+/* Zoom control inline UI */
+.toolbox-zoom-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px;
+}
+.toolbox-zoom-control input[type="range"] {
+  width: 120px;
+}
+.zoom-label {
+  font-size: 12px;
+  color: #666;
 }
 
 /* Menu Style */
