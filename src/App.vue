@@ -127,10 +127,78 @@
           <h2>Interactive Playground</h2>
           <p>Build and customize your charts with live preview</p>
         </div>
-
-        <div class="playground-layout">
-          <!-- Editor Panel -->
-          <div class="editor-panel">
+        
+        <!-- Tab Navigation -->
+        <div class="playground-tabs">
+          <button 
+            @click="playgroundTab = 'preview'" 
+            :class="{ active: playgroundTab === 'preview' }"
+            class="tab-button"
+          >
+            <span class="material-icons">visibility</span>
+            Preview
+          </button>
+          <button 
+            @click="playgroundTab = 'code'" 
+            :class="{ active: playgroundTab === 'code' }"
+            class="tab-button"
+          >
+            <span class="material-icons">code</span>
+            Code
+          </button>
+        </div>
+        
+        <div class="playground-content">
+          <!-- Preview Tab -->
+          <div v-show="playgroundTab === 'preview'" class="preview-tab" ref="previewPanelRef">
+            <div class="preview-toolbar">
+              <div class="preview-actions">
+                <button @click="toggleTheme" class="theme-toggle">
+                  <span class="material-icons">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
+                  {{ isDarkMode ? 'Light' : 'Dark' }}
+                </button>
+                <button @click="refreshPreview" :disabled="!validOptions">
+                  <span class="material-icons">refresh</span>
+                  Refresh
+                </button>
+                <button v-if="!isFullscreen" @click="openConfigDialog" :disabled="!validOptions">
+                  <span class="material-icons">settings</span>
+                  Config
+                </button>
+                <button @click="toggleFullscreen" class="fullscreen-toggle">
+                  <span class="material-icons">{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</span>
+                  {{ isFullscreen ? 'Exit' : 'Fullscreen' }}
+                </button>
+              </div>
+            </div>
+            
+            <div class="chart-preview-container">
+              <MyndEcharts
+                v-if="validOptions && previewOptions"
+                ref="previewChartRef"
+                :options="previewOptions"
+                :theme="currentTheme"
+                v-model:locale="chartLocale"
+                :show-toolbox="true"
+                :toolbox-style="'menu'"
+                :key="previewKey"
+                :auto-resize="true"
+                @ready="handleChartReady"
+                @update:options="handleOptionsUpdate"
+              />
+              <div v-else class="empty-preview">
+                <span class="material-icons empty-icon">insert_chart</span>
+                <p>Enter valid ECharts options to see preview</p>
+                <button @click="playgroundTab = 'code'" class="action-btn primary">
+                  <span class="material-icons">code</span>
+                  Go to Code Editor
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Code Tab -->
+          <div v-show="playgroundTab === 'code'" class="code-tab">
             <div class="editor-toolbar">
               <select v-model="selectedTemplate" @change="loadTemplate" class="template-select">
                 <option value="">Choose a template...</option>
@@ -170,56 +238,13 @@
               <div v-if="editorError" class="editor-error">
                 ❌ {{ editorError }}
               </div>
-            </div>
-          </div>
-
-          <!-- Preview Panel -->
-          <div class="preview-panel" ref="previewPanelRef">
-            <div class="preview-toolbar">
-              <h3>Preview</h3>
-              <div class="preview-actions">
-                <button @click="toggleTheme" class="theme-toggle">
-                  <span class="material-icons">{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
-                  {{ isDarkMode ? 'Light' : 'Dark' }}
-                </button>
-                <button @click="refreshPreview" :disabled="!validOptions">
-                  <span class="material-icons">refresh</span>
-                  Refresh
-                </button>
-                <button @click="openConfigDialog" :disabled="!validOptions">
-                  <span class="material-icons">settings</span>
-                  Config
-                </button>
-                <button @click="toggleFullscreen" class="fullscreen-toggle">
-                  <span class="material-icons">{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</span>
-                  {{ isFullscreen ? 'Exit' : 'Fullscreen' }}
-                </button>
-              </div>
-            </div>
-            
-            <div class="chart-preview-container">
-              <MyndEcharts
-                v-if="validOptions && previewOptions"
-                ref="previewChartRef"
-                :options="previewOptions"
-                :theme="currentTheme"
-                v-model:locale="chartLocale"
-                :show-toolbox="true"
-                :toolbox-style="'menu'"
-                :key="previewKey"
-                :auto-resize="true"
-                @ready="handleChartReady"
-                @update:options="handleOptionsUpdate"
-              />
-              <div v-else class="empty-preview">
-                <span class="material-icons empty-icon">insert_chart</span>
-                <p>Enter valid ECharts options to see preview</p>
+              <div v-else-if="validOptions" class="editor-success">
+                ✅ Valid JSON - <button @click="playgroundTab = 'preview'" class="inline-link">View Preview</button>
               </div>
             </div>
           </div>
         </div>
       </div>
-
       <!-- Examples View -->
       <div v-if="activeView === 'examples'" class="examples-view">
         <div class="examples-header">
@@ -357,6 +382,7 @@ const selectedTemplate = ref('')
 const isFullscreen = ref(false)
 const previewPanelRef = ref<HTMLElement>()
 const previewChartRef = ref<any>()
+const playgroundTab = ref<'preview' | 'code'>('preview')
 const editorContent = ref(JSON.stringify({
   title: {
     text: 'Sample Chart',
@@ -364,6 +390,15 @@ const editorContent = ref(JSON.stringify({
   },
   tooltip: {
     trigger: 'axis'
+  },
+  toolbox: {
+    feature: {
+      saveAsImage: { show: true },
+      restore: { show: true },
+      dataView: { show: true },
+      dataZoom: { show: true },
+      magicType: { show: true, type: ['line', 'bar'] }
+    }
   },
   grid: {
     left: '3%',
@@ -674,8 +709,17 @@ const toggleFullscreen = async () => {
 }
 
 // Listen for fullscreen changes
-const handleFullscreenChange = () => {
+const handleFullscreenChange = async () => {
+  const wasFullscreen = isFullscreen.value
   isFullscreen.value = !!document.fullscreenElement
+  
+  // Refresh the chart when exiting fullscreen to ensure proper rendering
+  if (wasFullscreen && !isFullscreen.value) {
+    await nextTick()
+    if (previewChartRef.value) {
+      previewChartRef.value.refresh()
+    }
+  }
 }
 
 // Initialize
@@ -1429,6 +1473,89 @@ onUnmounted(() => {
   font-size: 1.125rem;
 }
 
+/* Tab Navigation Styles */
+.playground-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0;
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: -2px;
+}
+
+.tab-button:hover {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+.tab-button.active {
+  color: #6366f1;
+  border-bottom-color: #6366f1;
+  background: transparent;
+}
+
+.tab-button .material-icons {
+  font-size: 20px;
+}
+
+/* Playground Content */
+.playground-content {
+  height: calc(100vh - 320px); /* Adjusted for fixed header and tabs */
+  min-height: 600px;
+}
+
+.preview-tab,
+.code-tab {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.inline-link {
+  background: none;
+  border: none;
+  color: #6366f1;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-size: inherit;
+}
+
+.inline-link:hover {
+  color: #4f46e5;
+}
+
+.editor-success {
+  padding: 0.75rem 1rem;
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+  border-left: 3px solid #16a34a;
+  margin-top: 0.5rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .playground-layout {
   display: grid;
   grid-template-rows: 1fr 1fr;
@@ -1447,12 +1574,19 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-.editor-toolbar,
-.preview-toolbar {
+.editor-toolbar {
   padding: 1rem;
   border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+.preview-toolbar {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
   align-items: center;
 }
 
@@ -1470,6 +1604,7 @@ onUnmounted(() => {
 .preview-actions {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .editor-actions button,
@@ -1578,27 +1713,111 @@ onUnmounted(() => {
   color: var(--text-tertiary);
 }
 
-/* Fullscreen styles */
-.preview-panel:fullscreen {
-  background: var(--bg-primary);
+/* Fullscreen styles - Fixed to properly detect theme */
+/* Base fullscreen styles - no forced colors */
+.preview-tab:fullscreen,
+.preview-tab:-webkit-full-screen,
+.preview-tab:-moz-full-screen,
+.preview-tab:-ms-fullscreen {
   padding: 0;
   display: flex;
   flex-direction: column;
 }
 
-.preview-panel:fullscreen .preview-toolbar {
+/* Toolbar in fullscreen */
+.preview-tab:fullscreen .preview-toolbar,
+.preview-tab:-webkit-full-screen .preview-toolbar,
+.preview-tab:-moz-full-screen .preview-toolbar,
+.preview-tab:-ms-fullscreen .preview-toolbar {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--bg-primary);
-  box-shadow: var(--shadow);
   flex-shrink: 0;
+  padding: 1rem;
+  display: flex;
+  justify-content: flex-end;
 }
 
-.preview-panel:fullscreen .chart-preview-container {
+/* Actions in fullscreen */
+.preview-tab:fullscreen .preview-actions,
+.preview-tab:-webkit-full-screen .preview-actions,
+.preview-tab:-moz-full-screen .preview-actions,
+.preview-tab:-ms-fullscreen .preview-actions {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Chart container in fullscreen */
+.preview-tab:fullscreen .chart-preview-container,
+.preview-tab:-webkit-full-screen .chart-preview-container,
+.preview-tab:-moz-full-screen .chart-preview-container,
+.preview-tab:-ms-fullscreen .chart-preview-container {
   flex: 1;
   height: calc(100vh - 60px);
   padding: 1rem;
+}
+
+/* Light mode fullscreen - when html does NOT have dark class */
+html:not(.dark) .preview-tab:fullscreen,
+html:not(.dark) .preview-tab:-webkit-full-screen,
+html:not(.dark) .preview-tab:-moz-full-screen,
+html:not(.dark) .preview-tab:-ms-fullscreen {
+  background-color: #ffffff !important;
+  color: #2c3e50 !important;
+}
+
+html:not(.dark) .preview-tab:fullscreen .preview-toolbar,
+html:not(.dark) .preview-tab:-webkit-full-screen .preview-toolbar,
+html:not(.dark) .preview-tab:-moz-full-screen .preview-toolbar,
+html:not(.dark) .preview-tab:-ms-fullscreen .preview-toolbar {
+  background-color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  color: #2c3e50 !important;
+}
+
+html:not(.dark) .preview-tab:fullscreen .chart-preview-container,
+html:not(.dark) .preview-tab:-webkit-full-screen .chart-preview-container,
+html:not(.dark) .preview-tab:-moz-full-screen .chart-preview-container,
+html:not(.dark) .preview-tab:-ms-fullscreen .chart-preview-container {
+  background-color: #ffffff !important;
+  color: #2c3e50 !important;
+}
+
+/* Dark mode fullscreen - when html HAS dark class */
+html.dark .preview-tab:fullscreen,
+html.dark .preview-tab:-webkit-full-screen,
+html.dark .preview-tab:-moz-full-screen,
+html.dark .preview-tab:-ms-fullscreen {
+  background-color: #1a202c !important;
+  color: #e2e8f0 !important;
+}
+
+html.dark .preview-tab:fullscreen .preview-toolbar,
+html.dark .preview-tab:-webkit-full-screen .preview-toolbar,
+html.dark .preview-tab:-moz-full-screen .preview-toolbar,
+html.dark .preview-tab:-ms-fullscreen .preview-toolbar {
+  background-color: #2d3748 !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  color: #e2e8f0 !important;
+}
+
+html.dark .preview-tab:fullscreen .chart-preview-container,
+html.dark .preview-tab:-webkit-full-screen .chart-preview-container,
+html.dark .preview-tab:-moz-full-screen .chart-preview-container,
+html.dark .preview-tab:-ms-fullscreen .chart-preview-container {
+  background-color: #1a202c !important;
+  color: #e2e8f0 !important;
+}
+
+/* Ensure browser default black background is overridden */
+::backdrop {
+  background-color: #ffffff !important;
+}
+
+html.dark ::backdrop {
+  background-color: #1a202c !important;
 }
 
 .fullscreen-toggle {
@@ -1807,15 +2026,14 @@ onUnmounted(() => {
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .playground-layout {
-    grid-template-rows: 1fr 1fr;
-    height: calc(100vh - 250px);
-    min-height: 700px;
+  .playground-content {
+    height: calc(100vh - 300px);
+    min-height: 500px;
   }
   
-  .editor-panel,
-  .preview-panel {
-    min-height: 350px;
+  .preview-tab,
+  .code-tab {
+    min-height: 400px;
   }
   
   /* Keep 2 columns on tablets but make them smaller */
@@ -1900,16 +2118,22 @@ onUnmounted(() => {
     width: auto;
   }
   
-  .playground-layout {
-    grid-template-rows: 1fr 1fr;
-    height: calc(100vh - 200px);
-    min-height: 600px;
-    gap: 1rem;
+  .playground-content {
+    height: calc(100vh - 280px);
+    min-height: 400px;
   }
   
-  .editor-panel,
-  .preview-panel {
-    min-height: 300px;
+  .playground-tabs {
+    margin-bottom: 1rem;
+  }
+  
+  .tab-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .tab-button .material-icons {
+    font-size: 18px;
   }
   
   .playground-header {

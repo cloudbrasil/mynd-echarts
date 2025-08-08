@@ -433,11 +433,22 @@ const { chartInstance, setOption: rawSetOption, resize, dispose, clear, getOptio
   autoResize: props.autoResize,
   initOptions: initOptionsWithDefaults.value,
   onReady: async (instance) => {
+    // Set initial options FIRST before doing anything else
+    if (props.options) {
+      const processed = processChartOptions(props.options)
+      instance.setOption(processed, {
+        notMerge: props.notMerge,
+        lazyUpdate: props.lazyUpdate,
+        silent: props.silent
+      })
+    }
+    
     emit('ready', instance)
     
     // Debug: emit toolbox-rendered event
     if (props.debugToolbox) {
       const chartDom = instance.getDom()
+      // Now it's safe to get options since we've set them
       const currentOpts = instance.getOption()
       const toolboxConfig = currentOpts.toolbox?.[0]
       
@@ -456,7 +467,6 @@ const { chartInstance, setOption: rawSetOption, resize, dispose, clear, getOptio
       }
     }
     
-    // No longer need to fix toolbox position since we use custom toolbox
     // Set up observers after chart is ready
     setupObservers()
   },
@@ -579,17 +589,16 @@ const processChartOptions = (options: EChartsOption): EChartsOption => {
   // The toolbox config is extracted and used by our custom ChartToolbox component
   delete processedOpts.toolbox
   
-  // Debug log if toolbox was removed
-  if (props.debugToolbox) {
-    debugLog('Options', 'Native toolbox removed from options')
-  }
+  // For now, completely remove any dataZoom to avoid axis issues
+  // We'll handle dataZoom separately when the user clicks the zoom button
+  delete processedOpts.dataZoom
   
   return processedOpts
 }
 
 // Wrapped setOption that always processes options
-const setOption = (options: EChartsOption, opts?: any) => {
-  const processed = processChartOptions(options)
+const setOption = (options: EChartsOption, opts?: any, skipProcessing = false) => {
+  const processed = skipProcessing ? options : processChartOptions(options)
   rawSetOption(processed, opts)
 }
 
@@ -599,18 +608,28 @@ const setupObservers = () => {
 
   // ResizeObserver to handle container size changes
   if (typeof ResizeObserver !== 'undefined') {
+    let isFirstResize = true
     resizeObserver = new ResizeObserver((entries) => {
+      // Skip the first resize trigger which happens immediately when observer is attached
+      if (isFirstResize) {
+        isFirstResize = false
+        return
+      }
+      
       // Clear any pending resize timer
       if (resizeTimer) {
         clearTimeout(resizeTimer)
       }
 
-      // Resize chart immediately
+      // Only resize if chart has been properly initialized with options
       if (chartInstance.value && !chartInstance.value.isDisposed()) {
-        chartInstance.value.resize()
+        // Use a small debounce to avoid too many resize calls
+        resizeTimer = setTimeout(() => {
+          if (chartInstance.value && !chartInstance.value.isDisposed()) {
+            chartInstance.value.resize()
+          }
+        }, 100)
       }
-
-      // No longer need to fix toolbox position since we use custom toolbox
     })
 
     resizeObserver.observe(chartRef.value)
@@ -767,18 +786,143 @@ const handleToolboxAction = (action: string) => {
       const hasDataZoom = currentOpts.dataZoom && currentOpts.dataZoom.length > 0
       
       if (!hasDataZoom) {
-        setOption({
-          ...currentOpts,
+        // Check if chart type supports dataZoom
+        const series = currentOpts.series as any[]
+        if (!series || series.length === 0) break
+        
+        // Special check for heatmap
+        const hasHeatmap = series.some((s: any) => s.type === 'heatmap')
+        if (hasHeatmap) {
+          console.warn('[MyndEcharts] DataZoom is not supported for heatmap charts')
+          break
+        }
+        
+        // Chart types that absolutely don't support dataZoom
+        const incompatibleTypes = ['graph', 'sankey', 'funnel', 'gauge', 'tree', 'treemap', 'sunburst', 'themeRiver', 'map', 'custom']
+        
+        // Check if ALL series are incompatible (not just some)
+        const allIncompatible = series.every((s: any) => {
+          const type = s.type || 'line' // Default to line if no type specified
+          return incompatibleTypes.includes(type)
+        })
+        
+        if (allIncompatible) {
+          const types = series.map((s: any) => s.type || 'line').join(', ')
+          console.warn(`[MyndEcharts] DataZoom is not supported for chart types: ${types}`)
+          break
+        }
+        
+        // Get all x-axis indices
+        const xAxis = currentOpts.xAxis
+        const xAxisIndices = Array.isArray(xAxis) 
+          ? xAxis.map((_, index) => index) 
+          : xAxis ? [0] : []
+        
+        // Get all y-axis indices
+        const yAxis = currentOpts.yAxis
+        const yAxisIndices = Array.isArray(yAxis) 
+          ? yAxis.map((_, index) => index) 
+          : yAxis ? [0] : []
+        
+        // Only proceed if we have valid axes
+        if (xAxisIndices.length === 0 && yAxisIndices.length === 0) {
+          console.warn('[MyndEcharts] No valid axes found for dataZoom')
+          break
+        }
+        
+        // Check if legend is at the bottom
+        const legend = currentOpts.legend?.[0] || currentOpts.legend
+        const hasBottomLegend = legend && (
+          legend.bottom !== undefined || 
+          legend.top === 'bottom' ||
+          (legend.orient === 'horizontal' && !legend.top && !legend.y)
+        )
+        
+        // Calculate bottom position for dataZoom slider
+        let sliderBottom = 5
+        if (hasBottomLegend) {
+          const legendHeight = legend.itemHeight || 25
+          const legendPadding = legend.padding || 5
+          const legendBottom = typeof legend.bottom === 'number' ? legend.bottom : 
+                              legend.bottom === 'center' ? 50 : 
+                              legend.bottom === 'bottom' ? 10 : 10
+          sliderBottom = legendBottom + legendHeight + legendPadding + 10
+        }
+        
+        // Build the complete dataZoom config
+        const dataZoomOptions: any = {
           dataZoom: [
-            { type: 'slider', start: 0, end: 100 },
-            { type: 'inside', start: 0, end: 100 }
+            { 
+              type: 'slider',
+              show: true,
+              realtime: true,
+              start: 0, 
+              end: 100,
+              bottom: sliderBottom,
+              height: 30,
+              handleIcon: 'path://M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+              handleSize: '100%',
+              handleStyle: {
+                color: '#5470c6',
+                shadowBlur: 3,
+                shadowColor: 'rgba(0, 0, 0, 0.6)',
+                shadowOffsetX: 2,
+                shadowOffsetY: 2
+              },
+              textStyle: {
+                color: 'inherit'
+              },
+              fillerColor: 'rgba(84, 112, 198, 0.2)',
+              borderColor: '#5470c6',
+              dataBackground: {
+                lineStyle: {
+                  color: '#5470c6',
+                  width: 0.5
+                },
+                areaStyle: {
+                  color: 'rgba(84, 112, 198, 0.1)',
+                  opacity: 0.8
+                }
+              },
+              brushSelect: false,
+              emphasis: {
+                handleStyle: {
+                  color: '#3957a8'
+                }
+              }
+            },
+            { 
+              type: 'inside',
+              start: 0, 
+              end: 100,
+              zoomOnMouseWheel: true,
+              moveOnMouseMove: true,
+              preventDefaultMouseMove: true
+            }
           ]
-        }, { notMerge: true })
+        }
+        
+        // Set xAxisIndex for both zoom components if we have valid x-axes
+        if (xAxisIndices.length > 0) {
+          dataZoomOptions.dataZoom[0].xAxisIndex = xAxisIndices
+          dataZoomOptions.dataZoom[1].xAxisIndex = xAxisIndices
+        } else if (yAxisIndices.length > 0) {
+          // If no x-axis but has y-axis, use yAxisIndex instead
+          dataZoomOptions.dataZoom[0].yAxisIndex = yAxisIndices
+          dataZoomOptions.dataZoom[0].orient = 'vertical'
+          dataZoomOptions.dataZoom[0].left = 10
+          delete dataZoomOptions.dataZoom[0].bottom
+          dataZoomOptions.dataZoom[1].yAxisIndex = yAxisIndices
+          dataZoomOptions.dataZoom[1].orient = 'vertical'
+        }
+        
+        // Apply dataZoom configuration
+        chartInstance.value.setOption(dataZoomOptions)
       } else {
-        setOption({
-          ...currentOpts,
+        // Remove dataZoom using direct ECharts API
+        chartInstance.value.setOption({
           dataZoom: []
-        }, { notMerge: true })
+        }, { replaceMerge: ['dataZoom'] })
       }
       break
       
@@ -833,11 +977,19 @@ const handleToolboxAction = (action: string) => {
   }
 }
 
-// Watch for option changes
+// Watch for option changes (but skip the first one since it's handled in onReady)
+let isFirstRun = true
 watch(
   () => props.options,
   async (newOptions) => {
     if (newOptions) {
+      // Skip the first run since onReady handles initial setup
+      if (isFirstRun) {
+        isFirstRun = false
+        currentOptions.value = newOptions
+        return
+      }
+      
       // Update currentOptions (setOption will process them)
       currentOptions.value = newOptions
       
@@ -847,7 +999,6 @@ watch(
           lazyUpdate: props.lazyUpdate,
           silent: props.silent
         })
-        // No longer need to fix toolbox position since we use custom toolbox
       }
     }
   },
@@ -891,16 +1042,10 @@ watch(chartInstance, (newInstance, oldInstance) => {
 
 // Initialize chart on mount
 onMounted(async () => {
-  if (props.options) {
-    setOption(props.options, {
-      notMerge: props.notMerge,
-      lazyUpdate: props.lazyUpdate,
-      silent: props.silent
-    })
-    // Set up observers if chart is already ready
-    if (chartInstance.value) {
-      setupObservers()
-    }
+  // Options are now set in the onReady callback to ensure proper initialization order
+  // Just ensure observers are set up if needed
+  if (chartInstance.value) {
+    setupObservers()
   }
 })
 
@@ -1110,11 +1255,15 @@ a.mynd-echarts-title:hover {
 }
 
 /* Dark mode title color */
-:root.dark .mynd-echarts-title {
+:root.dark .mynd-echarts-title,
+html.dark .mynd-echarts-title,
+.dark .mynd-echarts-title {
   color: #e2e8f0;
 }
 
-:root.dark a.mynd-echarts-title:hover {
+:root.dark a.mynd-echarts-title:hover,
+html.dark a.mynd-echarts-title:hover,
+.dark a.mynd-echarts-title:hover {
   color: #91d5ff;
 }
 
@@ -1140,11 +1289,15 @@ a.mynd-echarts-subtitle:hover {
 }
 
 /* Dark mode subtitle color */
-:root.dark .mynd-echarts-subtitle {
+:root.dark .mynd-echarts-subtitle,
+html.dark .mynd-echarts-subtitle,
+.dark .mynd-echarts-subtitle {
   color: #a0aec0;
 }
 
-:root.dark a.mynd-echarts-subtitle:hover {
+:root.dark a.mynd-echarts-subtitle:hover,
+html.dark a.mynd-echarts-subtitle:hover,
+.dark a.mynd-echarts-subtitle:hover {
   color: #91d5ff;
 }
 

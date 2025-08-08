@@ -36,7 +36,9 @@
       "Bash(npm publish:*)",
       "Bash(chmod:*)",
       "Bash(bash:*)",
-      "Bash(vercel:*)"
+      "Bash(vercel:*)",
+      "Bash(sed:*)",
+      "Bash(python3:*)"
     ],
     "deny": []
   }

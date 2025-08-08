@@ -85,6 +85,7 @@ export interface LocaleMessages {
       
       // General
       enable: string
+      displayStyle: string
     }
     positions: {
       left: string
@@ -149,6 +150,10 @@ export interface LocaleMessages {
     helpTexts: {
       formatter: string
       languageChange: string
+    }
+    toolboxStyles: {
+      menu: string
+      toolbar: string
     }
   }
   chart: {

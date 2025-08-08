@@ -86,7 +86,8 @@ export const ptBR: LocaleMessages = {
       selectLanguage: 'Selecionar Idioma',
       
       // General
-      enable: 'Habilitar'
+      enable: 'Habilitar',
+      displayStyle: 'Estilo de Exibição'
     },
     positions: {
       left: 'Esquerda',
@@ -151,6 +152,10 @@ export const ptBR: LocaleMessages = {
     helpTexts: {
       formatter: 'Use marcadores: {a} nome da série, {b} nome do dado, {c} valor do dado, {d} porcentagem. Exemplo: \'{b}: {c} ({d}%)}}\'',
       languageChange: 'Altera o idioma para todos os elementos da interface na configuração do gráfico'
+    },
+    toolboxStyles: {
+      menu: 'Menu',
+      toolbar: 'Barra de ferramentas'
     }
   },
   chart: {

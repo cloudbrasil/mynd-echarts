@@ -86,7 +86,8 @@ export const es: LocaleMessages = {
       selectLanguage: 'Seleccionar Idioma',
       
       // General
-      enable: 'Habilitar'
+      enable: 'Habilitar',
+      displayStyle: 'Estilo de Visualización'
     },
     positions: {
       left: 'Izquierda',
@@ -151,6 +152,10 @@ export const es: LocaleMessages = {
     helpTexts: {
       formatter: 'Usar marcadores: {a} nombre de serie, {b} nombre de datos, {c} valor de datos, {d} porcentaje. Ejemplo: \'{b}: {c} ({d}%)}}\'',
       languageChange: 'Cambia el idioma para todos los elementos de la interfaz en la configuración del gráfico'
+    },
+    toolboxStyles: {
+      menu: 'Menú',
+      toolbar: 'Barra de herramientas'
     }
   },
   chart: {

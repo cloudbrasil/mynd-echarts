@@ -144,6 +144,15 @@
                 ]"
                 @change="updateOptions"
               />
+              <BaseSelect
+                v-model="toolboxDisplayStyle"
+                :label="t('configDialog.fields.displayStyle')"
+                :options="[
+                  { label: t('configDialog.toolboxStyles.menu'), value: 'menu' },
+                  { label: t('configDialog.toolboxStyles.toolbar'), value: 'toolbar' }
+                ]"
+                @change="updateOptions"
+              />
               <BaseInput
                 v-model="localOptions.toolbox.itemSize"
                 type="number"
@@ -745,6 +754,14 @@ const backgroundColor = computed({
 })
 
 // Toolbox computed properties
+const toolboxDisplayStyle = computed({
+  get: () => localOptions.toolbox?.displayStyle ?? 'menu',
+  set: (value) => {
+    if (!localOptions.toolbox) localOptions.toolbox = {}
+    localOptions.toolbox.displayStyle = value
+  }
+})
+
 const toolboxSaveAsImageShow = computed({
   get: () => localOptions.toolbox?.feature?.saveAsImage?.show ?? true,
   set: (value) => {

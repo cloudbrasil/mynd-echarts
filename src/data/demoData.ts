@@ -35,6 +35,7 @@ export const showcaseCharts: ChartDemo[] = [
         feature: {
           saveAsImage: { show: true },
           restore: { show: true },
+          dataView: { show: true },
           dataZoom: { show: true },
           magicType: { show: true, type: ['line', 'bar'] }
         }

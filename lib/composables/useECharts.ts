@@ -122,6 +122,8 @@ export function useECharts(
     const el = unref(elRef)
     if (!el || !chartInstance.value) return
 
+    let isFirstResize = true
+    
     // Create debounced resize handler
     resizeHandler = debounce(() => {
       if (chartInstance.value && !chartInstance.value.isDisposed()) {
@@ -131,7 +133,15 @@ export function useECharts(
 
     // Use ResizeObserver for better performance
     if (typeof ResizeObserver !== 'undefined') {
-      resizeObserver = new ResizeObserver(resizeHandler)
+      resizeObserver = new ResizeObserver((entries) => {
+        // Skip the first resize which happens immediately when observer is attached
+        if (isFirstResize) {
+          isFirstResize = false
+          return
+        }
+        // Call the debounced resize handler
+        resizeHandler()
+      })
       resizeObserver.observe(el)
     } else {
       // Fallback to window resize event
@@ -152,11 +162,8 @@ export function useECharts(
         chartInstance.value.setOption(options, opts)
       } catch (error) {
         console.warn('[mynd-echarts] Error setting options:', error)
-        // If there's an error, try to clear and reset
-        if (chartInstance.value) {
-          chartInstance.value.clear()
-          chartInstance.value.setOption(options, { notMerge: true })
-        }
+        // Don't try to recover automatically as it might cause more issues
+        // Let the caller handle the error appropriately
       }
     }
   }

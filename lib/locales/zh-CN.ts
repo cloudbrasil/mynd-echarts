@@ -86,7 +86,8 @@ export const zhCN: LocaleMessages = {
       selectLanguage: '选择语言',
       
       // General
-      enable: '启用'
+      enable: '启用',
+      displayStyle: '显示样式'
     },
     positions: {
       left: '左',
@@ -151,6 +152,10 @@ export const zhCN: LocaleMessages = {
     helpTexts: {
       formatter: '使用占位符：{a} 系列名称，{b} 数据名称，{c} 数据值，{d} 百分比。示例：\'{b}: {c} ({d}%)\'',
       languageChange: '更改图表配置中所有UI元素的语言'
+    },
+    toolboxStyles: {
+      menu: '菜单',
+      toolbar: '工具栏'
     }
   },
   chart: {

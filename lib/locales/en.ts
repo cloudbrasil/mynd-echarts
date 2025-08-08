@@ -86,7 +86,8 @@ export const en: LocaleMessages = {
       selectLanguage: 'Select Language',
       
       // General
-      enable: 'Enable'
+      enable: 'Enable',
+      displayStyle: 'Display Style'
     },
     positions: {
       left: 'Left',
@@ -151,6 +152,10 @@ export const en: LocaleMessages = {
     helpTexts: {
       formatter: 'Use placeholders: {a} series name, {b} data name, {c} data value, {d} percentage. Example: \'{b}: {c} ({d}%)}\'',
       languageChange: 'Changes the language for all UI elements in the chart configuration'
+    },
+    toolboxStyles: {
+      menu: 'Menu',
+      toolbar: 'Toolbar'
     }
   },
   chart: {
