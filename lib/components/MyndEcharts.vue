@@ -426,7 +426,7 @@ const initOptionsWithDefaults = computed(() => ({
   ...props.initOptions
 }))
 
-const { chartInstance, setOption, resize, dispose, clear, getOption } = useECharts(chartRef, {
+const { chartInstance, setOption: rawSetOption, resize, dispose, clear, getOption } = useECharts(chartRef, {
   theme: computed(() => props.theme),
   locale: computed(() => props.locale),
   renderer: props.renderer,
@@ -587,6 +587,12 @@ const processChartOptions = (options: EChartsOption): EChartsOption => {
   return processedOpts
 }
 
+// Wrapped setOption that always processes options
+const setOption = (options: EChartsOption, opts?: any) => {
+  const processed = processChartOptions(options)
+  rawSetOption(processed, opts)
+}
+
 // Set up observers for resize and DOM changes
 const setupObservers = () => {
   if (!chartRef.value || !chartInstance.value) return
@@ -743,8 +749,7 @@ const handleToolboxAction = (action: string) => {
     case 'restore':
       // Restore to original options
       if (props.options) {
-        const processed = processChartOptions(props.options)
-        setOption(processed, {
+        setOption(props.options, {
           notMerge: true,
           lazyUpdate: false
         })
@@ -762,16 +767,18 @@ const handleToolboxAction = (action: string) => {
       const hasDataZoom = currentOpts.dataZoom && currentOpts.dataZoom.length > 0
       
       if (!hasDataZoom) {
-        chartInstance.value.setOption({
+        setOption({
+          ...currentOpts,
           dataZoom: [
             { type: 'slider', start: 0, end: 100 },
             { type: 'inside', start: 0, end: 100 }
           ]
-        })
+        }, { notMerge: true })
       } else {
-        chartInstance.value.setOption({
+        setOption({
+          ...currentOpts,
           dataZoom: []
-        })
+        }, { notMerge: true })
       }
       break
       
@@ -796,9 +803,10 @@ const handleToolboxAction = (action: string) => {
           type: newType
         }))
         
-        chartInstance.value.setOption({
+        setOption({
+          ...opts,
           series: newSeries
-        })
+        }, { notMerge: true })
       }
       break
       
@@ -808,16 +816,18 @@ const handleToolboxAction = (action: string) => {
       const hasBrush = brushOpts.brush && brushOpts.brush.length > 0
       
       if (!hasBrush) {
-        chartInstance.value.setOption({
+        setOption({
+          ...brushOpts,
           brush: {
             toolbox: ['rect', 'polygon', 'lineX', 'lineY', 'keep', 'clear'],
             xAxisIndex: 0
           }
-        })
+        }, { notMerge: true })
       } else {
-        chartInstance.value.setOption({
+        setOption({
+          ...brushOpts,
           brush: {}
-        })
+        }, { notMerge: true })
       }
       break
   }
@@ -828,14 +838,11 @@ watch(
   () => props.options,
   async (newOptions) => {
     if (newOptions) {
-      // Process options to ensure JSON serialization and apply toolbox fixes
-      const processed = processChartOptions(newOptions)
-      
-      // Update currentOptions with processed version
-      currentOptions.value = processed
+      // Update currentOptions (setOption will process them)
+      currentOptions.value = newOptions
       
       if (chartInstance.value) {
-        setOption(processed, {
+        setOption(newOptions, {
           notMerge: props.notMerge,
           lazyUpdate: props.lazyUpdate,
           silent: props.silent
@@ -885,8 +892,7 @@ watch(chartInstance, (newInstance, oldInstance) => {
 // Initialize chart on mount
 onMounted(async () => {
   if (props.options) {
-    const processed = processChartOptions(props.options)
-    setOption(processed, {
+    setOption(props.options, {
       notMerge: props.notMerge,
       lazyUpdate: props.lazyUpdate,
       silent: props.silent
@@ -912,12 +918,6 @@ const resizeWithFix = async (opts?: Parameters<ECharts['resize']>[0]) => {
   await nextTick()
 }
 
-// Override setOption to include processing
-const setOptionWithFix = async (options: EChartsOption, opts?: any) => {
-  const processed = processChartOptions(options)
-  setOption(processed, opts)
-  await nextTick()
-}
 
 // Manually refresh toolbox by directly manipulating DOM
 const refreshToolbox = () => {
@@ -1019,7 +1019,7 @@ const disposeWithCleanup = () => {
 // Expose chart methods for external use
 defineExpose({
   chartInstance,
-  setOption: setOptionWithFix,
+  setOption,
   getOption,
   resize: resizeWithFix,
   dispose: disposeWithCleanup,
