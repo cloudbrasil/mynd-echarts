@@ -42,8 +42,9 @@ const fillStyle = computed(() => {
   return { left: `${left}%`, width: `${right - left}%` }
 })
 
-const startStyle = computed(() => ({ left: `${startLocal.value}%` }))
-const endStyle = computed(() => ({ left: `${endLocal.value}%` }))
+const activeHandleZ = ref<number>(4)
+const startStyle = computed(() => ({ left: `${startLocal.value}%`, zIndex: dragging === 'start' ? 5 : activeHandleZ.value }))
+const endStyle = computed(() => ({ left: `${endLocal.value}%`, zIndex: dragging === 'end' ? 5 : activeHandleZ.value }))
 
 const scheduleEmit = () => {
   if (emitTimer) window.clearTimeout(emitTimer)
@@ -51,6 +52,7 @@ const scheduleEmit = () => {
 }
 
 const TRACK_PADDING = 10 // px, must match CSS padding
+const VISUAL_OFFSET_PCT = 2
 const percentFromEvent = (evt: MouseEvent | TouchEvent) => {
   const track = trackEl.value
   if (!track) return null
@@ -62,10 +64,12 @@ const percentFromEvent = (evt: MouseEvent | TouchEvent) => {
   else clientX = (evt as MouseEvent).clientX
   const x = Math.max(innerLeft, Math.min(innerRight, clientX))
   const pct = ((x - innerLeft) / (innerRight - innerLeft)) * 100
-  return Math.max(0, Math.min(100, pct))
+  const mapped = (pct / 100) * (100 - 2 * VISUAL_OFFSET_PCT) + VISUAL_OFFSET_PCT
+  return Math.max(0, Math.min(100, mapped))
 }
 
 const beginDrag = (which: 'start' | 'end', evt: MouseEvent | TouchEvent) => {
+  activeHandleZ.value = 4
   dragging = which
   const move = (e: MouseEvent | TouchEvent) => {
     const pct = percentFromEvent(e)
@@ -199,11 +203,12 @@ onBeforeUnmount(() => {
 .zb-end { transform: translateX(-50%); }
 
 
-:root.dark .zoombar-track { border-color: #374151; background: #111827; }
-:root.dark .zoombar-spark { opacity: 0.5; }
-:root.dark .zoombar-fill { background: rgba(84,112,198,0.3); border-color: rgba(84,112,198,0.75); }
-:root.dark .zb-handle { background: #1f2937; border-color: #4b5563; box-shadow: 0 1px 2px rgba(0,0,0,0.6); }
-:root.dark .zb-handle::before { background: #94a3b8; box-shadow: -4px 0 0 #94a3b8, 4px 0 0 #94a3b8; }
+/* Dark mode support (scoped) */
+.dark & .zoombar-track { border-color: #374151; background: #111827; }
+.dark & .zoombar-spark { opacity: 0.5; }
+.dark & .zoombar-fill { background: rgba(84,112,198,0.3); border-color: rgba(84,112,198,0.75); }
+.dark & .zb-handle { background: #1f2937; border-color: #4b5563; box-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+.dark & .zb-handle::before { background: #94a3b8; box-shadow: -4px 0 0 #94a3b8, 4px 0 0 #94a3b8; }
 
 /* Larger touch targets on coarse pointers (mobile) */
 @media (pointer: coarse) {

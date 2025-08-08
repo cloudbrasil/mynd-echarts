@@ -482,57 +482,57 @@ const close = () => {
 }
 
 /* Dark mode support */
-:root.dark .dataview-dialog {
+.dark & .dataview-dialog {
   background: #1a202c;
 }
 
-:root.dark .dataview-header {
+.dark & .dataview-header {
   border-bottom-color: #2d3748;
 }
 
-:root.dark .dataview-header h2 {
+.dark & .dataview-header h2 {
   color: #f7fafc;
 }
 
-:root.dark .dataview-close {
+.dark & .dataview-close {
   color: #a0aec0;
 }
 
-:root.dark .dataview-close:hover {
+.dark & .dataview-close:hover {
   background: #2d3748;
   color: #f7fafc;
 }
 
-:root.dark .dataview-table-wrapper {
+.dark & .dataview-table-wrapper {
   border-color: #2d3748;
 }
 
-:root.dark .dataview-table th {
+.dark & .dataview-table th {
   background: #2d3748;
   color: #f7fafc;
   border-bottom-color: #4a5568;
 }
 
-:root.dark .dataview-table td {
+.dark & .dataview-table td {
   color: #e2e8f0;
   border-bottom-color: #2d3748;
 }
 
-:root.dark .dataview-table tbody tr:hover {
+.dark & .dataview-table tbody tr:hover {
   background: #2d3748;
 }
 
-:root.dark .dataview-footer {
+.dark & .dataview-footer {
   border-top-color: #2d3748;
 }
 
-:root.dark .dataview-btn {
+.dark & .dataview-btn {
   background: #2d3748;
   color: #e2e8f0;
   border-color: #4a5568;
 }
 
-:root.dark .dataview-btn:hover:not(:disabled) {
+.dark & .dataview-btn:hover:not(:disabled) {
   background: #4a5568;
   border-color: #718096;
 }

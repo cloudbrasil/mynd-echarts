@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-toolbox" :class="[`toolbox-${displayStyle}`, { 'toolbox-open': isMenuOpen }]">
+  <div class="chart-toolbox" :class="[`toolbox-${displayStyle}`, { 'toolbox-open': isMenuOpen }]" @mousedown.stop @touchstart.stop>
     <!-- Toolbar Style -->
     <div v-if="displayStyle === 'toolbar'" class="toolbox-toolbar">
       <button
@@ -82,6 +82,7 @@ const allTools = computed(() => [
     icon: 'download',
     title: t('saveAsImage'),
     supportedTypes: ['line', 'bar', 'pie', 'scatter', 'radar', 'heatmap', 'tree', 'graph', 'gauge', 'funnel', 'sankey', 'treemap', 'sunburst', 'parallel', 'themeRiver'],
+    disabled: false,
     action: () => {
       if (props.chartInstance && !props.chartInstance.isDisposed()) {
         // Use configuration from toolbox if available
@@ -103,6 +104,7 @@ const allTools = computed(() => [
     icon: 'refresh',
     title: t('restore'),
     supportedTypes: ['line', 'bar', 'pie', 'scatter', 'radar', 'heatmap', 'tree', 'graph', 'gauge', 'funnel', 'sankey', 'treemap', 'sunburst', 'parallel', 'themeRiver'],
+    disabled: false,
     action: () => {
       emit('action', 'restore')
     }
@@ -112,6 +114,7 @@ const allTools = computed(() => [
     icon: 'table_chart',
     title: t('dataView'),
     supportedTypes: ['line', 'bar', 'area', 'pie', 'scatter', 'radar', 'heatmap', 'gauge', 'funnel', 'sankey'],
+    disabled: false,
     action: () => {
       emit('action', 'dataView')
     }
@@ -121,6 +124,7 @@ const allTools = computed(() => [
     icon: 'zoom_in',
     title: t('dataZoom'),
     supportedTypes: ['line', 'bar', 'area', 'scatter', 'candlestick', 'boxplot'],
+    disabled: false,
     action: () => emit('action', 'dataZoom')
   },
   {
@@ -128,6 +132,7 @@ const allTools = computed(() => [
     icon: 'auto_fix_high',
     title: t('magicType'),
     supportedTypes: ['line', 'bar', 'area'],
+    disabled: false,
     action: () => {
       emit('action', 'magicType')
     }
@@ -137,6 +142,7 @@ const allTools = computed(() => [
     icon: 'brush',
     title: t('brush'),
     supportedTypes: ['line', 'bar', 'scatter', 'parallel'],
+    disabled: false,
     action: () => {
       emit('action', 'brush')
     }
@@ -230,11 +236,11 @@ const handleClickOutside = (event: MouseEvent) => {
 
 // Setup click outside listener
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
+  document.addEventListener('click', handleClickOutside, { capture: true })
 })
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
+  document.removeEventListener('click', handleClickOutside, { capture: true } as any)
 })
 </script>
 
@@ -384,39 +390,39 @@ onUnmounted(() => {
   flex: 1;
 }
 
-/* Dark mode support */
-:root.dark .toolbox-btn {
+/* Dark mode support (scoped) */
+.dark & .toolbox-btn {
   color: #a0aec0;
 }
 
-:root.dark .toolbox-btn:hover:not(:disabled) {
+.dark & .toolbox-btn:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.1);
   color: #e2e8f0;
 }
 
-:root.dark .toolbox-menu-trigger {
+.dark & .toolbox-menu-trigger {
   color: #a0aec0;
 }
 
-:root.dark .toolbox-menu-trigger:hover {
+.dark & .toolbox-menu-trigger:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #e2e8f0;
 }
 
-:root.dark .toolbox-menu-dropdown {
+.dark & .toolbox-menu-dropdown {
   background: #1a202c;
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-:root.dark .toolbox-menu-item {
+.dark & .toolbox-menu-item {
   color: #e2e8f0;
 }
 
-:root.dark .toolbox-menu-item:hover:not(:disabled) {
+.dark & .toolbox-menu-item:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.1);
 }
 
-:root.dark .toolbox-menu-item .material-icons {
+.dark & .toolbox-menu-item .material-icons {
   color: #a0aec0;
 }
 </style>

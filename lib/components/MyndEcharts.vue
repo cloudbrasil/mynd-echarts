@@ -38,7 +38,7 @@
     </div>
     
     <!-- Chart Container -->
-    <div class="mynd-echarts-container">
+    <div class="mynd-echarts-container" @mousedown.stop @touchstart.stop>
       <div ref="chartRef" class="mynd-echarts-chart" :style="computedStyle" :class="computedClass"></div>
     </div>
     <!-- Zoom bar under the chart -->
@@ -453,7 +453,7 @@ const { chartInstance, setOption: rawSetOption, resize, dispose, clear, getOptio
     if (props.options) {
       const processed = processChartOptions(props.options)
       instance.setOption(processed, {
-        notMerge: props.notMerge,
+        notMerge: true,
         lazyUpdate: props.lazyUpdate,
         silent: props.silent
       })
@@ -603,6 +603,59 @@ const processChartOptions = (options: EChartsOption): EChartsOption => {
 
   // Remove native toolbox since we handle it in custom header
   delete processedOpts.toolbox
+  
+  // Ensure a valid coordinate system exists for common cartesian series
+  try {
+    const seriesOpt = processedOpts.series
+    const seriesArr = Array.isArray(seriesOpt) ? seriesOpt : (seriesOpt ? [seriesOpt] : [])
+    const needsCartesian = seriesArr.some((s: any) => s && ['line', 'bar', 'scatter', 'candlestick', 'effectScatter'].includes(s.type))
+    const hasAnyCoordSys = !!(processedOpts.xAxis || processedOpts.yAxis || processedOpts.polar || processedOpts.singleAxis || processedOpts.radar || processedOpts.geo || processedOpts.parallel)
+    if (needsCartesian && !(processedOpts.xAxis || processedOpts.yAxis)) {
+      // Add minimal default axes to prevent coordSys being undefined
+      if (!processedOpts.xAxis) processedOpts.xAxis = { type: 'category' }
+      if (!processedOpts.yAxis) processedOpts.yAxis = { type: 'value' }
+    }
+    
+    // Normalize axes shape to arrays when indexes are used
+    const normalizeAxis = (axis: any) => Array.isArray(axis) ? axis : (axis ? [axis] : [])
+    const xAxes = normalizeAxis(processedOpts.xAxis)
+    const yAxes = normalizeAxis(processedOpts.yAxis)
+
+    const clampIndex = (idx: any, max: number) => {
+      const n = typeof idx === 'number' ? idx : 0
+      return n >= 0 && n < max ? n : 0
+    }
+
+    processedOpts.series = seriesArr.map((s: any) => {
+      if (!s) return s
+      if (['line', 'bar', 'scatter', 'candlestick', 'effectScatter'].includes(s.type)) {
+        // Default to cartesian when unspecified
+        if (!s.coordinateSystem && !processedOpts.polar && !processedOpts.singleAxis) {
+          s = { coordinateSystem: 'cartesian2d', ...s }
+        }
+        // Ensure a grid exists for cartesian charts
+        if (!processedOpts.grid) {
+          processedOpts.grid = {}
+        }
+        // Ensure valid axis indexes
+        if (xAxes.length) {
+          const xi = clampIndex((s as any).xAxisIndex, xAxes.length)
+          if ((s as any).xAxisIndex !== undefined && xi !== (s as any).xAxisIndex) {
+            s = { ...s, xAxisIndex: xi }
+          }
+        }
+        if (yAxes.length) {
+          const yi = clampIndex((s as any).yAxisIndex, yAxes.length)
+          if ((s as any).yAxisIndex !== undefined && yi !== (s as any).yAxisIndex) {
+            s = { ...s, yAxisIndex: yi }
+          }
+        }
+      }
+      return s
+    })
+    // Preserve original shape (array vs object)
+    if (!Array.isArray(seriesOpt)) processedOpts.series = processedOpts.series[0]
+  } catch {}
   
   // Don't remove dataZoom if it's already configured in the options
   // We'll only add/remove it when user clicks the zoom button
@@ -829,18 +882,21 @@ const handleToolboxAction = (action: string, payload?: any) => {
         zoomEnd.value = endPct
         const newXAxis = { ...(xAxisOpt || {}), data: categories.slice(startIdx, endIdx + 1) }
         const seriesOpt = base.series
-        const seriesArr = Array.isArray(seriesOpt) ? seriesOpt : (seriesOpt ? [seriesOpt] : [])
+        const seriesArr = (Array.isArray(seriesOpt) ? seriesOpt : (seriesOpt ? [seriesOpt] : [])).filter(Boolean)
+        if (!seriesArr.length) break
         const newSeries = seriesArr.map((s: any) => {
-          const sData = s?.data
+          if (!s || !s.type) return s
+          const sData = s.data
           if (Array.isArray(sData) && sData.length === total) {
             return { ...s, data: sData.slice(startIdx, endIdx + 1) }
           }
-          return s
+          return { ...s }
         })
         const newOptions: any = { ...base }
         if (Array.isArray(base.xAxis)) newOptions.xAxis = [newXAxis]
         else newOptions.xAxis = newXAxis
-        newOptions.series = newSeries
+        // Preserve original shape (array vs object)
+        newOptions.series = Array.isArray(seriesOpt) ? newSeries : newSeries[0]
         rawSetOption(newOptions, { notMerge: true, lazyUpdate: false, silent: false })
       } catch (e) {
         console.warn('[MyndEcharts] Failed to apply custom zoom window:', e)
@@ -924,7 +980,7 @@ watch(
       // Set options if chart instance exists
       if (chartInstance.value && !chartInstance.value.isDisposed()) {
         setOption(newOptions, {
-          notMerge: props.notMerge,
+          notMerge: true,
           lazyUpdate: props.lazyUpdate,
           silent: props.silent
         })
@@ -1125,9 +1181,7 @@ defineExpose({
 })
 </script>
 
-<style>
-/* Import toolbox fixes for proper icon display */
-@import '../styles/echarts-toolbox.css';
+<style scoped>
 
 /* Wrapper to isolate chart from external CSS */
 .mynd-echarts-wrapper {
@@ -1183,16 +1237,12 @@ a.mynd-echarts-title:hover {
   text-decoration: underline;
 }
 
-/* Dark mode title color */
-:root.dark .mynd-echarts-title,
-html.dark .mynd-echarts-title,
-.dark .mynd-echarts-title {
+/* Dark mode title color (scoped) */
+.dark & .mynd-echarts-title {
   color: #e2e8f0;
 }
 
-:root.dark a.mynd-echarts-title:hover,
-html.dark a.mynd-echarts-title:hover,
-.dark a.mynd-echarts-title:hover {
+.dark & a.mynd-echarts-title:hover {
   color: #91d5ff;
 }
 
@@ -1217,16 +1267,12 @@ a.mynd-echarts-subtitle:hover {
   text-decoration: underline;
 }
 
-/* Dark mode subtitle color */
-:root.dark .mynd-echarts-subtitle,
-html.dark .mynd-echarts-subtitle,
-.dark .mynd-echarts-subtitle {
+/* Dark mode subtitle color (scoped) */
+.dark & .mynd-echarts-subtitle {
   color: #a0aec0;
 }
 
-:root.dark a.mynd-echarts-subtitle:hover,
-html.dark a.mynd-echarts-subtitle:hover,
-.dark a.mynd-echarts-subtitle:hover {
+.dark & a.mynd-echarts-subtitle:hover {
   color: #91d5ff;
 }
 

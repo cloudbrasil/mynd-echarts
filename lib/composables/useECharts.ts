@@ -20,7 +20,13 @@ import {
   DatasetComponent,
   TransformComponent,
   AxisPointerComponent,
-  BrushComponent
+  BrushComponent,
+  // Optional extra components you might enable later
+  // PolarComponent,
+  // SingleAxisComponent,
+  // GraphicComponent,
+  // TimelineComponent,
+  // VisualMapComponent
 } from 'echarts/components'
 // ECharts 5 axis components
 import {
