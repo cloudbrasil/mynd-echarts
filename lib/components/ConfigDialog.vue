@@ -1,27 +1,27 @@
 <template>
   <Teleport to="body">
-    <div v-if="isOpen" class="config-dialog-overlay" @click="handleOverlayClick">
-      <div class="config-dialog" @click.stop>
-        <div class="config-header">
+    <div v-if="isOpen" class="mynd-echarts-config-dialog-overlay" @click="handleOverlayClick">
+      <div class="mynd-echarts-config-dialog" @click.stop>
+        <div class="mynd-echarts-config-header">
           <h2>{{ t('configDialog.title') }}</h2>
-          <button class="close-btn" @click="close" :title="t('configDialog.buttons.close')">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+          <button class="mynd-echarts-close-btn" @click="close" :title="t('configDialog.buttons.close')">
+            <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
               <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
             </svg>
           </button>
         </div>
         
-        <div class="config-content">
+        <div class="mynd-echarts-config-content">
           <!-- Title Section -->
-          <div class="accordion-section">
-            <button class="accordion-header" @click="toggleSection('title')" :class="{ active: expandedSections.title }">
-              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+          <div class="mynd-echarts-accordion-section">
+            <button class="mynd-echarts-accordion-header" @click="toggleSection('title')" :class="{ active: expandedSections.title }">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.title" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.title') }}</span>
             </button>
-            <div v-if="expandedSections.title" class="accordion-content">
+            <div v-if="expandedSections.title" class="mynd-echarts-accordion-content">
               <BaseInput
                 v-model="localOptions.title.text"
                 :label="t('configDialog.fields.titleText')"
@@ -44,9 +44,9 @@
                 ]"
                 @change="updateOptions"
               />
-              <div class="form-group color-group">
-                <label class="color-label">{{ t('configDialog.fields.textStyleColor') }}</label>
-                <input type="color" v-model="titleTextColor" @input="updateOptions" class="color-picker">
+              <div class="mynd-echarts-form-group mynd-echarts-color-group">
+                <label class="mynd-echarts-color-label">{{ t('configDialog.fields.textStyleColor') }}</label>
+                <input type="color" v-model="titleTextColor" @input="updateOptions" class="mynd-echarts-color-picker">
               </div>
               <BaseInput
                 v-model="titleFontSize"
@@ -55,21 +55,21 @@
                 :min="10"
                 :max="48"
                 @input="updateOptions"
-                input-class="font-size-input"
+                input-class="mynd-echarts-font-size-input"
               />
             </div>
           </div>
 
           <!-- Legend Section -->
-          <div class="accordion-section">
-            <button class="accordion-header" @click="toggleSection('legend')" :class="{ active: expandedSections.legend }">
-              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+          <div class="mynd-echarts-accordion-section">
+            <button class="mynd-echarts-accordion-header" @click="toggleSection('legend')" :class="{ active: expandedSections.legend }">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.legend" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.legend') }}</span>
             </button>
-            <div v-if="expandedSections.legend" class="accordion-content">
+            <div v-if="expandedSections.legend" class="mynd-echarts-accordion-content">
               <BaseCheckbox
                 v-model="localOptions.legend.show"
                 :label="t('configDialog.fields.showLegend')"
@@ -98,15 +98,15 @@
           </div>
 
           <!-- Tooltip Section -->
-          <div class="accordion-section">
-            <button class="accordion-header" @click="toggleSection('tooltip')" :class="{ active: expandedSections.tooltip }">
-              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+          <div class="mynd-echarts-accordion-section">
+            <button class="mynd-echarts-accordion-header" @click="toggleSection('tooltip')" :class="{ active: expandedSections.tooltip }">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.tooltip" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.tooltip') }}</span>
             </button>
-            <div v-if="expandedSections.tooltip" class="accordion-content">
+            <div v-if="expandedSections.tooltip" class="mynd-echarts-accordion-content">
               <BaseCheckbox
                 v-model="localOptions.tooltip.show"
                 :label="t('configDialog.fields.showTooltip')"
@@ -135,15 +135,15 @@
           </div>
 
           <!-- Toolbox Section -->
-          <div class="accordion-section">
-            <button class="accordion-header" @click="toggleSection('toolbox')" :class="{ active: expandedSections.toolbox }">
-              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+          <div class="mynd-echarts-accordion-section">
+            <button class="mynd-echarts-accordion-header" @click="toggleSection('toolbox')" :class="{ active: expandedSections.toolbox }">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.toolbox" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.toolbox') }}</span>
             </button>
-            <div v-if="expandedSections.toolbox" class="accordion-content">
+            <div v-if="expandedSections.toolbox" class="mynd-echarts-accordion-content">
               <BaseCheckbox
                 v-model="localOptions.toolbox.show"
                 :label="t('configDialog.fields.showToolbox')"
@@ -189,12 +189,12 @@
                 @change="updateOptions"
               />
               
-              <div class="feature-section">
-                <h4 class="section-subtitle">{{ t('configDialog.fields.features') }}</h4>
+              <div class="mynd-echarts-feature-section">
+                <h4 class="mynd-echarts-section-subtitle">{{ t('configDialog.fields.features') }}</h4>
                 
                 <!-- Save as Image -->
-                <div class="feature-group">
-                  <h5 class="feature-title">{{ t('configDialog.features.saveAsImage') }}</h5>
+                <div class="mynd-echarts-feature-group">
+                  <h5 class="mynd-echarts-feature-title">{{ t('configDialog.features.saveAsImage') }}</h5>
                   <BaseCheckbox
                     v-model="toolboxSaveAsImageShow"
                     :label="t('configDialog.fields.enable')"
@@ -219,8 +219,8 @@
                 </div>
                 
                 <!-- Restore -->
-                <div class="feature-group">
-                  <h5 class="feature-title">{{ t('configDialog.features.restore') }}</h5>
+                <div class="mynd-echarts-feature-group">
+                  <h5 class="mynd-echarts-feature-title">{{ t('configDialog.features.restore') }}</h5>
                   <BaseCheckbox
                     v-model="toolboxRestoreShow"
                     :label="t('configDialog.fields.enable')"
@@ -229,8 +229,8 @@
                 </div>
                 
                 <!-- Data View -->
-                <div class="feature-group">
-                  <h5 class="feature-title">{{ t('configDialog.features.dataView') }}</h5>
+                <div class="mynd-echarts-feature-group">
+                  <h5 class="mynd-echarts-feature-title">{{ t('configDialog.features.dataView') }}</h5>
                   <BaseCheckbox
                     v-model="toolboxDataViewShow"
                     :label="t('configDialog.fields.enable')"
@@ -244,8 +244,8 @@
                 </div>
                 
                 <!-- Data Zoom -->
-                <div class="feature-group">
-                  <h5 class="feature-title">{{ t('configDialog.features.dataZoom') }}</h5>
+                <div class="mynd-echarts-feature-group">
+                  <h5 class="mynd-echarts-feature-title">{{ t('configDialog.features.dataZoom') }}</h5>
                   <BaseCheckbox
                     v-model="toolboxDataZoomShow"
                     :label="t('configDialog.fields.enable')"
@@ -254,14 +254,14 @@
                 </div>
                 
                 <!-- Magic Type -->
-                <div class="feature-group">
-                  <h5 class="feature-title">{{ t('configDialog.features.magicType') }}</h5>
+                <div class="mynd-echarts-feature-group">
+                  <h5 class="mynd-echarts-feature-title">{{ t('configDialog.features.magicType') }}</h5>
                   <BaseCheckbox
                     v-model="toolboxMagicTypeShow"
                     :label="t('configDialog.fields.enable')"
                     @change="updateOptions"
                   />
-                  <div class="checkbox-group">
+                  <div class="mynd-echarts-checkbox-group">
                     <BaseCheckbox
                       v-model="toolboxMagicTypeLine"
                       :label="t('configDialog.chartTypes.line')"
@@ -289,15 +289,15 @@
           </div>
 
           <!-- Grid Section -->
-          <div class="accordion-section">
-            <button class="accordion-header" @click="toggleSection('grid')" :class="{ active: expandedSections.grid }">
-              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+          <div class="mynd-echarts-accordion-section">
+            <button class="mynd-echarts-accordion-header" @click="toggleSection('grid')" :class="{ active: expandedSections.grid }">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.grid" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.grid') }}</span>
             </button>
-            <div v-if="expandedSections.grid" class="accordion-content">
+            <div v-if="expandedSections.grid" class="mynd-echarts-accordion-content">
               <BaseInput
                 v-model="localOptions.grid.left"
                 :label="t('configDialog.fields.leftMargin')"
@@ -332,14 +332,14 @@
 
           <!-- X Axis Section -->
           <div class="accordion-section" v-if="hasAxis">
-            <button class="accordion-header" @click="toggleSection('xAxis')" :class="{ active: expandedSections.xAxis }">
-              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+            <button class="mynd-echarts-accordion-header" @click="toggleSection('xAxis')" :class="{ active: expandedSections.xAxis }">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.xAxis" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.xAxis') }}</span>
             </button>
-            <div v-if="expandedSections.xAxis" class="accordion-content">
+            <div v-if="expandedSections.xAxis" class="mynd-echarts-accordion-content">
               <BaseInput
                 v-model="localOptions.xAxis.name"
                 :label="t('configDialog.fields.name')"
@@ -372,14 +372,14 @@
 
           <!-- Y Axis Section -->
           <div class="accordion-section" v-if="hasAxis">
-            <button class="accordion-header" @click="toggleSection('yAxis')" :class="{ active: expandedSections.yAxis }">
-              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+            <button class="mynd-echarts-accordion-header" @click="toggleSection('yAxis')" :class="{ active: expandedSections.yAxis }">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.yAxis" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.yAxis') }}</span>
             </button>
-            <div v-if="expandedSections.yAxis" class="accordion-content">
+            <div v-if="expandedSections.yAxis" class="mynd-echarts-accordion-content">
               <BaseInput
                 v-model="localOptions.yAxis.name"
                 :label="t('configDialog.fields.name')"
@@ -411,51 +411,51 @@
           </div>
 
           <!-- Colors Section -->
-          <div class="accordion-section">
-            <button class="accordion-header" @click="toggleSection('colors')" :class="{ active: expandedSections.colors }">
-              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+          <div class="mynd-echarts-accordion-section">
+            <button class="mynd-echarts-accordion-header" @click="toggleSection('colors')" :class="{ active: expandedSections.colors }">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.colors" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.colors') }}</span>
             </button>
-            <div v-if="expandedSections.colors" class="accordion-content">
+            <div v-if="expandedSections.colors" class="mynd-echarts-accordion-content">
               <div>
-                <h4 class="section-subtitle">{{ t('configDialog.fields.colorPalette') }}</h4>
-                <div class="color-palette">
-                  <div v-for="(color, index) in colorPalette" :key="index" class="color-item">
-                    <input type="color" :value="color" @input="updateColor(index, $event)" @change="updateOptions" class="color-picker">
-                    <button @click="removeColor(index)" class="remove-color">
-                      <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+                <h4 class="mynd-echarts-section-subtitle">{{ t('configDialog.fields.colorPalette') }}</h4>
+                <div class="mynd-echarts-color-palette">
+                  <div v-for="(color, index) in colorPalette" :key="index" class="mynd-echarts-color-item">
+                    <input type="color" :value="color" @input="updateColor(index, $event)" @change="updateOptions" class="mynd-echarts-color-picker">
+                    <button @click="removeColor(index)" class="mynd-echarts-remove-color">
+                      <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                         <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                       </svg>
                     </button>
                   </div>
-                  <button @click="addColor" class="add-color">
-                    <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+                  <button @click="addColor" class="mynd-echarts-add-color">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                       <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
                     </svg>
                     {{ t('configDialog.buttons.addColor') }}
                   </button>
                 </div>
               </div>
-              <div class="form-group color-group">
-                <label class="color-label">{{ t('configDialog.fields.backgroundColor') }}</label>
-                <input type="color" v-model="backgroundColor" @input="updateOptions" class="color-picker">
+              <div class="mynd-echarts-form-group mynd-echarts-color-group">
+                <label class="mynd-echarts-color-label">{{ t('configDialog.fields.backgroundColor') }}</label>
+                <input type="color" v-model="backgroundColor" @input="updateOptions" class="mynd-echarts-color-picker">
               </div>
             </div>
           </div>
 
           <!-- Animation Section -->
-          <div class="accordion-section">
-            <button class="accordion-header" @click="toggleSection('animation')" :class="{ active: expandedSections.animation }">
-              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+          <div class="mynd-echarts-accordion-section">
+            <button class="mynd-echarts-accordion-header" @click="toggleSection('animation')" :class="{ active: expandedSections.animation }">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.animation" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.animation') }}</span>
             </button>
-            <div v-if="expandedSections.animation" class="accordion-content">
+            <div v-if="expandedSections.animation" class="mynd-echarts-accordion-content">
               <BaseCheckbox
                 v-model="localOptions.animation"
                 :label="t('configDialog.fields.enableAnimation')"
@@ -487,15 +487,15 @@
           </div>
 
           <!-- Language Section -->
-          <div class="accordion-section">
-            <button class="accordion-header" @click="toggleSection('language')" :class="{ active: expandedSections.language }">
-              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+          <div class="mynd-echarts-accordion-section">
+            <button class="mynd-echarts-accordion-header" @click="toggleSection('language')" :class="{ active: expandedSections.language }">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.language" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.language') }}</span>
             </button>
-            <div v-if="expandedSections.language" class="accordion-content">
+            <div v-if="expandedSections.language" class="mynd-echarts-accordion-content">
               <BaseSelect
                 v-model="currentLocale"
                 :label="t('configDialog.fields.selectLanguage')"
@@ -509,9 +509,9 @@
           </div>
         </div>
 
-        <div class="config-footer">
-          <button class="btn-secondary" @click="resetOptions">{{ t('configDialog.buttons.reset') }}</button>
-          <button class="btn-primary" @click="applyAndClose">{{ t('configDialog.buttons.apply') }}</button>
+        <div class="mynd-echarts-config-footer">
+          <button class="mynd-echarts-btn-secondary" @click="resetOptions">{{ t('configDialog.buttons.reset') }}</button>
+          <button class="mynd-echarts-btn-primary" @click="applyAndClose">{{ t('configDialog.buttons.apply') }}</button>
         </div>
       </div>
     </div>
@@ -1134,7 +1134,7 @@ const handleOverlayClick = (e: MouseEvent) => {
 </script>
 
 <style scoped>
-.config-dialog-overlay {
+.mynd-echarts-config-dialog-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -1147,7 +1147,7 @@ const handleOverlayClick = (e: MouseEvent) => {
   z-index: 1000;
 }
 
-.config-dialog {
+.mynd-echarts-config-dialog {
   background: var(--bg-primary, white);
   border-radius: 12px;
   width: 90%;
@@ -1158,7 +1158,7 @@ const handleOverlayClick = (e: MouseEvent) => {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
-.config-header {
+.mynd-echarts-config-header {
   padding: 1.5rem;
   border-bottom: 1px solid var(--border-color, #e2e8f0);
   display: flex;
@@ -1166,13 +1166,13 @@ const handleOverlayClick = (e: MouseEvent) => {
   align-items: center;
 }
 
-.config-header h2 {
+.mynd-echarts-config-header h2 {
   margin: 0;
   font-size: 1.5rem;
   color: var(--text-primary, #2c3e50);
 }
 
-.close-btn {
+.mynd-echarts-close-btn {
   background: none;
   border: none;
   cursor: pointer;
@@ -1181,24 +1181,24 @@ const handleOverlayClick = (e: MouseEvent) => {
   transition: color 0.2s;
 }
 
-.close-btn:hover {
+.mynd-echarts-close-btn:hover {
   color: var(--text-primary, #2c3e50);
 }
 
-.config-content {
+.mynd-echarts-config-content {
   flex: 1;
   overflow-y: auto;
   padding: 1.5rem;
 }
 
-.accordion-section {
+.mynd-echarts-accordion-section {
   margin-bottom: 1rem;
   border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 8px;
   overflow: hidden;
 }
 
-.accordion-header {
+.mynd-echarts-accordion-header {
   width: 100%;
   padding: 1rem;
   background: var(--bg-secondary, #f8f9fa);
@@ -1213,37 +1213,37 @@ const handleOverlayClick = (e: MouseEvent) => {
   transition: background-color 0.2s;
 }
 
-.accordion-header:hover {
+.mynd-echarts-accordion-header:hover {
   background: var(--bg-tertiary, #f5f6fa);
 }
 
-.accordion-header.active {
+.mynd-echarts-accordion-header.active {
   background: var(--bg-tertiary, #f5f6fa);
 }
 
-.accordion-content {
+.mynd-echarts-accordion-content {
   padding: 1rem;
   background: var(--bg-primary, white);
 }
 
 /* Spacing between form components */
-.accordion-content > * {
+.mynd-echarts-accordion-content > * {
   margin-bottom: 1.25rem;
 }
 
-.accordion-content > *:last-child {
+.mynd-echarts-accordion-content > *:last-child {
   margin-bottom: 0;
 }
 
 /* Special styles for color inputs */
-.color-group {
+.mynd-echarts-color-group {
   display: flex;
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.25rem;
 }
 
-.color-label {
+.mynd-echarts-color-label {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-secondary, #64748b);
@@ -1251,7 +1251,7 @@ const handleOverlayClick = (e: MouseEvent) => {
   flex-shrink: 0;
 }
 
-.color-picker {
+.mynd-echarts-color-picker {
   width: 3rem;
   height: 3rem;
   padding: 0.25rem;
@@ -1262,31 +1262,31 @@ const handleOverlayClick = (e: MouseEvent) => {
   transition: all 0.2s ease;
 }
 
-.color-picker:hover {
+.mynd-echarts-color-picker:hover {
   border-color: var(--border-hover, #cbd5e1);
 }
 
-.color-picker:focus {
+.mynd-echarts-color-picker:focus {
   outline: none;
   border-color: var(--primary, #3b82f6);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.color-picker::-webkit-color-swatch-wrapper {
+.mynd-echarts-color-picker::-webkit-color-swatch-wrapper {
   padding: 0;
 }
 
-.color-picker::-webkit-color-swatch {
+.mynd-echarts-color-picker::-webkit-color-swatch {
   border: none;
   border-radius: 0.25rem;
 }
 
 /* Font size input */
-:deep(.font-size-input) {
+:deep(.mynd-echarts-font-size-input) {
   width: 100px !important;
 }
 
-.section-subtitle {
+.mynd-echarts-section-subtitle {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-secondary, #64748b);
@@ -1294,25 +1294,25 @@ const handleOverlayClick = (e: MouseEvent) => {
   letter-spacing: 0.025em;
 }
 
-.feature-section {
+.mynd-echarts-feature-section {
   margin-top: 1.5rem;
 }
 
-.feature-group {
+.mynd-echarts-feature-group {
   background: var(--bg-secondary, #f8f9fa);
   border-radius: 0.5rem;
   padding: 1rem;
   margin-bottom: 1rem;
 }
 
-.feature-title {
+.mynd-echarts-feature-title {
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-primary, #1e293b);
   margin-bottom: 0.75rem;
 }
 
-.checkbox-group {
+.mynd-echarts-checkbox-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -1320,25 +1320,25 @@ const handleOverlayClick = (e: MouseEvent) => {
   margin-left: 1rem;
 }
 
-.color-palette {
+.mynd-echarts-color-palette {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
 }
 
-.color-item {
+.mynd-echarts-color-item {
   display: flex;
   align-items: center;
   gap: 0.25rem;
 }
 
-.color-item .color-picker {
+.mynd-echarts-color-item .mynd-echarts-color-picker {
   width: 2.5rem;
   height: 2.5rem;
 }
 
-.remove-color {
+.mynd-echarts-remove-color {
   background: none;
   border: none;
   cursor: pointer;
@@ -1347,11 +1347,11 @@ const handleOverlayClick = (e: MouseEvent) => {
   transition: color 0.2s;
 }
 
-.remove-color:hover {
+.mynd-echarts-remove-color:hover {
   color: #e53e3e;
 }
 
-.add-color {
+.mynd-echarts-add-color {
   display: flex;
   align-items: center;
   gap: 0.25rem;
@@ -1365,11 +1365,11 @@ const handleOverlayClick = (e: MouseEvent) => {
   transition: all 0.2s;
 }
 
-.add-color:hover {
+.mynd-echarts-add-color:hover {
   background: var(--bg-tertiary, #f5f6fa);
 }
 
-.config-footer {
+.mynd-echarts-config-footer {
   padding: 1.5rem;
   border-top: 1px solid var(--border-color, #e2e8f0);
   display: flex;
@@ -1377,8 +1377,8 @@ const handleOverlayClick = (e: MouseEvent) => {
   gap: 1rem;
 }
 
-.btn-primary,
-.btn-secondary {
+.mynd-echarts-btn-primary,
+.mynd-echarts-btn-secondary {
   padding: 0.5rem 1.5rem;
   border-radius: 4px;
   font-size: 0.875rem;
@@ -1387,42 +1387,42 @@ const handleOverlayClick = (e: MouseEvent) => {
   transition: all 0.2s;
 }
 
-.btn-primary {
+.mynd-echarts-btn-primary {
   background: #4299e1;
   color: white;
   border: none;
 }
 
-.btn-primary:hover {
+.mynd-echarts-btn-primary:hover {
   background: #3182ce;
 }
 
-.btn-secondary {
+.mynd-echarts-btn-secondary {
   background: var(--bg-secondary, #f8f9fa);
   color: var(--text-primary, #2c3e50);
   border: 1px solid var(--border-color, #e2e8f0);
 }
 
-.btn-secondary:hover {
+.mynd-echarts-btn-secondary:hover {
   background: var(--bg-tertiary, #f5f6fa);
 }
 
 /* Dark mode support */
-:global(.dark) .config-dialog {
+:global(.dark) .mynd-echarts-config-dialog {
   background: var(--bg-primary);
   color: var(--text-primary);
 }
 
-:global(.dark) .color-picker {
+:global(.dark) .mynd-echarts-color-picker {
   background-color: var(--bg-secondary, #1e293b);
   border-color: var(--border-color, #334155);
 }
 
-:global(.dark) .feature-group {
+:global(.dark) .mynd-echarts-feature-group {
   background: var(--bg-secondary, #1e293b);
 }
 
-.icon {
+.mynd-echarts-icon {
   width: 1.25rem;
   height: 1.25rem;
   display: inline-block;

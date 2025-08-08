@@ -15,8 +15,9 @@
       <div v-if="activeView === 'showcase'" class="showcase-view">
         <!-- MyndAgents CTA Section -->
         <div class="myndagents-cta">
-          <div class="cta-backdrop"></div>
-          <div class="cta-glow"></div>
+          <!-- Backdrop and glow removed - causing overlay issues -->
+          <!-- <div class="cta-backdrop"></div> -->
+          <!-- <div class="cta-glow"></div> -->
           <div class="cta-content">
             <div class="cta-left">
               <div class="cta-badge">
@@ -271,10 +272,6 @@
                 <span v-for="tag in example.tags" :key="tag" class="tag">{{ tag }}</span>
               </div>
               <div class="example-actions">
-                <button @click="viewCode(example)" class="action-btn">
-                  <span class="material-icons">code</span>
-                  View Code
-                </button>
                 <button @click="useInPlayground(example)" class="action-btn primary">
                   <span class="material-icons">science</span>
                   Try in Playground
@@ -338,28 +335,6 @@
       </div>
     </main>
 
-    <!-- Code Modal -->
-    <div v-if="showCodeModal" class="modal-overlay" @click="closeCodeModal">
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h3>{{ selectedExample?.name }} - Source Code</h3>
-          <button @click="closeCodeModal" class="modal-close">×</button>
-        </div>
-        <div class="modal-body">
-          <pre><code>{{ formatJson(selectedExample?.options) }}</code></pre>
-        </div>
-        <div class="modal-footer">
-          <button @click="copyExampleCode" class="action-btn">
-            <span class="material-icons">content_copy</span>
-            Copy Code
-          </button>
-          <button @click="useSelectedInPlayground" class="action-btn primary">
-            <span class="material-icons">science</span>
-            Use in Playground
-          </button>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -426,8 +401,6 @@ const editorError = ref('')
 const previewOptions = ref<EChartsOption | null>(null)
 const validOptions = ref(false)
 const previewKey = ref(0)
-const showCodeModal = ref(false)
-const selectedExample = ref<any>(null)
 const selectedDocSection = ref('getting-started')
 const selectedSubsection = ref<string | null>(null)
 const isMobileDrawerOpen = ref(false)
@@ -623,34 +596,10 @@ const handleOptionsUpdate = (newOptions: EChartsOption) => {
   }
 }
 
-const viewCode = (example: any) => {
-  selectedExample.value = example
-  showCodeModal.value = true
-}
-
-const closeCodeModal = () => {
-  showCodeModal.value = false
-}
-
-const copyExampleCode = async () => {
-  const code = JSON.stringify(selectedExample.value.options, null, 2)
-  try {
-    await navigator.clipboard.writeText(code)
-    toast.success('Copied to clipboard!')
-  } catch (err) {
-    toast.danger('Failed to copy to clipboard')
-  }
-}
-
 const useInPlayground = (example: any) => {
   editorContent.value = JSON.stringify(example.options, null, 2)
   activeView.value = 'playground'
   updatePreview()
-}
-
-const useSelectedInPlayground = () => {
-  useInPlayground(selectedExample.value)
-  closeCodeModal()
 }
 
 const formatJson = (obj: any) => {
@@ -835,7 +784,7 @@ onUnmounted(() => {
     rgba(99, 102, 241, 0.05) 0%, 
     rgba(168, 85, 247, 0.05) 50%, 
     rgba(236, 72, 153, 0.05) 100%);
-  backdrop-filter: blur(10px);
+  /* backdrop-filter removed - causing overlay issues in dark mode */
   animation: cardEntrance 0.8s cubic-bezier(0.23, 1, 0.320, 1);
 }
 
@@ -858,11 +807,25 @@ onUnmounted(() => {
     rgba(168, 85, 247, 0.08) 50%, 
     rgba(236, 72, 153, 0.1) 100%);
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.5s ease;
+  z-index: 0;
 }
 
 .myndagents-cta:hover .cta-backdrop {
   opacity: 1;
+  pointer-events: auto;
+}
+
+/* Ensure backdrop is hidden in dark mode when not hovered */
+:global(.dark) .cta-backdrop {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+:global(.dark) .myndagents-cta:hover .cta-backdrop {
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 .cta-glow {
@@ -1811,14 +1774,7 @@ html.dark .preview-tab:-ms-fullscreen .chart-preview-container {
   color: #e2e8f0 !important;
 }
 
-/* Ensure browser default black background is overridden */
-::backdrop {
-  background-color: #ffffff !important;
-}
-
-html.dark ::backdrop {
-  background-color: #1a202c !important;
-}
+/* Backdrop styles removed - no longer needed after removing modals */
 
 .fullscreen-toggle {
   background: #805ad5 !important;
@@ -1943,85 +1899,6 @@ html.dark ::backdrop {
 
 .action-btn.primary:hover {
   background: #3182ce;
-}
-
-/* Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 800px;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-}
-
-.modal-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #e9ecef;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h3 {
-  margin: 0;
-  font-size: 1.25rem;
-  color: #2d3748;
-}
-
-.modal-close {
-  width: 32px;
-  height: 32px;
-  border: none;
-  background: transparent;
-  font-size: 1.5rem;
-  color: #718096;
-  cursor: pointer;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-close:hover {
-  background: #f7fafc;
-}
-
-.modal-body {
-  flex: 1;
-  overflow: auto;
-  padding: 1.5rem;
-}
-
-.modal-body pre {
-  margin: 0;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #2d3748;
-}
-
-.modal-footer {
-  padding: 1.5rem;
-  border-top: 1px solid #e9ecef;
-  display: flex;
-  gap: 0.75rem;
-  justify-content: flex-end;
 }
 
 /* Responsive */

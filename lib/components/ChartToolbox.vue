@@ -1,39 +1,39 @@
 <template>
-  <div class="chart-toolbox" :class="[`toolbox-${displayStyle}`, { 'toolbox-open': isMenuOpen }]" @mousedown.stop @touchstart.stop>
+  <div class="mynd-echarts-toolbox" :class="[`toolbox-${displayStyle}`, { 'mynd-echarts-toolbox-open': isMenuOpen }]" @mousedown.stop @touchstart.stop>
     <!-- Toolbar Style -->
-    <div v-if="displayStyle === 'toolbar'" class="toolbox-toolbar">
+    <div v-if="displayStyle === 'toolbar'" class="mynd-echarts-toolbox-toolbar">
       <button
         v-for="tool in availableTools"
         :key="tool.key"
         @click="handleToolAction(tool.key)"
-        class="toolbox-btn"
+        class="mynd-echarts-toolbox-btn"
         :title="tool.title"
         :disabled="tool.disabled"
       >
-        <svg class="toolbox-icon" viewBox="0 0 24 24" fill="currentColor" v-html="tool.icon"></svg>
+        <svg class="mynd-echarts-toolbox-icon" viewBox="0 0 24 24" fill="currentColor" v-html="tool.icon"></svg>
       </button>
       <!-- Zoom bar moved below chart -->
     </div>
 
     <!-- Menu Style -->
-    <div v-else-if="displayStyle === 'menu'" class="toolbox-menu">
-      <button @click.stop="toggleMenu" class="toolbox-menu-trigger" title="Chart Options">
-        <svg class="toolbox-icon" viewBox="0 0 24 24" fill="currentColor">
+    <div v-else-if="displayStyle === 'menu'" class="mynd-echarts-toolbox-menu">
+      <button @click.stop="toggleMenu" class="mynd-echarts-toolbox-menu-trigger" title="Chart Options">
+        <svg class="mynd-echarts-toolbox-icon" viewBox="0 0 24 24" fill="currentColor">
           <circle cx="12" cy="5" r="2"/>
           <circle cx="12" cy="12" r="2"/>
           <circle cx="12" cy="19" r="2"/>
         </svg>
       </button>
-      <div v-if="isMenuOpen" class="toolbox-menu-dropdown" @click.stop>
+      <div v-if="isMenuOpen" class="mynd-echarts-toolbox-menu-dropdown" @click.stop>
         <button
           v-for="tool in availableTools"
           :key="tool.key"
           @click="handleToolAction(tool.key)"
-          class="toolbox-menu-item"
+          class="mynd-echarts-toolbox-menu-item"
           :disabled="tool.disabled"
         >
-          <svg class="toolbox-icon" viewBox="0 0 24 24" fill="currentColor" v-html="tool.icon"></svg>
-          <span class="toolbox-menu-label">{{ tool.title }}</span>
+          <svg class="mynd-echarts-toolbox-icon" viewBox="0 0 24 24" fill="currentColor" v-html="tool.icon"></svg>
+          <span class="mynd-echarts-toolbox-menu-label">{{ tool.title }}</span>
         </button>
       </div>
     </div>
@@ -243,7 +243,7 @@ const closeMenu = () => {
 const handleClickOutside = (event: MouseEvent) => {
   const target = event.target as HTMLElement
   // Check if click is outside the menu
-  if (!target.closest('.toolbox-menu')) {
+  if (!target.closest('.mynd-echarts-toolbox-menu')) {
     closeMenu()
   }
 }
@@ -259,7 +259,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.chart-toolbox {
+.mynd-echarts-toolbox {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -267,13 +267,13 @@ onUnmounted(() => {
 }
 
 /* Toolbar Style */
-.toolbox-toolbar {
+.mynd-echarts-toolbox-toolbar {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.toolbox-btn {
+.mynd-echarts-toolbox-btn {
   padding: 6px;
   border: none;
   background: transparent;
@@ -288,43 +288,43 @@ onUnmounted(() => {
   height: 32px;
 }
 
-.toolbox-btn:hover:not(:disabled) {
+.mynd-echarts-toolbox-btn:hover:not(:disabled) {
   background: rgba(0, 0, 0, 0.05);
   color: #333;
 }
 
-.toolbox-btn:disabled {
+.mynd-echarts-toolbox-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-.toolbox-icon {
+.mynd-echarts-toolbox-icon {
   width: 18px;
   height: 18px;
   display: block;
 }
 
 /* Zoom control inline UI */
-.toolbox-zoom-control {
+.mynd-echarts-toolbox-zoom-control {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-left: 8px;
 }
-.toolbox-zoom-control input[type="range"] {
+.mynd-echarts-toolbox-zoom-control input[type="range"] {
   width: 120px;
 }
-.zoom-label {
+.mynd-echarts-zoom-label {
   font-size: 12px;
   color: #666;
 }
 
 /* Menu Style */
-.toolbox-menu {
+.mynd-echarts-toolbox-menu {
   position: relative;
 }
 
-.toolbox-menu-trigger {
+.mynd-echarts-toolbox-menu-trigger {
   padding: 6px;
   border: none;
   background: transparent;
@@ -339,17 +339,17 @@ onUnmounted(() => {
   height: 32px;
 }
 
-.toolbox-menu-trigger:hover {
+.mynd-echarts-toolbox-menu-trigger:hover {
   background: rgba(0, 0, 0, 0.05);
   color: #333;
 }
 
-.toolbox-menu-trigger .toolbox-icon {
+.mynd-echarts-toolbox-menu-trigger .mynd-echarts-toolbox-icon {
   width: 20px;
   height: 20px;
 }
 
-.toolbox-menu-dropdown {
+.mynd-echarts-toolbox-menu-dropdown {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
@@ -374,7 +374,7 @@ onUnmounted(() => {
   }
 }
 
-.toolbox-menu-item {
+.mynd-echarts-toolbox-menu-item {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -389,59 +389,59 @@ onUnmounted(() => {
   font-size: 14px;
 }
 
-.toolbox-menu-item:hover:not(:disabled) {
+.mynd-echarts-toolbox-menu-item:hover:not(:disabled) {
   background: rgba(0, 0, 0, 0.05);
 }
 
-.toolbox-menu-item:disabled {
+.mynd-echarts-toolbox-menu-item:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-.toolbox-menu-item .toolbox-icon {
+.mynd-echarts-toolbox-menu-item .mynd-echarts-toolbox-icon {
   width: 18px;
   height: 18px;
   color: #666;
   flex-shrink: 0;
 }
 
-.toolbox-menu-label {
+.mynd-echarts-toolbox-menu-label {
   flex: 1;
 }
 
 /* Dark mode support (scoped) */
-.dark & .toolbox-btn {
+:global(.dark) .mynd-echarts-toolbox-btn {
   color: #a0aec0;
 }
 
-.dark & .toolbox-btn:hover:not(:disabled) {
+:global(.dark) .mynd-echarts-toolbox-btn:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.1);
   color: #e2e8f0;
 }
 
-.dark & .toolbox-menu-trigger {
+:global(.dark) .mynd-echarts-toolbox-menu-trigger {
   color: #a0aec0;
 }
 
-.dark & .toolbox-menu-trigger:hover {
+:global(.dark) .mynd-echarts-toolbox-menu-trigger:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #e2e8f0;
 }
 
-.dark & .toolbox-menu-dropdown {
+:global(.dark) .mynd-echarts-toolbox-menu-dropdown {
   background: #1a202c;
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-.dark & .toolbox-menu-item {
+:global(.dark) .mynd-echarts-toolbox-menu-item {
   color: #e2e8f0;
 }
 
-.dark & .toolbox-menu-item:hover:not(:disabled) {
+:global(.dark) .mynd-echarts-toolbox-menu-item:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.dark & .toolbox-menu-item .toolbox-icon {
+:global(.dark) .mynd-echarts-toolbox-menu-item .mynd-echarts-toolbox-icon {
   color: #a0aec0;
 }
 </style>

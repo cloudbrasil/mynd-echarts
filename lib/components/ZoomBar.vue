@@ -1,10 +1,10 @@
 <template>
-  <div class="zoombar" @mousedown.stop @touchstart.stop>
-    <div class="zoombar-track" ref="trackEl">
-      <canvas ref="sparkCanvas" class="zoombar-spark"></canvas>
-      <div class="zoombar-fill" :style="fillStyle"></div>
-      <div class="zb-handle zb-start" :style="startStyle" @mousedown="beginDrag('start', $event)" @touchstart.prevent="beginDrag('start', $event)"></div>
-      <div class="zb-handle zb-end" :style="endStyle" @mousedown="beginDrag('end', $event)" @touchstart.prevent="beginDrag('end', $event)"></div>
+  <div class="mynd-echarts-zoombar" @mousedown.stop @touchstart.stop>
+    <div class="mynd-echarts-zoombar-track" ref="trackEl">
+      <canvas ref="sparkCanvas" class="mynd-echarts-zoombar-spark"></canvas>
+      <div class="mynd-echarts-zoombar-fill" :style="fillStyle"></div>
+      <div class="mynd-echarts-zb-handle mynd-echarts-zb-start" :style="startStyle" @mousedown="beginDrag('start', $event)" @touchstart.prevent="beginDrag('start', $event)"></div>
+      <div class="mynd-echarts-zb-handle mynd-echarts-zb-end" :style="endStyle" @mousedown="beginDrag('end', $event)" @touchstart.prevent="beginDrag('end', $event)"></div>
     </div>
   </div>
 </template>
@@ -143,12 +143,12 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.zoombar {
+.mynd-echarts-zoombar {
   width: 100%;
   padding: 6px 12px 10px 12px;
   box-sizing: border-box;
 }
-.zoombar-track {
+.mynd-echarts-zoombar-track {
   position: relative;
   height: 30px;
   border: 1px solid #e6eaf2;
@@ -158,7 +158,7 @@ onBeforeUnmount(() => {
   -webkit-tap-highlight-color: transparent;
   padding: 0 10px; /* matches TRACK_PADDING in script */
 }
-.zoombar-spark {
+.mynd-echarts-zoombar-spark {
   position: absolute;
   left: 0;
   top: 0;
@@ -167,7 +167,7 @@ onBeforeUnmount(() => {
   pointer-events: none;
   opacity: 0.35;
 }
-.zoombar-fill {
+.mynd-echarts-zoombar-fill {
   position: absolute;
   top: 0;
   height: 100%;
@@ -176,7 +176,7 @@ onBeforeUnmount(() => {
   border-right: 1px solid rgba(84,112,198,0.65);
   transition: left 80ms ease, width 80ms ease;
 }
-.zb-handle {
+.mynd-echarts-zb-handle {
   position: absolute;
   top: 3px;
   width: 14px;
@@ -188,7 +188,7 @@ onBeforeUnmount(() => {
   cursor: ew-resize;
   z-index: 4;
 }
-.zb-handle::before {
+.mynd-echarts-zb-handle::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -199,20 +199,20 @@ onBeforeUnmount(() => {
   background: #c0cbe0;
   box-shadow: -4px 0 0 #c0cbe0, 4px 0 0 #c0cbe0;
 }
-.zb-start { transform: translateX(-50%); }
-.zb-end { transform: translateX(-50%); }
+.mynd-echarts-zb-start { transform: translateX(-50%); }
+.mynd-echarts-zb-end { transform: translateX(-50%); }
 
 
 /* Dark mode support (scoped) */
-.dark & .zoombar-track { border-color: #374151; background: #111827; }
-.dark & .zoombar-spark { opacity: 0.5; }
-.dark & .zoombar-fill { background: rgba(84,112,198,0.3); border-color: rgba(84,112,198,0.75); }
-.dark & .zb-handle { background: #1f2937; border-color: #4b5563; box-shadow: 0 1px 2px rgba(0,0,0,0.6); }
-.dark & .zb-handle::before { background: #94a3b8; box-shadow: -4px 0 0 #94a3b8, 4px 0 0 #94a3b8; }
+:global(.dark) .mynd-echarts-zoombar-track { border-color: #374151; background: #111827; }
+:global(.dark) .mynd-echarts-zoombar-spark { opacity: 0.5; }
+:global(.dark) .mynd-echarts-zoombar-fill { background: rgba(84,112,198,0.3); border-color: rgba(84,112,198,0.75); }
+:global(.dark) .mynd-echarts-zb-handle { background: #1f2937; border-color: #4b5563; box-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+:global(.dark) .mynd-echarts-zb-handle::before { background: #94a3b8; box-shadow: -4px 0 0 #94a3b8, 4px 0 0 #94a3b8; }
 
 /* Larger touch targets on coarse pointers (mobile) */
 @media (pointer: coarse) {
-  .zoombar-track { height: 44px; }
-  .zb-handle { top: 6px; width: 24px; height: 32px; }
+  .mynd-echarts-zoombar-track { height: 44px; }
+  .mynd-echarts-zb-handle { top: 6px; width: 24px; height: 32px; }
 }
 </style>

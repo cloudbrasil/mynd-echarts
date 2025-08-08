@@ -1,8 +1,8 @@
 <template>
-  <div class="base-input" :class="{ 'has-icon': $slots.icon }">
-    <label v-if="label" class="input-label" :for="inputId">{{ label }}</label>
-    <div class="input-wrapper">
-      <div v-if="$slots.icon" class="input-icon">
+  <div class="mynd-echarts-base-input" :class="{ 'mynd-echarts-has-icon': $slots.icon }">
+    <label v-if="label" class="mynd-echarts-input-label" :for="inputId">{{ label }}</label>
+    <div class="mynd-echarts-input-wrapper">
+      <div v-if="$slots.icon" class="mynd-echarts-input-icon">
         <slot name="icon"></slot>
       </div>
       <input
@@ -20,7 +20,7 @@
         @change="$emit('change', $event)"
         @focus="$emit('focus', $event)"
         @blur="$emit('blur', $event)"
-        class="input-field"
+        class="mynd-echarts-input-field"
         :class="inputClass"
       />
       <textarea
@@ -35,14 +35,14 @@
         @change="$emit('change', $event)"
         @focus="$emit('focus', $event)"
         @blur="$emit('blur', $event)"
-        class="input-field textarea-field"
+        class="mynd-echarts-input-field mynd-echarts-textarea-field"
         :class="inputClass"
       ></textarea>
-      <div v-if="$slots.suffix" class="input-suffix">
+      <div v-if="$slots.suffix" class="mynd-echarts-input-suffix">
         <slot name="suffix"></slot>
       </div>
     </div>
-    <div v-if="helpText" class="input-help">{{ helpText }}</div>
+    <div v-if="helpText" class="mynd-echarts-input-help">{{ helpText }}</div>
   </div>
 </template>
 
@@ -92,11 +92,11 @@ const handleInput = (event: Event) => {
 </script>
 
 <style scoped>
-.base-input {
+.mynd-echarts-base-input {
   width: 100%;
 }
 
-.input-label {
+.mynd-echarts-input-label {
   display: block;
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
@@ -105,14 +105,14 @@ const handleInput = (event: Event) => {
   letter-spacing: 0.025em;
 }
 
-.input-wrapper {
+.mynd-echarts-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
   width: 100%;
 }
 
-.input-field {
+.mynd-echarts-input-field {
   flex: 1;
   width: 100%;
   height: 3rem;
@@ -127,17 +127,17 @@ const handleInput = (event: Event) => {
   transition: all 0.2s ease;
 }
 
-.textarea-field {
+.mynd-echarts-textarea-field {
   min-height: 5rem;
   padding: 0.75rem 1rem;
   resize: vertical;
 }
 
-.has-icon .input-field {
+.mynd-echarts-has-icon .mynd-echarts-input-field {
   padding-left: 3rem;
 }
 
-.input-icon {
+.mynd-echarts-input-icon {
   position: absolute;
   left: 1rem;
   display: flex;
@@ -148,7 +148,7 @@ const handleInput = (event: Event) => {
   z-index: 1;
 }
 
-.input-suffix {
+.mynd-echarts-input-suffix {
   position: absolute;
   right: 1rem;
   display: flex;
@@ -156,26 +156,26 @@ const handleInput = (event: Event) => {
   color: var(--text-secondary, #64748b);
 }
 
-.input-field:hover:not(:disabled) {
+.mynd-echarts-input-field:hover:not(:disabled) {
   border-color: var(--border-hover, #cbd5e1);
 }
 
-.input-field:focus {
+.mynd-echarts-input-field:focus {
   border-color: var(--primary, #3b82f6);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.input-field:disabled {
+.mynd-echarts-input-field:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   background-color: var(--bg-disabled, #f8fafc);
 }
 
-.input-field::placeholder {
+.mynd-echarts-input-field::placeholder {
   color: var(--text-placeholder, #94a3b8);
 }
 
-.input-help {
+.mynd-echarts-input-help {
   margin-top: 0.375rem;
   font-size: 0.8125rem;
   color: var(--text-tertiary, #94a3b8);
@@ -189,15 +189,15 @@ const handleInput = (event: Event) => {
   color: var(--text-primary, #f1f5f9);
 }
 
-:global(.dark) .input-field:hover:not(:disabled) {
+:global(.dark) .mynd-echarts-input-field:hover:not(:disabled) {
   border-color: var(--border-hover, #475569);
 }
 
-:global(.dark) .input-field:focus {
+:global(.dark) .mynd-echarts-input-field:focus {
   border-color: var(--primary, #3b82f6);
 }
 
-:global(.dark) .input-field:disabled {
+:global(.dark) .mynd-echarts-input-field:disabled {
   background-color: var(--bg-disabled, #0f172a);
 }
 

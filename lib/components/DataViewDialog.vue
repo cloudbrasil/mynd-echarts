@@ -1,19 +1,19 @@
 <template>
   <Teleport to="body">
-    <div v-if="modelValue" class="dataview-overlay" @click="close">
-      <div class="dataview-dialog" @click.stop>
-        <div class="dataview-header">
+    <div v-if="modelValue" class="mynd-echarts-dataview-overlay" @click="close">
+      <div class="mynd-echarts-dataview-dialog" @click.stop>
+        <div class="mynd-echarts-dataview-header">
           <h2>{{ t('title') }}</h2>
-          <button @click="close" class="dataview-close">
-            <svg class="dataview-icon" viewBox="0 0 24 24" fill="currentColor">
+          <button @click="close" class="mynd-echarts-dataview-close">
+            <svg class="mynd-echarts-dataview-icon" viewBox="0 0 24 24" fill="currentColor">
               <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
             </svg>
           </button>
         </div>
         
-        <div class="dataview-content">
-          <div v-if="tableData.length > 0" class="dataview-table-wrapper">
-            <table class="dataview-table">
+        <div class="mynd-echarts-dataview-content">
+          <div v-if="tableData.length > 0" class="mynd-echarts-dataview-table-wrapper">
+            <table class="mynd-echarts-dataview-table">
               <thead>
                 <tr>
                   <th v-for="header in headers" :key="header">{{ header }}</th>
@@ -28,28 +28,28 @@
               </tbody>
             </table>
           </div>
-          <div v-else class="dataview-empty">
-            <svg class="dataview-icon-large" viewBox="0 0 24 24" fill="currentColor">
+          <div v-else class="mynd-echarts-dataview-empty">
+            <svg class="mynd-echarts-dataview-icon-large" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
             </svg>
             <p>{{ t('noData') }}</p>
           </div>
         </div>
         
-        <div class="dataview-footer">
-          <button @click="downloadCSV" class="dataview-btn primary" :disabled="tableData.length === 0">
-            <svg class="dataview-icon" viewBox="0 0 24 24" fill="currentColor">
+        <div class="mynd-echarts-dataview-footer">
+          <button @click="downloadCSV" class="mynd-echarts-dataview-btn primary" :disabled="tableData.length === 0">
+            <svg class="mynd-echarts-dataview-icon" viewBox="0 0 24 24" fill="currentColor">
               <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
             </svg>
             {{ t('downloadCSV') }}
           </button>
-          <button @click="copyToClipboard" class="dataview-btn" :disabled="tableData.length === 0">
-            <svg class="dataview-icon" viewBox="0 0 24 24" fill="currentColor">
+          <button @click="copyToClipboard" class="mynd-echarts-dataview-btn" :disabled="tableData.length === 0">
+            <svg class="mynd-echarts-dataview-icon" viewBox="0 0 24 24" fill="currentColor">
               <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
             </svg>
             {{ t('copyToClipboard') }}
           </button>
-          <button @click="close" class="dataview-btn">
+          <button @click="close" class="mynd-echarts-dataview-btn">
             {{ t('close') }}
           </button>
         </div>
@@ -298,7 +298,7 @@ const close = () => {
 </script>
 
 <style scoped>
-.dataview-overlay {
+.mynd-echarts-dataview-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -321,7 +321,7 @@ const close = () => {
   }
 }
 
-.dataview-dialog {
+.mynd-echarts-dataview-dialog {
   background: white;
   border-radius: 8px;
   width: 90%;
@@ -344,7 +344,7 @@ const close = () => {
   }
 }
 
-.dataview-header {
+.mynd-echarts-dataview-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -352,14 +352,14 @@ const close = () => {
   border-bottom: 1px solid #e2e8f0;
 }
 
-.dataview-header h2 {
+.mynd-echarts-dataview-header h2 {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
   color: #1a202c;
 }
 
-.dataview-close {
+.mynd-echarts-dataview-close {
   background: none;
   border: none;
   padding: 0.5rem;
@@ -372,30 +372,30 @@ const close = () => {
   justify-content: center;
 }
 
-.dataview-close:hover {
+.mynd-echarts-dataview-close:hover {
   background: #f7fafc;
   color: #2d3748;
 }
 
-.dataview-content {
+.mynd-echarts-dataview-content {
   flex: 1;
   overflow: auto;
   padding: 1.5rem;
 }
 
-.dataview-table-wrapper {
+.mynd-echarts-dataview-table-wrapper {
   overflow: auto;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
 }
 
-.dataview-table {
+.mynd-echarts-dataview-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;
 }
 
-.dataview-table th {
+.mynd-echarts-dataview-table th {
   background: #f7fafc;
   padding: 0.75rem 1rem;
   text-align: left;
@@ -407,21 +407,21 @@ const close = () => {
   z-index: 1;
 }
 
-.dataview-table td {
+.mynd-echarts-dataview-table td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #f7fafc;
   color: #4a5568;
 }
 
-.dataview-table tbody tr:hover {
+.mynd-echarts-dataview-table tbody tr:hover {
   background: #f7fafc;
 }
 
-.dataview-table tbody tr:last-child td {
+.mynd-echarts-dataview-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.dataview-empty {
+.mynd-echarts-dataview-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -430,18 +430,18 @@ const close = () => {
   color: #a0aec0;
 }
 
-.dataview-icon-large {
+.mynd-echarts-dataview-icon-large {
   width: 3rem;
   height: 3rem;
   margin-bottom: 1rem;
 }
 
-.dataview-empty p {
+.mynd-echarts-dataview-empty p {
   margin: 0;
   font-size: 1rem;
 }
 
-.dataview-footer {
+.mynd-echarts-dataview-footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -450,7 +450,7 @@ const close = () => {
   border-top: 1px solid #e2e8f0;
 }
 
-.dataview-btn {
+.mynd-echarts-dataview-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -465,102 +465,102 @@ const close = () => {
   transition: all 0.2s;
 }
 
-.dataview-btn:hover:not(:disabled) {
+.mynd-echarts-dataview-btn:hover:not(:disabled) {
   background: #f7fafc;
   border-color: #cbd5e0;
 }
 
-.dataview-btn.primary {
+.mynd-echarts-dataview-btn.primary {
   background: #4299e1;
   color: white;
   border-color: #4299e1;
 }
 
-.dataview-btn.primary:hover:not(:disabled) {
+.mynd-echarts-dataview-btn.primary:hover:not(:disabled) {
   background: #3182ce;
   border-color: #3182ce;
 }
 
-.dataview-btn:disabled {
+.mynd-echarts-dataview-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.dataview-icon {
+.mynd-echarts-dataview-icon {
   width: 1.125rem;
   height: 1.125rem;
   display: block;
 }
 
 /* Dark mode support */
-.dark & .dataview-dialog {
+:global(.dark) .mynd-echarts-dataview-dialog {
   background: #1a202c;
 }
 
-.dark & .dataview-header {
+:global(.dark) .mynd-echarts-dataview-header {
   border-bottom-color: #2d3748;
 }
 
-.dark & .dataview-header h2 {
+:global(.dark) .mynd-echarts-dataview-header h2 {
   color: #f7fafc;
 }
 
-.dark & .dataview-close {
+:global(.dark) .mynd-echarts-dataview-close {
   color: #a0aec0;
 }
 
-.dark & .dataview-close:hover {
+:global(.dark) .mynd-echarts-dataview-close:hover {
   background: #2d3748;
   color: #f7fafc;
 }
 
-.dark & .dataview-table-wrapper {
+:global(.dark) .mynd-echarts-dataview-table-wrapper {
   border-color: #2d3748;
 }
 
-.dark & .dataview-table th {
+:global(.dark) .mynd-echarts-dataview-table th {
   background: #2d3748;
   color: #f7fafc;
   border-bottom-color: #4a5568;
 }
 
-.dark & .dataview-table td {
+:global(.dark) .mynd-echarts-dataview-table td {
   color: #e2e8f0;
   border-bottom-color: #2d3748;
 }
 
-.dark & .dataview-table tbody tr:hover {
+:global(.dark) .mynd-echarts-dataview-table tbody tr:hover {
   background: #2d3748;
 }
 
-.dark & .dataview-footer {
+:global(.dark) .mynd-echarts-dataview-footer {
   border-top-color: #2d3748;
 }
 
-.dark & .dataview-btn {
+:global(.dark) .mynd-echarts-dataview-btn {
   background: #2d3748;
   color: #e2e8f0;
   border-color: #4a5568;
 }
 
-.dark & .dataview-btn:hover:not(:disabled) {
+:global(.dark) .mynd-echarts-dataview-btn:hover:not(:disabled) {
   background: #4a5568;
   border-color: #718096;
 }
 
 /* Mobile styles */
 @media (max-width: 768px) {
-  .dataview-dialog {
+  .mynd-echarts-dataview-dialog {
     width: 95%;
     max-height: 90vh;
   }
   
-  .dataview-footer {
+  .mynd-echarts-dataview-footer {
     flex-direction: column;
     gap: 0.5rem;
   }
   
-  .dataview-btn {
+  .mynd-echarts-dataview-btn {
     width: 100%;
     justify-content: center;
   }

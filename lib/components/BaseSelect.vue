@@ -1,13 +1,13 @@
 <template>
-  <div class="base-select">
-    <label v-if="label" class="select-label" :for="selectId">{{ label }}</label>
-    <div class="select-wrapper">
+  <div class="mynd-echarts-base-select">
+    <label v-if="label" class="mynd-echarts-select-label" :for="selectId">{{ label }}</label>
+    <div class="mynd-echarts-select-wrapper">
       <select
         :id="selectId"
         :value="modelValue"
         :disabled="disabled"
         @change="handleChange"
-        class="select-field"
+        class="mynd-echarts-select-field"
         :class="selectClass"
         v-bind="$attrs"
       >
@@ -20,13 +20,13 @@
           {{ getOptionLabel(option) }}
         </option>
       </select>
-      <div class="select-icon">
+      <div class="mynd-echarts-select-icon">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
     </div>
-    <div v-if="helpText" class="select-help">{{ helpText }}</div>
+    <div v-if="helpText" class="mynd-echarts-select-help">{{ helpText }}</div>
   </div>
 </template>
 
@@ -84,11 +84,11 @@ const handleChange = (event: Event) => {
 </script>
 
 <style scoped>
-.base-select {
+.mynd-echarts-base-select {
   width: 100%;
 }
 
-.select-label {
+.mynd-echarts-select-label {
   display: block;
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
@@ -97,12 +97,12 @@ const handleChange = (event: Event) => {
   letter-spacing: 0.025em;
 }
 
-.select-wrapper {
+.mynd-echarts-select-wrapper {
   position: relative;
   width: 100%;
 }
 
-.select-field {
+.mynd-echarts-select-field {
   width: 100%;
   height: 3rem;
   padding: 0 3rem 0 1rem;
@@ -118,22 +118,22 @@ const handleChange = (event: Event) => {
   transition: all 0.2s ease;
 }
 
-.select-field:hover:not(:disabled) {
+.mynd-echarts-select-field:hover:not(:disabled) {
   border-color: var(--border-hover, #cbd5e1);
 }
 
-.select-field:focus {
+.mynd-echarts-select-field:focus {
   border-color: var(--primary, #3b82f6);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.select-field:disabled {
+.mynd-echarts-select-field:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   background-color: var(--bg-disabled, #f8fafc);
 }
 
-.select-icon {
+.mynd-echarts-select-icon {
   position: absolute;
   top: 50%;
   right: 1rem;
@@ -142,7 +142,7 @@ const handleChange = (event: Event) => {
   color: var(--text-secondary, #64748b);
 }
 
-.select-help {
+.mynd-echarts-select-help {
   margin-top: 0.375rem;
   font-size: 0.8125rem;
   color: var(--text-tertiary, #94a3b8);
@@ -150,21 +150,21 @@ const handleChange = (event: Event) => {
 }
 
 /* Dark mode support */
-:global(.dark) .select-field {
+:global(.dark) .mynd-echarts-select-field {
   background-color: var(--bg-secondary, #1e293b);
   border-color: var(--border-color, #334155);
   color: var(--text-primary, #f1f5f9);
 }
 
-:global(.dark) .select-field:hover:not(:disabled) {
+:global(.dark) .mynd-echarts-select-field:hover:not(:disabled) {
   border-color: var(--border-hover, #475569);
 }
 
-:global(.dark) .select-field:focus {
+:global(.dark) .mynd-echarts-select-field:focus {
   border-color: var(--primary, #3b82f6);
 }
 
-:global(.dark) .select-field:disabled {
+:global(.dark) .mynd-echarts-select-field:disabled {
   background-color: var(--bg-disabled, #0f172a);
 }
 </style>

@@ -59,6 +59,7 @@
     />
     
     <DataViewDialog
+      v-if="showDataView"
       v-model="showDataView"
       :options="props.options"
       :chart-instance="chartInstance"
@@ -1243,11 +1244,11 @@ a.mynd-echarts-title:hover {
 }
 
 /* Dark mode title color (scoped) */
-.dark & .mynd-echarts-title {
+:global(.dark) .mynd-echarts-title {
   color: #e2e8f0;
 }
 
-.dark & a.mynd-echarts-title:hover {
+:global(.dark) a.mynd-echarts-title:hover {
   color: #91d5ff;
 }
 
@@ -1273,11 +1274,11 @@ a.mynd-echarts-subtitle:hover {
 }
 
 /* Dark mode subtitle color (scoped) */
-.dark & .mynd-echarts-subtitle {
+:global(.dark) .mynd-echarts-subtitle {
   color: #a0aec0;
 }
 
-.dark & a.mynd-echarts-subtitle:hover {
+:global(.dark) a.mynd-echarts-subtitle:hover {
   color: #91d5ff;
 }
 
