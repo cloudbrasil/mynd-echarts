@@ -5,7 +5,9 @@
         <div class="dataview-header">
           <h2>{{ t('title') }}</h2>
           <button @click="close" class="dataview-close">
-            <span class="material-icons">close</span>
+            <svg class="dataview-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
           </button>
         </div>
         
@@ -27,18 +29,24 @@
             </table>
           </div>
           <div v-else class="dataview-empty">
-            <span class="material-icons">info</span>
+            <svg class="dataview-icon-large" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
             <p>{{ t('noData') }}</p>
           </div>
         </div>
         
         <div class="dataview-footer">
           <button @click="downloadCSV" class="dataview-btn primary" :disabled="tableData.length === 0">
-            <span class="material-icons">download</span>
+            <svg class="dataview-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
             {{ t('downloadCSV') }}
           </button>
           <button @click="copyToClipboard" class="dataview-btn" :disabled="tableData.length === 0">
-            <span class="material-icons">content_copy</span>
+            <svg class="dataview-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+            </svg>
             {{ t('copyToClipboard') }}
           </button>
           <button @click="close" class="dataview-btn">
@@ -422,8 +430,9 @@ const close = () => {
   color: #a0aec0;
 }
 
-.dataview-empty .material-icons {
-  font-size: 3rem;
+.dataview-icon-large {
+  width: 3rem;
+  height: 3rem;
   margin-bottom: 1rem;
 }
 
@@ -477,8 +486,10 @@ const close = () => {
   cursor: not-allowed;
 }
 
-.dataview-btn .material-icons {
-  font-size: 1.125rem;
+.dataview-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  display: block;
 }
 
 /* Dark mode support */

@@ -10,7 +10,7 @@
         :title="tool.title"
         :disabled="tool.disabled"
       >
-        <span class="material-icons">{{ tool.icon }}</span>
+        <svg class="toolbox-icon" viewBox="0 0 24 24" fill="currentColor" v-html="tool.icon"></svg>
       </button>
       <!-- Zoom bar moved below chart -->
     </div>
@@ -18,7 +18,11 @@
     <!-- Menu Style -->
     <div v-else-if="displayStyle === 'menu'" class="toolbox-menu">
       <button @click.stop="toggleMenu" class="toolbox-menu-trigger" title="Chart Options">
-        <span class="material-icons">more_vert</span>
+        <svg class="toolbox-icon" viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="12" cy="5" r="2"/>
+          <circle cx="12" cy="12" r="2"/>
+          <circle cx="12" cy="19" r="2"/>
+        </svg>
       </button>
       <div v-if="isMenuOpen" class="toolbox-menu-dropdown" @click.stop>
         <button
@@ -28,7 +32,7 @@
           class="toolbox-menu-item"
           :disabled="tool.disabled"
         >
-          <span class="material-icons">{{ tool.icon }}</span>
+          <svg class="toolbox-icon" viewBox="0 0 24 24" fill="currentColor" v-html="tool.icon"></svg>
           <span class="toolbox-menu-label">{{ tool.title }}</span>
         </button>
       </div>
@@ -75,11 +79,21 @@ const t = (key: string) => {
   return key
 }
 
+// SVG icon definitions
+const icons = {
+  download: '<path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>',
+  refresh: '<path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>',
+  table: '<path d="M10 10.02h5V21h-5zM17 21h3c1.1 0 2-.9 2-2v-9h-5v11zm3-18H5c-1.1 0-2 .9-2 2v3h19V5c0-1.1-.9-2-2-2zM3 19c0 1.1.9 2 2 2h3V10.02H3V19z"/>',
+  zoomIn: '<path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm2.5-4h-2v2H9v-2H7V9h2V7h1v2h2v1z"/>',
+  magicWand: '<path d="M7.5 5.6L10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29c-.39-.39-1.02-.39-1.41 0L1.29 18.96c-.39.39-.39 1.02 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05c.39-.39.39-1.02 0-1.41l-2.33-2.35zm-1.03 5.49l-2.12-2.12 2.44-2.44 2.12 2.12-2.44 2.44z"/>',
+  brush: '<path d="M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z"/>'
+}
+
 // Define all possible tools
 const allTools = computed(() => [
   {
     key: 'saveAsImage',
-    icon: 'download',
+    icon: icons.download,
     title: t('saveAsImage'),
     supportedTypes: ['line', 'bar', 'pie', 'scatter', 'radar', 'heatmap', 'tree', 'graph', 'gauge', 'funnel', 'sankey', 'treemap', 'sunburst', 'parallel', 'themeRiver'],
     disabled: false,
@@ -101,7 +115,7 @@ const allTools = computed(() => [
   },
   {
     key: 'restore',
-    icon: 'refresh',
+    icon: icons.refresh,
     title: t('restore'),
     supportedTypes: ['line', 'bar', 'pie', 'scatter', 'radar', 'heatmap', 'tree', 'graph', 'gauge', 'funnel', 'sankey', 'treemap', 'sunburst', 'parallel', 'themeRiver'],
     disabled: false,
@@ -111,7 +125,7 @@ const allTools = computed(() => [
   },
   {
     key: 'dataView',
-    icon: 'table_chart',
+    icon: icons.table,
     title: t('dataView'),
     supportedTypes: ['line', 'bar', 'area', 'pie', 'scatter', 'radar', 'heatmap', 'gauge', 'funnel', 'sankey'],
     disabled: false,
@@ -121,7 +135,7 @@ const allTools = computed(() => [
   },
   {
     key: 'dataZoom',
-    icon: 'zoom_in',
+    icon: icons.zoomIn,
     title: t('dataZoom'),
     supportedTypes: ['line', 'bar', 'area', 'scatter', 'candlestick', 'boxplot'],
     disabled: false,
@@ -129,7 +143,7 @@ const allTools = computed(() => [
   },
   {
     key: 'magicType',
-    icon: 'auto_fix_high',
+    icon: icons.magicWand,
     title: t('magicType'),
     supportedTypes: ['line', 'bar', 'area'],
     disabled: false,
@@ -139,7 +153,7 @@ const allTools = computed(() => [
   },
   {
     key: 'brush',
-    icon: 'brush',
+    icon: icons.brush,
     title: t('brush'),
     supportedTypes: ['line', 'bar', 'scatter', 'parallel'],
     disabled: false,
@@ -284,8 +298,10 @@ onUnmounted(() => {
   cursor: not-allowed;
 }
 
-.toolbox-btn .material-icons {
-  font-size: 18px;
+.toolbox-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 
 /* Zoom control inline UI */
@@ -328,8 +344,9 @@ onUnmounted(() => {
   color: #333;
 }
 
-.toolbox-menu-trigger .material-icons {
-  font-size: 20px;
+.toolbox-menu-trigger .toolbox-icon {
+  width: 20px;
+  height: 20px;
 }
 
 .toolbox-menu-dropdown {
@@ -381,9 +398,11 @@ onUnmounted(() => {
   cursor: not-allowed;
 }
 
-.toolbox-menu-item .material-icons {
-  font-size: 18px;
+.toolbox-menu-item .toolbox-icon {
+  width: 18px;
+  height: 18px;
   color: #666;
+  flex-shrink: 0;
 }
 
 .toolbox-menu-label {
@@ -422,7 +441,7 @@ onUnmounted(() => {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.dark & .toolbox-menu-item .material-icons {
+.dark & .toolbox-menu-item .toolbox-icon {
   color: #a0aec0;
 }
 </style>

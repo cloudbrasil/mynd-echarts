@@ -4,7 +4,7 @@
     <div v-if="chartTitle || chartSubtitle" class="mynd-echarts-header">
       <div class="mynd-echarts-title-section">
         <component 
-          :is="titleLink ? 'a' : 'h3'" 
+          :is="titleLink ? 'a' : 'div'" 
           v-if="chartTitle" 
           class="mynd-echarts-title" 
           :style="titleStyle"
@@ -321,6 +321,10 @@ const titleStyle = computed(() => {
     style.fontFamily = config.textStyle.fontFamily
     style.fontStyle = config.textStyle.fontStyle
     style.lineHeight = config.textStyle.lineHeight
+  } else {
+    // Default styles when no textStyle is provided
+    style.fontWeight = 'bold'
+    style.fontSize = '14px'
   }
   
   // Handle text alignment
@@ -1219,8 +1223,9 @@ defineExpose({
 .mynd-echarts-title {
   margin: 0;
   padding: 0;
-  font-size: 18px;
-  font-weight: 500;
+  /* Default styles - can be overridden by inline styles from options */
+  font-size: 14px;
+  font-weight: bold;
   color: #333;
   line-height: 1.4;
   overflow: hidden;

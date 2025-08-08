@@ -5,7 +5,9 @@
         <div class="config-header">
           <h2>{{ t('configDialog.title') }}</h2>
           <button class="close-btn" @click="close" :title="t('configDialog.buttons.close')">
-            <span class="material-icons">close</span>
+            <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
           </button>
         </div>
         
@@ -13,7 +15,10 @@
           <!-- Title Section -->
           <div class="accordion-section">
             <button class="accordion-header" @click="toggleSection('title')" :class="{ active: expandedSections.title }">
-              <span class="material-icons">{{ expandedSections.title ? 'expand_less' : 'expand_more' }}</span>
+              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+                <path v-if="expandedSections.title" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+                <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+              </svg>
               <span>{{ t('configDialog.sections.title') }}</span>
             </button>
             <div v-if="expandedSections.title" class="accordion-content">
@@ -58,7 +63,10 @@
           <!-- Legend Section -->
           <div class="accordion-section">
             <button class="accordion-header" @click="toggleSection('legend')" :class="{ active: expandedSections.legend }">
-              <span class="material-icons">{{ expandedSections.legend ? 'expand_less' : 'expand_more' }}</span>
+              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+                <path v-if="expandedSections.legend" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+                <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+              </svg>
               <span>{{ t('configDialog.sections.legend') }}</span>
             </button>
             <div v-if="expandedSections.legend" class="accordion-content">
@@ -92,7 +100,10 @@
           <!-- Tooltip Section -->
           <div class="accordion-section">
             <button class="accordion-header" @click="toggleSection('tooltip')" :class="{ active: expandedSections.tooltip }">
-              <span class="material-icons">{{ expandedSections.tooltip ? 'expand_less' : 'expand_more' }}</span>
+              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+                <path v-if="expandedSections.tooltip" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+                <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+              </svg>
               <span>{{ t('configDialog.sections.tooltip') }}</span>
             </button>
             <div v-if="expandedSections.tooltip" class="accordion-content">
@@ -126,7 +137,10 @@
           <!-- Toolbox Section -->
           <div class="accordion-section">
             <button class="accordion-header" @click="toggleSection('toolbox')" :class="{ active: expandedSections.toolbox }">
-              <span class="material-icons">{{ expandedSections.toolbox ? 'expand_less' : 'expand_more' }}</span>
+              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+                <path v-if="expandedSections.toolbox" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+                <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+              </svg>
               <span>{{ t('configDialog.sections.toolbox') }}</span>
             </button>
             <div v-if="expandedSections.toolbox" class="accordion-content">
@@ -277,7 +291,10 @@
           <!-- Grid Section -->
           <div class="accordion-section">
             <button class="accordion-header" @click="toggleSection('grid')" :class="{ active: expandedSections.grid }">
-              <span class="material-icons">{{ expandedSections.grid ? 'expand_less' : 'expand_more' }}</span>
+              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+                <path v-if="expandedSections.grid" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+                <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+              </svg>
               <span>{{ t('configDialog.sections.grid') }}</span>
             </button>
             <div v-if="expandedSections.grid" class="accordion-content">
@@ -316,7 +333,10 @@
           <!-- X Axis Section -->
           <div class="accordion-section" v-if="hasAxis">
             <button class="accordion-header" @click="toggleSection('xAxis')" :class="{ active: expandedSections.xAxis }">
-              <span class="material-icons">{{ expandedSections.xAxis ? 'expand_less' : 'expand_more' }}</span>
+              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+                <path v-if="expandedSections.xAxis" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+                <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+              </svg>
               <span>{{ t('configDialog.sections.xAxis') }}</span>
             </button>
             <div v-if="expandedSections.xAxis" class="accordion-content">
@@ -353,7 +373,10 @@
           <!-- Y Axis Section -->
           <div class="accordion-section" v-if="hasAxis">
             <button class="accordion-header" @click="toggleSection('yAxis')" :class="{ active: expandedSections.yAxis }">
-              <span class="material-icons">{{ expandedSections.yAxis ? 'expand_less' : 'expand_more' }}</span>
+              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+                <path v-if="expandedSections.yAxis" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+                <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+              </svg>
               <span>{{ t('configDialog.sections.yAxis') }}</span>
             </button>
             <div v-if="expandedSections.yAxis" class="accordion-content">
@@ -390,7 +413,10 @@
           <!-- Colors Section -->
           <div class="accordion-section">
             <button class="accordion-header" @click="toggleSection('colors')" :class="{ active: expandedSections.colors }">
-              <span class="material-icons">{{ expandedSections.colors ? 'expand_less' : 'expand_more' }}</span>
+              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+                <path v-if="expandedSections.colors" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+                <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+              </svg>
               <span>{{ t('configDialog.sections.colors') }}</span>
             </button>
             <div v-if="expandedSections.colors" class="accordion-content">
@@ -400,11 +426,15 @@
                   <div v-for="(color, index) in colorPalette" :key="index" class="color-item">
                     <input type="color" :value="color" @input="updateColor(index, $event)" @change="updateOptions" class="color-picker">
                     <button @click="removeColor(index)" class="remove-color">
-                      <span class="material-icons">close</span>
+                      <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                      </svg>
                     </button>
                   </div>
                   <button @click="addColor" class="add-color">
-                    <span class="material-icons">add</span>
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+                      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
                     {{ t('configDialog.buttons.addColor') }}
                   </button>
                 </div>
@@ -419,7 +449,10 @@
           <!-- Animation Section -->
           <div class="accordion-section">
             <button class="accordion-header" @click="toggleSection('animation')" :class="{ active: expandedSections.animation }">
-              <span class="material-icons">{{ expandedSections.animation ? 'expand_less' : 'expand_more' }}</span>
+              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+                <path v-if="expandedSections.animation" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+                <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+              </svg>
               <span>{{ t('configDialog.sections.animation') }}</span>
             </button>
             <div v-if="expandedSections.animation" class="accordion-content">
@@ -456,7 +489,10 @@
           <!-- Language Section -->
           <div class="accordion-section">
             <button class="accordion-header" @click="toggleSection('language')" :class="{ active: expandedSections.language }">
-              <span class="material-icons">{{ expandedSections.language ? 'expand_less' : 'expand_more' }}</span>
+              <svg viewBox="0 0 24 24" fill="currentColor" class="icon">
+                <path v-if="expandedSections.language" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+                <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
+              </svg>
               <span>{{ t('configDialog.sections.language') }}</span>
             </button>
             <div v-if="expandedSections.language" class="accordion-content">
@@ -1386,7 +1422,10 @@ const handleOverlayClick = (e: MouseEvent) => {
   background: var(--bg-secondary, #1e293b);
 }
 
-.material-icons {
-  font-size: 1.25rem;
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-block;
+  flex-shrink: 0;
 }
 </style>
