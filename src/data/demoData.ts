@@ -50,7 +50,7 @@ export const showcaseCharts: ChartDemo[] = [
         type: 'line',
         data: [20, 22, 21, 23, 25, 26, 23],
         smooth: true,
-        itemStyle: { color: '#5470c6' }
+        // Color will be handled by theme
       }]
     }
   },
@@ -84,14 +84,7 @@ export const showcaseCharts: ChartDemo[] = [
         data: [120, 132, 101, 134, 90, 130],
         smooth: true,
         areaStyle: {
-          color: {
-            type: 'linear',
-            x: 0, y: 0, x2: 0, y2: 1,
-            colorStops: [
-              { offset: 0, color: 'rgba(84, 112, 198, 0.5)' },
-              { offset: 1, color: 'rgba(84, 112, 198, 0.1)' }
-            ]
-          }
+          opacity: 0.3
         }
       }]
     }
@@ -175,7 +168,7 @@ export const showcaseCharts: ChartDemo[] = [
         name: 'Sales',
         type: 'bar',
         data: [120, 200, 150, 80, 70, 110],
-        itemStyle: { color: '#91cc75' }
+        // Color will be handled by theme
       }]
     }
   },
@@ -377,7 +370,7 @@ export const showcaseCharts: ChartDemo[] = [
           [176.2, 66.8], [160.2, 75.2], [172.5, 55.2], [170.9, 54.2],
           [172.9, 62.5], [153.4, 42.0], [160.0, 50.0]
         ],
-        itemStyle: { color: '#5470c6' }
+        // Color will be handled by theme
       }]
     }
   },
@@ -405,14 +398,7 @@ export const showcaseCharts: ChartDemo[] = [
           symbolSize: Math.sqrt(item[2]) * 3
         })),
         itemStyle: {
-          color: {
-            type: 'radial',
-            x: 0.4, y: 0.3, r: 1,
-            colorStops: [
-              { offset: 0, color: 'rgb(251, 118, 123)' },
-              { offset: 1, color: 'rgb(204, 46, 72)' }
-            ]
-          }
+          // Color will be handled by theme
         }
       }]
     }
@@ -616,8 +602,8 @@ export const showcaseCharts: ChartDemo[] = [
         progress: { show: true, width: 18 },
         axisLine: { lineStyle: { width: 18 } },
         axisTick: { show: false },
-        splitLine: { length: 15, lineStyle: { width: 2, color: '#999' } },
-        axisLabel: { distance: 25, color: '#999', fontSize: 14 },
+        splitLine: { length: 15, lineStyle: { width: 2 } },
+        axisLabel: { distance: 25, fontSize: 14 },
         anchor: { show: true, showAbove: true, size: 25, itemStyle: { borderWidth: 10 } },
         detail: {
           valueAnimation: true,
@@ -796,7 +782,7 @@ export const advancedExamples: AdvancedExample[] = [
           yAxisIndex: 1,
           data: [10, 10.2, -5.3, 32.7, -11.2, 155.6, -8.7, -13.5, 4.9, 22.3, 11.1, 7.7],
           smooth: true,
-          itemStyle: { color: '#fac858' },
+          // Color will be handled by theme,
           lineStyle: { width: 3 },
           markPoint: {
             data: [
@@ -845,7 +831,7 @@ export const advancedExamples: AdvancedExample[] = [
           showSymbol: false,
           data: generateTimeData(),
           smooth: true,
-          itemStyle: { color: '#5470c6' }
+          // Color will be handled by theme
         },
         {
           name: 'Memory',
@@ -853,7 +839,7 @@ export const advancedExamples: AdvancedExample[] = [
           showSymbol: false,
           data: generateTimeData(),
           smooth: true,
-          itemStyle: { color: '#91cc75' }
+          // Color will be handled by theme
         },
         {
           name: 'Network',
@@ -861,7 +847,7 @@ export const advancedExamples: AdvancedExample[] = [
           showSymbol: false,
           data: generateTimeData(),
           smooth: true,
-          itemStyle: { color: '#fac858' }
+          // Color will be handled by theme
         }
       ]
     }

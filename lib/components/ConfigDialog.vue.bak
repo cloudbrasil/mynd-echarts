@@ -23,21 +23,18 @@
             </button>
             <div v-if="expandedSections.title" class="mynd-echarts-accordion-content">
               <BaseInput
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.title.text"
                 :label="t('configDialog.fields.titleText')"
                 :placeholder="t('configDialog.placeholders.chartTitle')"
                 @input="updateOptions"
               />
               <BaseInput
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.title.subtext"
                 :label="t('configDialog.fields.subtitle')"
                 :placeholder="t('configDialog.placeholders.chartSubtitle')"
                 @input="updateOptions"
               />
               <BaseSelect
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.title.left"
                 :label="t('configDialog.fields.position')"
                 :options="[
@@ -52,7 +49,6 @@
                 <input type="color" v-model="titleTextColor" @input="updateOptions" class="mynd-echarts-color-picker">
               </div>
               <BaseInput
-                :isDarkMode="isDarkMode"
                 v-model="titleFontSize"
                 type="number"
                 :label="t('configDialog.fields.fontSize')"
@@ -75,13 +71,11 @@
             </button>
             <div v-if="expandedSections.legend" class="mynd-echarts-accordion-content">
               <BaseCheckbox
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.legend.show"
                 :label="t('configDialog.fields.showLegend')"
                 @change="updateOptions"
               />
               <BaseSelect
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.legend.left"
                 :label="t('configDialog.fields.position')"
                 :options="[
@@ -92,7 +86,6 @@
                 @change="updateOptions"
               />
               <BaseSelect
-                :isDarkMode="isDarkMode"
                 v-model="legendOrient"
                 :label="t('configDialog.fields.orientation')"
                 :options="[
@@ -115,13 +108,11 @@
             </button>
             <div v-if="expandedSections.tooltip" class="mynd-echarts-accordion-content">
               <BaseCheckbox
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.tooltip.show"
                 :label="t('configDialog.fields.showTooltip')"
                 @change="updateOptions"
               />
               <BaseSelect
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.tooltip.trigger"
                 :label="t('configDialog.fields.trigger')"
                 :options="[
@@ -132,7 +123,6 @@
                 @change="updateOptions"
               />
               <BaseInput
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.tooltip.formatter"
                 type="textarea"
                 :label="t('configDialog.fields.formatter')"
@@ -155,13 +145,11 @@
             </button>
             <div v-if="expandedSections.toolbox" class="mynd-echarts-accordion-content">
               <BaseCheckbox
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.toolbox.show"
                 :label="t('configDialog.fields.showToolbox')"
                 @change="updateOptions"
               />
               <BaseSelect
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.toolbox.orient"
                 :label="t('configDialog.fields.orientation')"
                 :options="[
@@ -171,7 +159,6 @@
                 @change="updateOptions"
               />
               <BaseSelect
-                :isDarkMode="isDarkMode"
                 v-model="toolboxDisplayStyle"
                 :label="t('configDialog.fields.displayStyle')"
                 :options="[
@@ -181,7 +168,6 @@
                 @change="updateOptions"
               />
               <BaseInput
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.toolbox.itemSize"
                 type="number"
                 :label="t('configDialog.fields.iconSize')"
@@ -190,7 +176,6 @@
                 @input="updateOptions"
               />
               <BaseInput
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.toolbox.itemGap"
                 type="number"
                 :label="t('configDialog.fields.itemGap')"
@@ -199,7 +184,6 @@
                 @input="updateOptions"
               />
               <BaseCheckbox
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.toolbox.showTitle"
                 :label="t('configDialog.fields.showTitleOnHover')"
                 @change="updateOptions"
@@ -212,13 +196,11 @@
                 <div class="mynd-echarts-feature-group">
                   <h5 class="mynd-echarts-feature-title">{{ t('configDialog.features.saveAsImage') }}</h5>
                   <BaseCheckbox
-                :isDarkMode="isDarkMode"
                     v-model="toolboxSaveAsImageShow"
                     :label="t('configDialog.fields.enable')"
                     @change="updateOptions"
                   />
                   <BaseSelect
-                :isDarkMode="isDarkMode"
                     v-model="toolboxSaveAsImageType"
                     :label="t('configDialog.fields.imageType')"
                     :options="[
@@ -229,7 +211,6 @@
                     @change="updateOptions"
                   />
                   <BaseInput
-                :isDarkMode="isDarkMode"
                     v-model="toolboxSaveAsImageName"
                     :label="t('configDialog.fields.filename')"
                     :placeholder="t('configDialog.placeholders.defaultFilename')"
@@ -241,7 +222,6 @@
                 <div class="mynd-echarts-feature-group">
                   <h5 class="mynd-echarts-feature-title">{{ t('configDialog.features.restore') }}</h5>
                   <BaseCheckbox
-                :isDarkMode="isDarkMode"
                     v-model="toolboxRestoreShow"
                     :label="t('configDialog.fields.enable')"
                     @change="updateOptions"
@@ -252,13 +232,11 @@
                 <div class="mynd-echarts-feature-group">
                   <h5 class="mynd-echarts-feature-title">{{ t('configDialog.features.dataView') }}</h5>
                   <BaseCheckbox
-                :isDarkMode="isDarkMode"
                     v-model="toolboxDataViewShow"
                     :label="t('configDialog.fields.enable')"
                     @change="updateOptions"
                   />
                   <BaseCheckbox
-                :isDarkMode="isDarkMode"
                     v-model="toolboxDataViewReadOnly"
                     :label="t('configDialog.fields.readOnly')"
                     @change="updateOptions"
@@ -269,7 +247,6 @@
                 <div class="mynd-echarts-feature-group">
                   <h5 class="mynd-echarts-feature-title">{{ t('configDialog.features.dataZoom') }}</h5>
                   <BaseCheckbox
-                :isDarkMode="isDarkMode"
                     v-model="toolboxDataZoomShow"
                     :label="t('configDialog.fields.enable')"
                     @change="updateOptions"
@@ -280,32 +257,27 @@
                 <div class="mynd-echarts-feature-group">
                   <h5 class="mynd-echarts-feature-title">{{ t('configDialog.features.magicType') }}</h5>
                   <BaseCheckbox
-                :isDarkMode="isDarkMode"
                     v-model="toolboxMagicTypeShow"
                     :label="t('configDialog.fields.enable')"
                     @change="updateOptions"
                   />
                   <div class="mynd-echarts-checkbox-group">
                     <BaseCheckbox
-                :isDarkMode="isDarkMode"
                       v-model="toolboxMagicTypeLine"
                       :label="t('configDialog.chartTypes.line')"
                       @change="updateToolboxMagicTypes"
                     />
                     <BaseCheckbox
-                :isDarkMode="isDarkMode"
                       v-model="toolboxMagicTypeBar"
                       :label="t('configDialog.chartTypes.bar')"
                       @change="updateToolboxMagicTypes"
                     />
                     <BaseCheckbox
-                :isDarkMode="isDarkMode"
                       v-model="toolboxMagicTypeStack"
                       :label="t('configDialog.chartTypes.stack')"
                       @change="updateToolboxMagicTypes"
                     />
                     <BaseCheckbox
-                :isDarkMode="isDarkMode"
                       v-model="toolboxMagicTypeTiled"
                       :label="t('configDialog.chartTypes.tiled')"
                       @change="updateToolboxMagicTypes"
@@ -327,35 +299,30 @@
             </button>
             <div v-if="expandedSections.grid" class="mynd-echarts-accordion-content">
               <BaseInput
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.grid.left"
                 :label="t('configDialog.fields.leftMargin')"
                 :placeholder="t('configDialog.placeholders.marginExample')"
                 @input="updateOptions"
               />
               <BaseInput
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.grid.right"
                 :label="t('configDialog.fields.rightMargin')"
                 :placeholder="t('configDialog.placeholders.marginExample')"
                 @input="updateOptions"
               />
               <BaseInput
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.grid.top"
                 :label="t('configDialog.fields.topMargin')"
                 :placeholder="t('configDialog.placeholders.pixelValue')"
                 @input="updateOptions"
               />
               <BaseInput
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.grid.bottom"
                 :label="t('configDialog.fields.bottomMargin')"
                 :placeholder="t('configDialog.placeholders.pixelValue')"
                 @input="updateOptions"
               />
               <BaseCheckbox
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.grid.containLabel"
                 :label="t('configDialog.fields.containLabel')"
                 @change="updateOptions"
@@ -374,14 +341,12 @@
             </button>
             <div v-if="expandedSections.xAxis" class="mynd-echarts-accordion-content">
               <BaseInput
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.xAxis.name"
                 :label="t('configDialog.fields.name')"
                 :placeholder="t('configDialog.placeholders.xAxisName')"
                 @input="updateOptions"
               />
               <BaseSelect
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.xAxis.type"
                 :label="t('configDialog.fields.type')"
                 :options="[
@@ -393,13 +358,11 @@
                 @change="updateOptions"
               />
               <BaseCheckbox
-                :isDarkMode="isDarkMode"
                 v-model="xAxisLineShow"
                 :label="t('configDialog.fields.showAxisLine')"
                 @change="updateOptions"
               />
               <BaseCheckbox
-                :isDarkMode="isDarkMode"
                 v-model="xAxisSplitLineShow"
                 :label="t('configDialog.fields.showSplitLine')"
                 @change="updateOptions"
@@ -418,14 +381,12 @@
             </button>
             <div v-if="expandedSections.yAxis" class="mynd-echarts-accordion-content">
               <BaseInput
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.yAxis.name"
                 :label="t('configDialog.fields.name')"
                 :placeholder="t('configDialog.placeholders.yAxisName')"
                 @input="updateOptions"
               />
               <BaseSelect
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.yAxis.type"
                 :label="t('configDialog.fields.type')"
                 :options="[
@@ -437,13 +398,11 @@
                 @change="updateOptions"
               />
               <BaseCheckbox
-                :isDarkMode="isDarkMode"
                 v-model="yAxisLineShow"
                 :label="t('configDialog.fields.showAxisLine')"
                 @change="updateOptions"
               />
               <BaseCheckbox
-                :isDarkMode="isDarkMode"
                 v-model="yAxisSplitLineShow"
                 :label="t('configDialog.fields.showSplitLine')"
                 @change="updateOptions"
@@ -498,13 +457,11 @@
             </button>
             <div v-if="expandedSections.animation" class="mynd-echarts-accordion-content">
               <BaseCheckbox
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.animation"
                 :label="t('configDialog.fields.enableAnimation')"
                 @change="updateOptions"
               />
               <BaseInput
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.animationDuration"
                 type="number"
                 :label="t('configDialog.fields.animationDuration')"
@@ -514,7 +471,6 @@
                 @input="updateOptions"
               />
               <BaseSelect
-                :isDarkMode="isDarkMode"
                 v-model="localOptions.animationEasing"
                 :label="t('configDialog.fields.animationEasing')"
                 :options="[
@@ -541,7 +497,6 @@
             </button>
             <div v-if="expandedSections.language" class="mynd-echarts-accordion-content">
               <BaseSelect
-                :isDarkMode="isDarkMode"
                 v-model="currentLocale"
                 :label="t('configDialog.fields.selectLanguage')"
                 :options="availableLocales"

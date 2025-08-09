@@ -1,5 +1,5 @@
 <template>
-  <div class="mynd-echarts-base-select">
+  <div class="mynd-echarts-base-select" :data-theme="isDarkMode ? 'dark' : 'light'">
     <label v-if="label" class="mynd-echarts-select-label" :for="selectId">{{ label }}</label>
     <div class="mynd-echarts-select-wrapper">
       <select
@@ -48,6 +48,7 @@ interface BaseSelectProps {
   helpText?: string
   selectClass?: string | string[] | Record<string, boolean>
   id?: string
+  isDarkMode?: boolean
 }
 
 const props = withDefaults(defineProps<BaseSelectProps>(), {
@@ -150,21 +151,21 @@ const handleChange = (event: Event) => {
 }
 
 /* Dark mode support */
-:global(.dark) .mynd-echarts-select-field {
+.mynd-echarts-base-select[data-theme="dark"] .mynd-echarts-select-field {
   background-color: var(--bg-secondary, #1e293b);
   border-color: var(--border-color, #334155);
   color: var(--text-primary, #f1f5f9);
 }
 
-:global(.dark) .mynd-echarts-select-field:hover:not(:disabled) {
+.mynd-echarts-base-select[data-theme="dark"] .mynd-echarts-select-field:hover:not(:disabled) {
   border-color: var(--border-hover, #475569);
 }
 
-:global(.dark) .mynd-echarts-select-field:focus {
+.mynd-echarts-base-select[data-theme="dark"] .mynd-echarts-select-field:focus {
   border-color: var(--primary, #3b82f6);
 }
 
-:global(.dark) .mynd-echarts-select-field:disabled {
+.mynd-echarts-base-select[data-theme="dark"] .mynd-echarts-select-field:disabled {
   background-color: var(--bg-disabled, #0f172a);
 }
 </style>

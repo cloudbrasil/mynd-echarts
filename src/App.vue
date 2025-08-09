@@ -93,7 +93,7 @@
 
         <div class="showcase-grid">
           <div 
-            v-for="chart in filteredCharts" 
+            v-for="chart in enhancedShowcaseCharts" 
             :key="chart.id"
             class="showcase-card"
           >
@@ -177,7 +177,7 @@
               <MyndEcharts
                 v-if="validOptions && previewOptions"
                 ref="previewChartRef"
-                :options="previewOptions"
+                :options="enhanceOptionsWithTheme(previewOptions)"
                 :theme="currentTheme"
                 v-model:locale="chartLocale"
                 :show-toolbox="true"
@@ -254,7 +254,7 @@
         </div>
 
         <div class="examples-grid">
-          <div v-for="example in advancedExamples" :key="example.id" class="example-card">
+          <div v-for="example in enhancedAdvancedExamples" :key="example.id" class="example-card">
             <div class="example-preview">
               <MyndEcharts
                 :options="example.options"
@@ -391,10 +391,8 @@ const editorContent = ref(JSON.stringify({
   series: [{
     name: 'Sales',
     data: [120, 200, 150, 80, 70, 110, 130],
-    type: 'bar',
-    itemStyle: {
-      color: '#5470c6'
-    }
+    type: 'bar'
+    // Color handled by theme
   }]
 }, null, 2))
 const editorError = ref('')
@@ -491,7 +489,9 @@ const currentDocSection = computed(() => {
 // Methods
 const selectChart = (chart: any) => {
   selectedChart.value = chart
-  editorContent.value = JSON.stringify(chart.options, null, 2)
+  // Apply theme enhancements when loading in playground
+  const enhancedOptions = enhanceOptionsWithTheme(chart.options)
+  editorContent.value = JSON.stringify(enhancedOptions, null, 2)
   activeView.value = 'playground'
   updatePreview()
 }
@@ -499,7 +499,9 @@ const selectChart = (chart: any) => {
 const loadTemplate = () => {
   const template = showcaseCharts.find(c => c.id === selectedTemplate.value)
   if (template) {
-    editorContent.value = JSON.stringify(template.options, null, 2)
+    // Apply theme enhancements when loading template
+    const enhancedOptions = enhanceOptionsWithTheme(template.options)
+    editorContent.value = JSON.stringify(enhancedOptions, null, 2)
     updatePreview()
   }
 }
@@ -597,7 +599,9 @@ const handleOptionsUpdate = (newOptions: EChartsOption) => {
 }
 
 const useInPlayground = (example: any) => {
-  editorContent.value = JSON.stringify(example.options, null, 2)
+  // Apply theme enhancements when loading in playground
+  const enhancedOptions = enhanceOptionsWithTheme(example.options)
+  editorContent.value = JSON.stringify(enhancedOptions, null, 2)
   activeView.value = 'playground'
   updatePreview()
 }
@@ -670,6 +674,178 @@ const handleFullscreenChange = async () => {
     }
   }
 }
+
+// Function to enhance chart options with theme-aware colors
+const enhanceOptionsWithTheme = (options: EChartsOption): EChartsOption => {
+  const enhanced = { ...options }
+  
+  // Define colors based on current theme
+  const titleColor = isDarkMode.value ? '#e2e8f0' : '#333'
+  const subtitleColor = isDarkMode.value ? '#a0aec0' : '#666'
+  const axisLabelColor = isDarkMode.value ? '#9ca3af' : '#666'
+  const splitLineColor = isDarkMode.value ? '#374151' : '#e5e7eb'
+  
+  // Enhance title if it exists
+  if (enhanced.title) {
+    enhanced.title = {
+      ...enhanced.title,
+      textStyle: {
+        ...((enhanced.title as any).textStyle || {}),
+        color: titleColor
+      },
+      subtextStyle: {
+        ...((enhanced.title as any).subtextStyle || {}),
+        color: subtitleColor
+      }
+    }
+  }
+  
+  // Enhance toolbox if it exists
+  if (enhanced.toolbox) {
+    const toolboxIconColor = isDarkMode.value ? '#9ca3af' : '#666'
+    const toolboxEmphasisColor = isDarkMode.value ? '#e2e8f0' : '#333'
+    
+    enhanced.toolbox = {
+      ...enhanced.toolbox,
+      iconStyle: {
+        normal: {
+          borderColor: toolboxIconColor,
+          color: 'transparent'
+        },
+        ...((enhanced.toolbox as any).iconStyle || {})
+      },
+      emphasis: {
+        iconStyle: {
+          borderColor: toolboxEmphasisColor,
+          color: 'transparent',
+          borderWidth: 2
+        },
+        ...((enhanced.toolbox as any).emphasis || {})
+      }
+    }
+    
+    // Also enhance individual feature icons if they exist
+    if (enhanced.toolbox.feature) {
+      Object.keys(enhanced.toolbox.feature).forEach(featureName => {
+        const feature = (enhanced.toolbox.feature as any)[featureName]
+        if (feature && typeof feature === 'object') {
+          (enhanced.toolbox.feature as any)[featureName] = {
+            ...feature,
+            iconStyle: {
+              normal: {
+                borderColor: toolboxIconColor,
+                color: 'transparent'
+              },
+              emphasis: {
+                borderColor: toolboxEmphasisColor,
+                color: 'transparent'
+              },
+              ...(feature.iconStyle || {})
+            }
+          }
+        }
+      })
+    }
+  }
+  
+  // Enhance axis if they exist
+  if (enhanced.xAxis) {
+    const xAxis = Array.isArray(enhanced.xAxis) ? enhanced.xAxis : [enhanced.xAxis]
+    enhanced.xAxis = xAxis.map(axis => ({
+      ...axis,
+      axisLabel: {
+        ...(axis.axisLabel || {}),
+        color: axisLabelColor
+      },
+      axisLine: {
+        ...(axis.axisLine || {}),
+        lineStyle: {
+          ...((axis.axisLine as any)?.lineStyle || {}),
+          color: isDarkMode.value ? '#4b5563' : '#d1d5db'
+        }
+      },
+      splitLine: {
+        ...(axis.splitLine || {}),
+        lineStyle: {
+          ...((axis.splitLine as any)?.lineStyle || {}),
+          color: splitLineColor
+        }
+      }
+    }))
+    if (!Array.isArray(options.xAxis)) {
+      enhanced.xAxis = enhanced.xAxis[0]
+    }
+  }
+  
+  if (enhanced.yAxis) {
+    const yAxis = Array.isArray(enhanced.yAxis) ? enhanced.yAxis : [enhanced.yAxis]
+    enhanced.yAxis = yAxis.map(axis => ({
+      ...axis,
+      axisLabel: {
+        ...(axis.axisLabel || {}),
+        color: axisLabelColor
+      },
+      axisLine: {
+        ...(axis.axisLine || {}),
+        lineStyle: {
+          ...((axis.axisLine as any)?.lineStyle || {}),
+          color: isDarkMode.value ? '#4b5563' : '#d1d5db'
+        }
+      },
+      splitLine: {
+        ...(axis.splitLine || {}),
+        lineStyle: {
+          ...((axis.splitLine as any)?.lineStyle || {}),
+          color: splitLineColor
+        }
+      }
+    }))
+    if (!Array.isArray(options.yAxis)) {
+      enhanced.yAxis = enhanced.yAxis[0]
+    }
+  }
+  
+  // Enhance legend if it exists
+  if (enhanced.legend) {
+    enhanced.legend = {
+      ...enhanced.legend,
+      textStyle: {
+        ...((enhanced.legend as any).textStyle || {}),
+        color: axisLabelColor
+      }
+    }
+  }
+  
+  // Enhance tooltip if it exists
+  if (enhanced.tooltip) {
+    enhanced.tooltip = {
+      ...enhanced.tooltip,
+      backgroundColor: isDarkMode.value ? '#1f2937' : '#fff',
+      borderColor: isDarkMode.value ? '#374151' : '#e5e7eb',
+      textStyle: {
+        ...((enhanced.tooltip as any).textStyle || {}),
+        color: isDarkMode.value ? '#e2e8f0' : '#333'
+      }
+    }
+  }
+  
+  return enhanced
+}
+
+// Computed properties for enhanced chart options
+const enhancedShowcaseCharts = computed(() => {
+  return filteredCharts.value.map(chart => ({
+    ...chart,
+    options: enhanceOptionsWithTheme(chart.options)
+  }))
+})
+
+const enhancedAdvancedExamples = computed(() => {
+  return advancedExamples.map(example => ({
+    ...example,
+    options: enhanceOptionsWithTheme(example.options)
+  }))
+})
 
 // Initialize
 watch(() => currentTheme.value, () => {

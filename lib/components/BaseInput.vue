@@ -1,5 +1,5 @@
 <template>
-  <div class="mynd-echarts-base-input" :class="{ 'mynd-echarts-has-icon': $slots.icon }">
+  <div class="mynd-echarts-base-input" :class="{ 'mynd-echarts-has-icon': $slots.icon }" :data-theme="isDarkMode ? 'dark' : 'light'">
     <label v-if="label" class="mynd-echarts-input-label" :for="inputId">{{ label }}</label>
     <div class="mynd-echarts-input-wrapper">
       <div v-if="$slots.icon" class="mynd-echarts-input-icon">
@@ -63,6 +63,7 @@ interface BaseInputProps {
   rows?: number
   inputClass?: string | string[] | Record<string, boolean>
   id?: string
+  isDarkMode?: boolean
 }
 
 const props = withDefaults(defineProps<BaseInputProps>(), {
@@ -183,21 +184,21 @@ const handleInput = (event: Event) => {
 }
 
 /* Dark mode support */
-:global(.dark) .input-field {
+.mynd-echarts-base-input[data-theme="dark"] .input-field {
   background-color: var(--bg-secondary, #1e293b);
   border-color: var(--border-color, #334155);
   color: var(--text-primary, #f1f5f9);
 }
 
-:global(.dark) .mynd-echarts-input-field:hover:not(:disabled) {
+.mynd-echarts-base-input[data-theme="dark"] .mynd-echarts-input-field:hover:not(:disabled) {
   border-color: var(--border-hover, #475569);
 }
 
-:global(.dark) .mynd-echarts-input-field:focus {
+.mynd-echarts-base-input[data-theme="dark"] .mynd-echarts-input-field:focus {
   border-color: var(--primary, #3b82f6);
 }
 
-:global(.dark) .mynd-echarts-input-field:disabled {
+.mynd-echarts-base-input[data-theme="dark"] .mynd-echarts-input-field:disabled {
   background-color: var(--bg-disabled, #0f172a);
 }
 

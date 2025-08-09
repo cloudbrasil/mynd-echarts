@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body">
-    <div v-if="modelValue" class="mynd-echarts-dataview-overlay" @click="close">
+    <div v-if="modelValue" class="mynd-echarts-dataview-overlay" :data-theme="isDarkMode ? 'dark' : 'light'" @click="close">
       <div class="mynd-echarts-dataview-dialog" @click.stop>
         <div class="mynd-echarts-dataview-header">
           <h2>{{ t('title') }}</h2>
@@ -69,6 +69,7 @@ interface Props {
   options?: EChartsOption
   chartInstance?: any
   locale?: SupportedLocale
+  isDarkMode?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -493,57 +494,57 @@ const close = () => {
 }
 
 /* Dark mode support */
-:global(.dark) .mynd-echarts-dataview-dialog {
+.mynd-echarts-dataview-overlay[data-theme="dark"] .mynd-echarts-dataview-dialog {
   background: #1a202c;
 }
 
-:global(.dark) .mynd-echarts-dataview-header {
+.mynd-echarts-dataview-overlay[data-theme="dark"] .mynd-echarts-dataview-header {
   border-bottom-color: #2d3748;
 }
 
-:global(.dark) .mynd-echarts-dataview-header h2 {
+.mynd-echarts-dataview-overlay[data-theme="dark"] .mynd-echarts-dataview-header h2 {
   color: #f7fafc;
 }
 
-:global(.dark) .mynd-echarts-dataview-close {
+.mynd-echarts-dataview-overlay[data-theme="dark"] .mynd-echarts-dataview-close {
   color: #a0aec0;
 }
 
-:global(.dark) .mynd-echarts-dataview-close:hover {
+.mynd-echarts-dataview-overlay[data-theme="dark"] .mynd-echarts-dataview-close:hover {
   background: #2d3748;
   color: #f7fafc;
 }
 
-:global(.dark) .mynd-echarts-dataview-table-wrapper {
+.mynd-echarts-dataview-overlay[data-theme="dark"] .mynd-echarts-dataview-table-wrapper {
   border-color: #2d3748;
 }
 
-:global(.dark) .mynd-echarts-dataview-table th {
+.mynd-echarts-dataview-overlay[data-theme="dark"] .mynd-echarts-dataview-table th {
   background: #2d3748;
   color: #f7fafc;
   border-bottom-color: #4a5568;
 }
 
-:global(.dark) .mynd-echarts-dataview-table td {
+.mynd-echarts-dataview-overlay[data-theme="dark"] .mynd-echarts-dataview-table td {
   color: #e2e8f0;
   border-bottom-color: #2d3748;
 }
 
-:global(.dark) .mynd-echarts-dataview-table tbody tr:hover {
+.mynd-echarts-dataview-overlay[data-theme="dark"] .mynd-echarts-dataview-table tbody tr:hover {
   background: #2d3748;
 }
 
-:global(.dark) .mynd-echarts-dataview-footer {
+.mynd-echarts-dataview-overlay[data-theme="dark"] .mynd-echarts-dataview-footer {
   border-top-color: #2d3748;
 }
 
-:global(.dark) .mynd-echarts-dataview-btn {
+.mynd-echarts-dataview-overlay[data-theme="dark"] .mynd-echarts-dataview-btn {
   background: #2d3748;
   color: #e2e8f0;
   border-color: #4a5568;
 }
 
-:global(.dark) .mynd-echarts-dataview-btn:hover:not(:disabled) {
+.mynd-echarts-dataview-overlay[data-theme="dark"] .mynd-echarts-dataview-btn:hover:not(:disabled) {
   background: #4a5568;
   border-color: #718096;
 }

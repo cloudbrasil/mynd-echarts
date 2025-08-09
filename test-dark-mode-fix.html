@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Mode Fix Test - MyndEcharts</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Light mode (default) */
+        body {
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        /* Dark mode */
+        body.dark {
+            background: #1a202c;
+            color: #e2e8f0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        body.dark .header {
+            background: #2d3748;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .theme-toggle {
+            padding: 10px 20px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .theme-toggle:hover {
+            background: #3182ce;
+        }
+        
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 400px;
+        }
+        
+        body.dark .chart-container {
+            background: #2d3748;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        body.dark .info-box {
+            background: #374151;
+            border-left-color: #60a5fa;
+        }
+        
+        .info-box h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #1976d2;
+        }
+        
+        body.dark .info-box h2 {
+            color: #93c5fd;
+        }
+        
+        .info-box p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        body.dark .info-box p {
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 MyndEcharts - Dark Mode Header Fix Test</h1>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <span id="themeText">🌙 Switch to Dark Mode</span>
+            </button>
+        </div>
+        
+        <div class="info-box">
+            <h2>Testing Chart Header in Dark Mode</h2>
+            <p>This page tests the fix for the chart header colors in dark mode. The title and subtitle should be clearly visible in both light and dark themes. Toggle the theme using the button above to see the difference.</p>
+        </div>
+        
+        <div id="app">
+            <div class="chart-grid">
+                <div class="chart-container">
+                    <mynd-echarts 
+                        :options="lineChartOptions"
+                        :title="'Sales Performance'"
+                        :subtitle="'Monthly Revenue Data'"
+                        :height="350"
+                        :show-toolbox="true"
+                        :toolbox-style="'toolbar'"
+                    />
+                </div>
+                <div class="chart-container">
+                    <mynd-echarts 
+                        :options="barChartOptions"
+                        :title="'Product Categories'"
+                        :subtitle="'Q4 2024 Analysis'"
+                        :height="350"
+                        :show-toolbox="true"
+                        :toolbox-style="'menu'"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/echarts@5/dist/echarts.min.js"></script>
+    <script type="module">
+        import MyndEcharts from './lib/index.js';
+        
+        const { createApp } = Vue;
+        
+        createApp({
+            components: {
+                MyndEcharts
+            },
+            data() {
+                return {
+                    lineChartOptions: {
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: 'Sales (k)'
+                        },
+                        series: [{
+                            name: 'Sales',
+                            data: [120, 132, 101, 134, 90, 130],
+                            type: 'line',
+                            smooth: true,
+                            areaStyle: {
+                                opacity: 0.3
+                            }
+                        }]
+                    },
+                    barChartOptions: {
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: ['Electronics', 'Clothing', 'Food', 'Books', 'Sports']
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: 'Revenue ($)'
+                        },
+                        series: [{
+                            name: 'Revenue',
+                            data: [320, 250, 180, 140, 210],
+                            type: 'bar',
+                            itemStyle: {
+                                borderRadius: [4, 4, 0, 0]
+                            }
+                        }]
+                    }
+                }
+            }
+        }).mount('#app');
+        
+        // Theme toggle functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeText = document.getElementById('themeText');
+            
+            if (body.classList.contains('dark')) {
+                body.classList.remove('dark');
+                document.documentElement.classList.remove('dark');
+                themeText.textContent = '🌙 Switch to Dark Mode';
+            } else {
+                body.classList.add('dark');
+                document.documentElement.classList.add('dark');
+                themeText.textContent = '☀️ Switch to Light Mode';
+            }
+        }
+        
+        // Make function available globally
+        window.toggleTheme = toggleTheme;
+    </script>
+</body>
+</html>

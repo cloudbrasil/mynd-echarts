@@ -1,5 +1,5 @@
 <template>
-  <label class="mynd-echarts-base-checkbox" :class="{ disabled }" :for="checkboxId">
+  <label class="mynd-echarts-base-checkbox" :class="{ disabled }" :for="checkboxId" :data-theme="isDarkMode ? 'dark' : 'light'">
     <input
       :id="checkboxId"
       type="checkbox"
@@ -30,6 +30,7 @@ interface BaseCheckboxProps {
   label?: string
   disabled?: boolean
   id?: string
+  isDarkMode?: boolean
 }
 
 const props = withDefaults(defineProps<BaseCheckboxProps>(), {
@@ -110,12 +111,12 @@ const handleChange = (event: Event) => {
 }
 
 /* Dark mode support */
-:global(.dark) .mynd-echarts-checkbox-box {
+.mynd-echarts-base-checkbox[data-theme="dark"] .mynd-echarts-checkbox-box {
   background-color: var(--bg-secondary, #1e293b);
   border-color: var(--border-color, #334155);
 }
 
-:global(.dark) .mynd-echarts-checkbox-label {
+.mynd-echarts-base-checkbox[data-theme="dark"] .mynd-echarts-checkbox-label {
   color: var(--text-primary, #f1f5f9);
 }
 </style>

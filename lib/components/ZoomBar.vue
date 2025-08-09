@@ -1,5 +1,5 @@
 <template>
-  <div class="mynd-echarts-zoombar" @mousedown.stop @touchstart.stop>
+  <div class="mynd-echarts-zoombar" :data-theme="isDarkMode ? 'dark' : 'light'" @mousedown.stop @touchstart.stop>
     <div class="mynd-echarts-zoombar-track" ref="trackEl">
       <canvas ref="sparkCanvas" class="mynd-echarts-zoombar-spark"></canvas>
       <div class="mynd-echarts-zoombar-fill" :style="fillStyle"></div>
@@ -17,6 +17,7 @@ interface Props {
   options: EChartsOption
   start?: number
   end?: number
+  isDarkMode?: boolean
 }
 
 const props = defineProps<Props>()
@@ -204,11 +205,11 @@ onBeforeUnmount(() => {
 
 
 /* Dark mode support (scoped) */
-:global(.dark) .mynd-echarts-zoombar-track { border-color: #374151; background: #111827; }
-:global(.dark) .mynd-echarts-zoombar-spark { opacity: 0.5; }
-:global(.dark) .mynd-echarts-zoombar-fill { background: rgba(84,112,198,0.3); border-color: rgba(84,112,198,0.75); }
-:global(.dark) .mynd-echarts-zb-handle { background: #1f2937; border-color: #4b5563; box-shadow: 0 1px 2px rgba(0,0,0,0.6); }
-:global(.dark) .mynd-echarts-zb-handle::before { background: #94a3b8; box-shadow: -4px 0 0 #94a3b8, 4px 0 0 #94a3b8; }
+.mynd-echarts-zoombar[data-theme="dark"] .mynd-echarts-zoombar-track { border-color: #374151; background: #111827; }
+.mynd-echarts-zoombar[data-theme="dark"] .mynd-echarts-zoombar-spark { opacity: 0.5; }
+.mynd-echarts-zoombar[data-theme="dark"] .mynd-echarts-zoombar-fill { background: rgba(84,112,198,0.3); border-color: rgba(84,112,198,0.75); }
+.mynd-echarts-zoombar[data-theme="dark"] .mynd-echarts-zb-handle { background: #1f2937; border-color: #4b5563; box-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+.mynd-echarts-zoombar[data-theme="dark"] .mynd-echarts-zb-handle::before { background: #94a3b8; box-shadow: -4px 0 0 #94a3b8, 4px 0 0 #94a3b8; }
 
 /* Larger touch targets on coarse pointers (mobile) */
 @media (pointer: coarse) {

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toolbox Icons Dark Mode Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 40px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        body.light {
+            background: #f9fafb;
+            color: #111827;
+        }
+        
+        body.dark {
+            background: #111827;
+            color: #f9fafb;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        body.dark .header {
+            background: #1f2937;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .theme-toggle {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: #2563eb;
+        }
+        
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        body.dark .test-section {
+            background: #1f2937;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .test-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #374151;
+        }
+        
+        body.dark .test-title {
+            color: #e5e7eb;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .status-item {
+            padding: 15px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            border-left: 4px solid #10b981;
+        }
+        
+        body.dark .status-item {
+            background: #374151;
+            border-left-color: #10b981;
+        }
+        
+        .status-item.error {
+            border-left-color: #ef4444;
+        }
+        
+        .status-label {
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+        
+        body.dark .status-label {
+            color: #9ca3af;
+        }
+        
+        .status-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .chart-wrapper {
+            height: 400px;
+            margin-top: 20px;
+            position: relative;
+        }
+        
+        #app {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .test-results {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            border-radius: 8px;
+        }
+        
+        body.dark .test-results {
+            background: #78350f;
+            border-color: #fbbf24;
+        }
+        
+        .result-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+        }
+        
+        .result-icon {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .result-icon.pass {
+            color: #10b981;
+        }
+        
+        .result-icon.fail {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body class="light">
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Toolbox Icons Color Test</h1>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <span id="theme-text">Switch to Dark Mode</span>
+            </button>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">Expected Colors by Theme</h2>
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-label">Light Mode Icons</div>
+                    <div class="status-value">#4b5563 (Gray)</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Dark Mode Icons</div>
+                    <div class="status-value">#ffffff (White)</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Light Mode Hover</div>
+                    <div class="status-value">#1f2937 (Dark Gray)</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Dark Mode Hover</div>
+                    <div class="status-value">#ffffff (White)</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">Live Component Test - Toolbar Style</h2>
+            <div class="chart-wrapper">
+                <div id="app"></div>
+            </div>
+            <div id="toolbar-results" class="test-results" style="display: none;">
+                <h3>Test Results:</h3>
+                <div id="toolbar-test-output"></div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">Live Component Test - Menu Style</h2>
+            <div class="chart-wrapper">
+                <div id="app2"></div>
+            </div>
+            <div id="menu-results" class="test-results" style="display: none;">
+                <h3>Test Results:</h3>
+                <div id="menu-test-output"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createApp, ref, computed, onMounted, nextTick } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+        import * as echarts from 'https://unpkg.com/echarts@5/dist/echarts.esm.js';
+        
+        // Import the built component
+        const loadComponent = async () => {
+            const module = await import('./dist/mynd-echarts.js');
+            return module.MyndEcharts;
+        };
+        
+        window.toggleTheme = function() {
+            const body = document.body;
+            const isDark = body.classList.contains('dark');
+            
+            if (isDark) {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                document.getElementById('theme-text').textContent = 'Switch to Dark Mode';
+            } else {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                document.getElementById('theme-text').textContent = 'Switch to Light Mode';
+            }
+            
+            // Run tests after theme change
+            setTimeout(() => {
+                runIconColorTests('toolbar');
+                runIconColorTests('menu');
+            }, 100);
+        };
+        
+        window.runIconColorTests = function(style) {
+            const isDark = document.body.classList.contains('dark');
+            const resultsEl = document.getElementById(`${style}-results`);
+            const outputEl = document.getElementById(`${style}-test-output`);
+            
+            resultsEl.style.display = 'block';
+            outputEl.innerHTML = '';
+            
+            // Test toolbar buttons or menu trigger
+            const selector = style === 'toolbar' 
+                ? '.mynd-echarts-toolbox-btn' 
+                : '.mynd-echarts-toolbox-menu-trigger';
+            
+            const buttons = document.querySelectorAll(selector);
+            const tests = [];
+            
+            buttons.forEach((btn, index) => {
+                const computedStyle = window.getComputedStyle(btn);
+                const color = computedStyle.color;
+                const expectedColor = isDark ? 'rgb(255, 255, 255)' : 'rgb(75, 85, 99)';
+                const passed = color === expectedColor;
+                
+                tests.push({
+                    name: `Button ${index + 1} Color`,
+                    expected: expectedColor,
+                    actual: color,
+                    passed: passed
+                });
+            });
+            
+            // Test SVG icons
+            const icons = document.querySelectorAll(`${selector} svg`);
+            icons.forEach((icon, index) => {
+                const computedStyle = window.getComputedStyle(icon);
+                const fill = computedStyle.fill;
+                const expectedFill = 'currentcolor';
+                const passed = fill.toLowerCase() === expectedFill;
+                
+                tests.push({
+                    name: `Icon ${index + 1} Fill`,
+                    expected: expectedFill,
+                    actual: fill,
+                    passed: passed
+                });
+            });
+            
+            // Display results
+            tests.forEach(test => {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'result-item';
+                resultDiv.innerHTML = `
+                    <span class="result-icon ${test.passed ? 'pass' : 'fail'}">
+                        ${test.passed ? '✓' : '✗'}
+                    </span>
+                    <span>${test.name}: ${test.actual} ${test.passed ? '✓' : `(expected: ${test.expected})`}</span>
+                `;
+                outputEl.appendChild(resultDiv);
+            });
+            
+            const allPassed = tests.every(t => t.passed);
+            const summary = document.createElement('div');
+            summary.style.marginTop = '15px';
+            summary.style.fontWeight = 'bold';
+            summary.innerHTML = allPassed 
+                ? '<span style="color: #10b981;">✓ All tests passed!</span>'
+                : '<span style="color: #ef4444;">✗ Some tests failed</span>';
+            outputEl.appendChild(summary);
+        };
+        
+        // Create apps
+        loadComponent().then(MyndEcharts => {
+            // Toolbar style app
+            const app1 = createApp({
+                components: { MyndEcharts },
+                setup() {
+                    const chartOptions = ref({
+                        title: {
+                            text: 'Toolbar Style Icons Test'
+                        },
+                        toolbox: {
+                            feature: {
+                                saveAsImage: { show: true },
+                                restore: { show: true },
+                                dataView: { show: true },
+                                dataZoom: { show: true },
+                                magicType: { show: true, type: ['line', 'bar'] }
+                            }
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [{
+                            type: 'line',
+                            data: [120, 200, 150, 80, 70]
+                        }]
+                    });
+                    
+                    onMounted(() => {
+                        nextTick(() => {
+                            setTimeout(() => runIconColorTests('toolbar'), 500);
+                        });
+                    });
+                    
+                    return { chartOptions };
+                },
+                template: `
+                    <mynd-echarts 
+                        :options="chartOptions"
+                        :height="300"
+                        :toolbox-config="{
+                            feature: {
+                                saveAsImage: { show: true },
+                                restore: { show: true },
+                                dataView: { show: true },
+                                dataZoom: { show: true },
+                                magicType: { show: true }
+                            }
+                        }"
+                        toolbox-display-style="toolbar"
+                    />
+                `
+            });
+            
+            // Menu style app
+            const app2 = createApp({
+                components: { MyndEcharts },
+                setup() {
+                    const chartOptions = ref({
+                        title: {
+                            text: 'Menu Style Icons Test'
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [{
+                            type: 'bar',
+                            data: [120, 200, 150, 80, 70]
+                        }]
+                    });
+                    
+                    onMounted(() => {
+                        nextTick(() => {
+                            setTimeout(() => runIconColorTests('menu'), 500);
+                        });
+                    });
+                    
+                    return { chartOptions };
+                },
+                template: `
+                    <mynd-echarts 
+                        :options="chartOptions"
+                        :height="300"
+                        :toolbox-config="{
+                            feature: {
+                                saveAsImage: { show: true },
+                                restore: { show: true },
+                                dataView: { show: true },
+                                magicType: { show: true }
+                            }
+                        }"
+                        toolbox-display-style="menu"
+                    />
+                `
+            });
+            
+            app1.mount('#app');
+            app2.mount('#app2');
+        });
+    </script>
+</body>
+</html>

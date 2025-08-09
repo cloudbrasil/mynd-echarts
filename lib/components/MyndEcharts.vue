@@ -1,5 +1,5 @@
 <template>
-  <div class="mynd-echarts-wrapper">
+  <div class="mynd-echarts-wrapper" :data-theme="isDarkMode ? 'dark' : 'light'">
     <!-- Custom Header -->
     <div v-if="chartTitle || chartSubtitle" class="mynd-echarts-header">
       <div class="mynd-echarts-title-section">
@@ -33,6 +33,7 @@
         :toolbox-config="toolboxConfig"
         :options="props.options"
         :locale="props.locale"
+        :is-dark-mode="isDarkMode"
         @action="handleToolboxAction"
       />
     </div>
@@ -47,6 +48,7 @@
       :options="props.options"
       :start="zoomStart"
       :end="zoomEnd"
+      :is-dark-mode="isDarkMode"
       @change="handleZoomBarChange"
     />
     
@@ -54,6 +56,7 @@
       v-if="showConfig"
       v-model="showConfig" 
       :options="currentOptions"
+      :is-dark-mode="isDarkMode"
       @update:options="handleConfigUpdate"
       @update:locale="handleLocaleUpdate"
     />
@@ -64,6 +67,7 @@
       :options="props.options"
       :chart-instance="chartInstance"
       :locale="props.locale as SupportedLocale"
+      :is-dark-mode="isDarkMode"
     />
   </div>
 </template>
@@ -252,6 +256,18 @@ const emit = defineEmits<{
   'toolbox-fixed': [info: { method: string, success: boolean }]
 }>()
 
+// Dark mode detection
+const isDarkMode = ref(false)
+
+const updateDarkMode = () => {
+  if (typeof document !== 'undefined') {
+    isDarkMode.value = document.documentElement.classList.contains('dark') || document.body.classList.contains('dark')
+  }
+}
+
+// Setup dark mode observer
+let darkModeObserver: MutationObserver | null = null
+
 const chartRef = ref<HTMLElement>()
 const showConfig = ref(false)
 const showDataView = ref(false)
@@ -314,7 +330,10 @@ const titleStyle = computed(() => {
   
   // Map ECharts title properties to CSS
   if (config.textStyle) {
-    style.color = config.textStyle.color
+    // Only set color if explicitly provided, otherwise let CSS handle theming
+    if (config.textStyle.color) {
+      style.color = config.textStyle.color
+    }
     style.fontSize = typeof config.textStyle.fontSize === 'number' 
       ? `${config.textStyle.fontSize}px` 
       : config.textStyle.fontSize
@@ -346,7 +365,10 @@ const subtitleStyle = computed(() => {
   
   // Map ECharts subtitle properties to CSS
   if (config.subtextStyle) {
-    style.color = config.subtextStyle.color
+    // Only set color if explicitly provided, otherwise let CSS handle theming
+    if (config.subtextStyle.color) {
+      style.color = config.subtextStyle.color
+    }
     style.fontSize = typeof config.subtextStyle.fontSize === 'number' 
       ? `${config.subtextStyle.fontSize}px` 
       : config.subtextStyle.fontSize
@@ -1032,6 +1054,25 @@ watch(chartInstance, (newInstance, oldInstance) => {
 
 // Initialize chart on mount
 onMounted(async () => {
+  // Setup dark mode detection
+  updateDarkMode()
+  
+  if (typeof document !== 'undefined') {
+    darkModeObserver = new MutationObserver(() => {
+      updateDarkMode()
+    })
+    
+    darkModeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
+    
+    darkModeObserver.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
+  }
+  
   // Options are now set in the onReady callback to ensure proper initialization order
   // Just ensure observers are set up if needed
   if (chartInstance.value) {
@@ -1045,6 +1086,12 @@ onUnmounted(() => {
   cleanupObservers()
   // Then dispose the chart
   dispose()
+  
+  // Clean up dark mode observer
+  if (darkModeObserver) {
+    darkModeObserver.disconnect()
+    darkModeObserver = null
+  }
 })
 
 // Override resize
@@ -1203,6 +1250,19 @@ defineExpose({
   z-index: 0;
   display: flex;
   flex-direction: column;
+  /* Define CSS variables for theme colors */
+  --mynd-echarts-title-color: #333;
+  --mynd-echarts-title-hover-color: #5470c6;
+  --mynd-echarts-subtitle-color: #666;
+  --mynd-echarts-subtitle-hover-color: #5470c6;
+}
+
+/* Dark mode variable overrides */
+.mynd-echarts-wrapper[data-theme="dark"] {
+  --mynd-echarts-title-color: #e2e8f0;
+  --mynd-echarts-title-hover-color: #91d5ff;
+  --mynd-echarts-subtitle-color: #a0aec0;
+  --mynd-echarts-subtitle-hover-color: #91d5ff;
 }
 
 /* Custom header for title and toolbox */
@@ -1227,7 +1287,7 @@ defineExpose({
   /* Default styles - can be overridden by inline styles from options */
   font-size: 14px;
   font-weight: bold;
-  color: #333;
+  color: var(--mynd-echarts-title-color, #333);
   line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1239,25 +1299,18 @@ defineExpose({
 
 /* Link styles for title */
 a.mynd-echarts-title:hover {
-  color: #5470c6;
+  color: var(--mynd-echarts-title-hover-color, #5470c6);
   text-decoration: underline;
 }
 
-/* Dark mode title color (scoped) */
-:global(.dark) .mynd-echarts-title {
-  color: #e2e8f0;
-}
-
-:global(.dark) a.mynd-echarts-title:hover {
-  color: #91d5ff;
-}
+/* No need for additional dark mode overrides here since variables are set at wrapper level */
 
 .mynd-echarts-subtitle {
   margin: 4px 0 0 0;
   padding: 0;
   font-size: 14px;
   font-weight: 400;
-  color: #666;
+  color: var(--mynd-echarts-subtitle-color, #666);
   line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1269,18 +1322,11 @@ a.mynd-echarts-title:hover {
 
 /* Link styles for subtitle */
 a.mynd-echarts-subtitle:hover {
-  color: #5470c6;
+  color: var(--mynd-echarts-subtitle-hover-color, #5470c6);
   text-decoration: underline;
 }
 
-/* Dark mode subtitle color (scoped) */
-:global(.dark) .mynd-echarts-subtitle {
-  color: #a0aec0;
-}
-
-:global(.dark) a.mynd-echarts-subtitle:hover {
-  color: #91d5ff;
-}
+/* No need for additional dark mode overrides here since variables are set at wrapper level */
 
 /* Toolbox styling is handled by ChartToolbox component */
 
