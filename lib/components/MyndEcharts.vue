@@ -1,7 +1,7 @@
 <template>
   <div class="mynd-echarts-wrapper" :data-theme="isDarkMode ? 'dark' : 'light'" :class="computedClass">
     <!-- Custom Header -->
-    <div v-if="chartTitle || chartSubtitle" class="mynd-echarts-header">
+    <div v-if="props.renderHeader && (chartTitle || chartSubtitle)" class="mynd-echarts-header">
       <div class="mynd-echarts-title-section">
         <component 
           :is="titleLink ? 'a' : 'div'" 
@@ -26,7 +26,7 @@
       </div>
       <!-- Custom Toolbox -->
       <ChartToolbox
-        v-if="showToolbox"
+        v-if="props.renderHeader && showToolbox"
         :chart-instance="chartInstance"
         :chart-type="detectedChartTypes"
         :display-style="toolboxStyle"
@@ -40,7 +40,7 @@
     
     <!-- Chart Container -->
     <div class="mynd-echarts-container" @mousedown.stop @touchstart.stop>
-      <div ref="chartRef" class="mynd-echarts-chart" :style="computedStyle"></div>
+      <div ref="chartRef" class="mynd-echarts-chart" :style="computedStyle" :class="computedClass"></div>
     </div>
     <!-- Zoom bar under the chart -->
     <ZoomBar
@@ -91,6 +91,8 @@ type ExtendedMyndEchartsProps = CoreMyndEchartsProps & {
   showToolbox?: boolean
   /** Toolbox display style */
   toolboxStyle?: 'toolbar' | 'menu'
+  /** Render custom header (title/toolbox) instead of ECharts native */
+  renderHeader?: boolean
   /** @deprecated Native toolbox mode no longer used */
   toolboxMode?: 'auto' | 'fixed' | 'disabled'
   /** @deprecated Native toolbox position no longer used */
@@ -111,7 +113,8 @@ const props = withDefaults(defineProps<ExtendedMyndEchartsProps>(), {
   lazyUpdate: false,
   silent: false,
   showToolbox: true,
-  toolboxStyle: 'toolbar'
+  toolboxStyle: 'toolbar',
+  renderHeader: true
 })
 
 type ExtendedEmits = CoreMyndEchartsEmits & {
@@ -261,8 +264,11 @@ const subtitleStyle = computed(() => {
 // Process options to remove title (since we're showing it in custom header)
 const processedOptions = computed(() => {
   const opts = { ...props.options }
-  // Remove title from options to prevent double display
-  delete opts.title
+  if (props.renderHeader) {
+    // Remove native header UI when rendering custom header
+    delete (opts as any).title
+    delete (opts as any).toolbox
+  }
   return opts
 })
 
@@ -343,12 +349,15 @@ const { chartInstance, setOption: rawSetOption, resize, dispose, clear, getOptio
   renderer: props.renderer,
   autoResize: props.autoResize,
   initOptions: initOptionsWithDefaults.value,
+  onInitError: (e) => { console.error(e) },
+  onSetOptionError: (e) => { console.error(e) },
   onReady: async (instance) => {
     // Set initial options immediately when chart is ready
     if (props.options) {
       try {
-        // Pass through original options and honor notMerge prop
-        rawSetOption(props.options, {
+        // Respect renderHeader behavior
+        const initialOptions = props.renderHeader ? processedOptions.value : props.options
+        rawSetOption(initialOptions, {
           notMerge: props.notMerge,
           lazyUpdate: props.lazyUpdate,
           silent: props.silent
@@ -424,10 +433,10 @@ const processChartOptions = (options: EChartsOption): EChartsOption => {
   }
   
   // Remove title from options since we're displaying it in custom header
-  delete processedOpts.title
+  if (props.renderHeader) delete (processedOpts as any).title
 
   // Remove native toolbox since we handle it in custom header
-  delete processedOpts.toolbox
+  if (props.renderHeader) delete processedOpts.toolbox
   
   // Ensure a valid coordinate system exists for common cartesian series
   try {
@@ -675,7 +684,8 @@ watch(
       
       // Set options if chart instance exists
       if (chartInstance.value && !chartInstance.value.isDisposed()) {
-        rawSetOption(newOptions, {
+        const nextOptions = props.renderHeader ? processedOptions.value : newOptions
+        rawSetOption(nextOptions, {
           notMerge: props.notMerge,
           lazyUpdate: props.lazyUpdate,
           silent: props.silent
@@ -773,6 +783,7 @@ const disposeWithCleanup = () => {
 // Expose chart methods for external use
 defineExpose({
   get chartInstance() { return chartInstance.value },
+  getChartInstance,
   setOption,
   getOption,
   resize: resizeWithFix,

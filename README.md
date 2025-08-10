@@ -4,7 +4,7 @@ A powerful Vue 3 wrapper component for Apache ECharts with full TypeScript suppo
 
 [![npm version](https://badge.fury.io/js/@docbrasil%2Fmynd-echarts.svg)](https://www.npmjs.com/package/@docbrasil/mynd-echarts)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Test Coverage](https://img.shields.io/badge/tests-405%2F556%20passing-yellow.svg)](https://github.com/docbrasil/mynd-echarts)
+[![Test Coverage](https://img.shields.io/badge/tests-498%2F556%20passing-yellow.svg)](https://github.com/docbrasil/mynd-echarts)
 
 ## 🌟 Features
 
@@ -102,41 +102,42 @@ app.mount('#app')
 ### Latest Test Run Summary
 
 ```
-Test Files: 13 failed | 12 passed (25)
-Tests: 151 failed | 405 passed (556)
-Duration: 18.86s
+Test Files: 8 failed | 17 passed (25)
+Tests: 58 failed | 498 passed (556)
+Start: 2025-08-10 23:24:25
+Duration: 2.06s
 ```
 
 ### Test Suite Details
 
-#### ✅ Passing Test Files (12)
+#### ✅ Passing Test Files (17)
 - `tests/unit/types/utilities.spec.ts` - 41 tests passed
-- `tests/unit/types/guards.spec.ts` - 44 tests passed
-- `tests/unit/composables/useChartEvents.spec.ts` - 23 tests passed
 - `tests/unit/composables/useChartData.spec.ts` - 37 tests passed
 - `tests/unit/composables/useChartAnimation.spec.ts` - 26 tests passed
+- `tests/unit/types/guards.spec.ts` - 44 tests passed
 - `tests/unit/composables/useChartOptions.spec.ts` - 27 tests passed
+- `tests/unit/composables/useChartEvents.spec.ts` - 23 tests passed
+- `tests/unit/components/BaseCheckbox.spec.ts` - 24 tests passed
 - `tests/unit/composables/useLocale.spec.ts` - 21 tests passed
-- `tests/unit/composables/useToast.spec.ts` - 22 tests passed
+- `tests/unit/components/BaseSelect.spec.ts` - 24 tests passed
 - `tests/unit/composables/useChartResize.spec.ts` - 11 tests passed
-- `tests/unit/composables/useChartTheme.spec.ts` - All tests passed
-- `tests/unit/composables/index.spec.ts` - All tests passed
+- `tests/unit/composables/useToast.spec.ts` - 22 tests passed
 - `tests/unit/utils/index.spec.ts` - 15 tests passed
+- `tests/unit/components/BaseInput.spec.ts` - 28 tests passed
+- `tests/unit/components/ConfigDialog-final.spec.ts` - 16 tests passed
+- `tests/unit/components/ConfigDialog-teleport.spec.ts` - 16 tests passed
+- `tests/unit/composables/useChartTheme.spec.ts` - 14 tests passed
+- `tests/unit/composables/index.spec.ts` - 10 tests passed
 
-#### ⚠️ Failing Test Files (13)
-- `tests/unit/components/BaseCheckbox.spec.ts` - 20/24 passed (4 failed)
-- `tests/unit/components/BaseSelect.spec.ts` - 22/24 passed (2 failed)
-- `tests/unit/components/BaseInput.spec.ts` - 24/28 passed (4 failed)
-- `tests/unit/components/ConfigDialog.spec.ts` - 2/31 passed (29 failed)
-- `tests/unit/components/ConfigDialog-fixed.spec.ts` - 2/17 passed (15 failed)
-- `tests/unit/components/ConfigDialog-simple.spec.ts` - Failed
-- `tests/unit/components/ConfigDialog-final.spec.ts` - Failed
-- `tests/unit/components/ConfigDialog-teleport.spec.ts` - Failed
-- `tests/unit/components/MyndEcharts.spec.ts` - Multiple failures
-- `tests/unit/composables/useECharts.spec.ts` - 5/25 passed (20 failed)
-- `tests/unit/coverage-boost.spec.ts` - 2/13 passed (11 failed)
-- `tests/unit/comprehensive-coverage.spec.ts` - 11/15 passed (4 failed)
-- `tests/unit/simple-coverage.spec.ts` - Failed
+#### ⚠️ Failing Test Files (8)
+- `tests/unit/components/ConfigDialog-fixed.spec.ts` - 17 tests (2 failed)
+- `tests/unit/components/ConfigDialog.spec.ts` - 31 tests (24 failed)
+- `tests/unit/composables/useECharts.spec.ts` - 25 tests (1 failed)
+- `tests/unit/coverage-boost.spec.ts` - 13 tests (11 failed)
+- `tests/unit/comprehensive-coverage.spec.ts` - 15 tests (4 failed)
+- `tests/unit/components/MyndEcharts.spec.ts` - 33 tests (11 failed)
+- `tests/unit/components/ConfigDialog-simple.spec.ts` - 8 tests (1 failed)
+- `tests/unit/simple-coverage.spec.ts` - 15 tests (4 failed)
 
 ### Test Failure Analysis
 
@@ -529,9 +530,9 @@ const handleLegendChange = (params) => {
 
 | Metric | Count | Status |
 |--------|-------|--------|
-| **Test Files** | 25 total (18 passed, 7 with failures) | ⚠️ |
-| **Test Cases** | 556 total (473 passed, 83 failed) | ✅ |
-| **Pass Rate** | 85.07% | ✅ |
+| **Test Files** | 25 total (17 passed, 8 with failures) | ⚠️ |
+| **Test Cases** | 556 total (498 passed, 58 failed) | ⚠️ |
+| **Pass Rate** | 89.57% | ⚠️ |
 
 #### Detailed Coverage by Module
 

@@ -80,6 +80,15 @@ echarts.use([
 ])
 import { debounce } from '../utils'
 
+// Optional helper for consumers using modular ECharts builds
+export function registerEChartsModules(modules: any[]) {
+  try {
+    echarts.use(modules as any)
+  } catch (err) {
+    console.warn('[mynd-echarts] Failed to register ECharts modules:', err)
+  }
+}
+
 export interface UseEChartsOptions {
   theme?: string | object | Ref<string | object> | ComputedRef<string | object>
   locale?: string | Ref<string> | ComputedRef<string>
@@ -96,6 +105,9 @@ export interface UseEChartsOptions {
   }
   onReady?: (instance: ECharts) => void
   onDispose?: (instance: ECharts) => void
+  onInitError?: (error: unknown) => void
+  onSetOptionError?: (error: unknown) => void
+  rethrowOnSetOptionError?: boolean
   events?: Record<string, (params: any) => void>
 }
 
@@ -133,6 +145,9 @@ export function useECharts(
     initOptions = {},
     onReady,
     onDispose,
+    onInitError,
+    onSetOptionError,
+    rethrowOnSetOptionError = false,
     events = {}
   } = options
 
@@ -176,7 +191,8 @@ export function useECharts(
         ...initOptions
       })
     } catch (e) {
-      console.error(e)
+      if (onInitError) onInitError(e)
+      else console.error(e)
       return
     }
 
@@ -213,6 +229,7 @@ export function useECharts(
     }, resizeDebounce)
 
     // Use ResizeObserver for better performance
+    let usedWindowResize = false
     if (typeof ResizeObserver !== 'undefined') {
       try {
         // @ts-expect-error: Mocked in tests, may not fully implement types
@@ -229,12 +246,15 @@ export function useECharts(
         if (resizeHandler) {
           window.addEventListener('resize', resizeHandler)
         }
+        usedWindowResize = true
+        resizeObserver = null
       }
     } else {
       // Fallback to window resize event
       if (resizeHandler) {
         window.addEventListener('resize', resizeHandler)
       }
+      usedWindowResize = true
     }
   }
 
@@ -250,12 +270,14 @@ export function useECharts(
       try {
         chartInstance.value.setOption(options, opts)
       } catch (error) {
-        console.warn('[mynd-echarts] Error setting options:', error)
+        if (onSetOptionError) onSetOptionError(error)
+        else console.warn('[mynd-echarts] Error setting options:', error)
         try {
-          // Attempt to recover by clearing and retrying once
           chartInstance.value.clear()
           chartInstance.value.setOption(options, opts)
-        } catch {}
+        } catch (retryErr) {
+          if (rethrowOnSetOptionError) throw retryErr
+        }
       }
     }
   }
@@ -370,7 +392,7 @@ export function useECharts(
     }
 
     // Remove window resize listener if used
-    if (resizeHandler && !resizeObserver) {
+    if (resizeHandler) {
       window.removeEventListener('resize', resizeHandler)
     }
     resizeHandler = null

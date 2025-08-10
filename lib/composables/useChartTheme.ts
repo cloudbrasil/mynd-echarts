@@ -30,6 +30,9 @@ export function useChartTheme(options: UseChartThemeOptions = {}) {
     registeredThemes.value.add(name)
   }
 
+  // Backwards/alternative naming expected by some consumers/tests
+  const registerCustomTheme = (name: string, theme: object) => registerTheme(name, theme)
+
   const setTheme = (themeName: string) => {
     if (registeredThemes.value.has(themeName)) {
       currentTheme.value = themeName
@@ -198,6 +201,7 @@ export function useChartTheme(options: UseChartThemeOptions = {}) {
     currentTheme,
     registeredThemes,
     registerTheme,
+    registerCustomTheme,
     setTheme,
     getTheme,
     getRegisteredThemes,

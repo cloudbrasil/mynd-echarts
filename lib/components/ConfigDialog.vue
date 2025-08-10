@@ -566,13 +566,6 @@
 
 <script setup lang="ts">
 import { reactive, computed, watch, watchEffect, getCurrentInstance } from 'vue'
-// Choose teleport target: prefer test target when present
-const teleportTo = computed(() => {
-  if (typeof document !== 'undefined' && document.getElementById('teleport-target')) {
-    return '#teleport-target'
-  }
-  return 'body'
-})
 import type { EChartsOption } from 'echarts'
 import BaseInput from './BaseInput.vue'
 import BaseSelect from './BaseSelect.vue'
@@ -583,11 +576,21 @@ interface ConfigDialogProps {
   modelValue: boolean
   options: EChartsOption
   isDarkMode?: boolean
+  teleportTarget?: string
 }
 
 const props = withDefaults(defineProps<ConfigDialogProps>(), {
   modelValue: false,
   options: () => ({})
+})
+
+// Choose teleport target: prefer explicit prop, else test target, else body
+const teleportTo = computed(() => {
+  if (props.teleportTarget) return props.teleportTarget
+  if (typeof document !== 'undefined' && document.getElementById('teleport-target')) {
+    return '#teleport-target'
+  }
+  return 'body'
 })
 
 const emit = defineEmits<{
