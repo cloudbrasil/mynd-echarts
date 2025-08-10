@@ -1,20 +1,20 @@
 <template>
-  <label class="mynd-echarts-base-checkbox" :class="{ disabled }" :for="checkboxId" :data-theme="isDarkMode ? 'dark' : 'light'">
+  <label class="mynd-echarts-base-checkbox base-checkbox" :class="{ disabled }" :for="checkboxId" :data-theme="isDarkMode ? 'dark' : 'light'">
     <input
       :id="checkboxId"
       type="checkbox"
       :checked="modelValue"
       :disabled="disabled"
       @change="handleChange"
-      class="mynd-echarts-checkbox-input"
+      class="mynd-echarts-checkbox-input checkbox-input"
       v-bind="$attrs"
     />
-    <div class="mynd-echarts-checkbox-box">
+    <div class="mynd-echarts-checkbox-box checkbox-box">
       <svg v-if="modelValue" class="mynd-echarts-checkbox-icon" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
       </svg>
     </div>
-    <span v-if="label" class="mynd-echarts-checkbox-label">{{ label }}</span>
+    <span v-if="label" class="mynd-echarts-checkbox-label checkbox-label">{{ label }}</span>
   </label>
 </template>
 

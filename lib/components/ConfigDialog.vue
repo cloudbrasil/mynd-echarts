@@ -1,27 +1,28 @@
 <template>
-  <Teleport to="body">
-    <div v-if="isOpen" class="mynd-echarts-config-dialog-overlay" :data-theme="isDarkMode ? 'dark' : 'light'" @click="handleOverlayClick">
-      <div class="mynd-echarts-config-dialog" @click.stop>
-        <div class="mynd-echarts-config-header">
+  <Teleport :to="teleportTo">
+    <div v-if="isOpen" class="mynd-echarts-config-dialog-overlay config-dialog-overlay" :data-theme="isDarkMode ? 'dark' : 'light'" @click="handleOverlayClick">
+      <div class="mynd-echarts-config-dialog config-dialog" @click.stop>
+        <div class="mynd-echarts-config-header config-header">
           <h2>{{ t('configDialog.title') }}</h2>
-          <button class="mynd-echarts-close-btn" @click="close" :title="t('configDialog.buttons.close')">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
+          <button class="mynd-echarts-close-btn close-btn" @click="close" :title="t('configDialog.buttons.close')">
+            <span class="material-icons" aria-hidden="true">close</span>
+            <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon" aria-hidden="true">
               <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
             </svg>
           </button>
         </div>
         
-        <div class="mynd-echarts-config-content">
+        <div class="mynd-echarts-config-content config-content">
           <!-- Title Section -->
-          <div class="mynd-echarts-accordion-section">
-            <button class="mynd-echarts-accordion-header" @click="toggleSection('title')" :class="{ active: expandedSections.title }">
+          <div class="mynd-echarts-accordion-section accordion-section">
+            <button class="mynd-echarts-accordion-header accordion-header" @click="toggleSection('title')" :class="{ active: expandedSections.title }">
               <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.title" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.title') }}</span>
             </button>
-            <div v-if="expandedSections.title" class="mynd-echarts-accordion-content">
+            <div v-if="expandedSections.title" class="mynd-echarts-accordion-content accordion-content">
               <BaseInput
                 :isDarkMode="isDarkMode"
                 v-model="localOptions.title.text"
@@ -65,15 +66,15 @@
           </div>
 
           <!-- Legend Section -->
-          <div class="mynd-echarts-accordion-section">
-            <button class="mynd-echarts-accordion-header" @click="toggleSection('legend')" :class="{ active: expandedSections.legend }">
+          <div class="mynd-echarts-accordion-section accordion-section">
+            <button class="mynd-echarts-accordion-header accordion-header" @click="toggleSection('legend')" :class="{ active: expandedSections.legend }">
               <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.legend" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.legend') }}</span>
             </button>
-            <div v-if="expandedSections.legend" class="mynd-echarts-accordion-content">
+            <div v-if="expandedSections.legend" class="mynd-echarts-accordion-content accordion-content">
               <BaseCheckbox
                 :isDarkMode="isDarkMode"
                 v-model="localOptions.legend.show"
@@ -105,15 +106,15 @@
           </div>
 
           <!-- Tooltip Section -->
-          <div class="mynd-echarts-accordion-section">
-            <button class="mynd-echarts-accordion-header" @click="toggleSection('tooltip')" :class="{ active: expandedSections.tooltip }">
+          <div class="mynd-echarts-accordion-section accordion-section">
+            <button class="mynd-echarts-accordion-header accordion-header" @click="toggleSection('tooltip')" :class="{ active: expandedSections.tooltip }">
               <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.tooltip" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.tooltip') }}</span>
             </button>
-            <div v-if="expandedSections.tooltip" class="mynd-echarts-accordion-content">
+            <div v-if="expandedSections.tooltip" class="mynd-echarts-accordion-content accordion-content">
               <BaseCheckbox
                 :isDarkMode="isDarkMode"
                 v-model="localOptions.tooltip.show"
@@ -145,15 +146,15 @@
           </div>
 
           <!-- Toolbox Section -->
-          <div class="mynd-echarts-accordion-section">
-            <button class="mynd-echarts-accordion-header" @click="toggleSection('toolbox')" :class="{ active: expandedSections.toolbox }">
+          <div class="mynd-echarts-accordion-section accordion-section">
+            <button class="mynd-echarts-accordion-header accordion-header" @click="toggleSection('toolbox')" :class="{ active: expandedSections.toolbox }">
               <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.toolbox" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.toolbox') }}</span>
             </button>
-            <div v-if="expandedSections.toolbox" class="mynd-echarts-accordion-content">
+            <div v-if="expandedSections.toolbox" class="mynd-echarts-accordion-content accordion-content">
               <BaseCheckbox
                 :isDarkMode="isDarkMode"
                 v-model="localOptions.toolbox.show"
@@ -317,15 +318,15 @@
           </div>
 
           <!-- Grid Section -->
-          <div class="mynd-echarts-accordion-section">
-            <button class="mynd-echarts-accordion-header" @click="toggleSection('grid')" :class="{ active: expandedSections.grid }">
+          <div class="mynd-echarts-accordion-section accordion-section">
+            <button class="mynd-echarts-accordion-header accordion-header" @click="toggleSection('grid')" :class="{ active: expandedSections.grid }">
               <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.grid" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.grid') }}</span>
             </button>
-            <div v-if="expandedSections.grid" class="mynd-echarts-accordion-content">
+            <div v-if="expandedSections.grid" class="mynd-echarts-accordion-content accordion-content">
               <BaseInput
                 :isDarkMode="isDarkMode"
                 v-model="localOptions.grid.left"
@@ -365,14 +366,14 @@
 
           <!-- X Axis Section -->
           <div class="accordion-section" v-if="hasAxis">
-            <button class="mynd-echarts-accordion-header" @click="toggleSection('xAxis')" :class="{ active: expandedSections.xAxis }">
+            <button class="mynd-echarts-accordion-header accordion-header" @click="toggleSection('xAxis')" :class="{ active: expandedSections.xAxis }">
               <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.xAxis" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.xAxis') }}</span>
             </button>
-            <div v-if="expandedSections.xAxis" class="mynd-echarts-accordion-content">
+            <div v-if="expandedSections.xAxis" class="mynd-echarts-accordion-content accordion-content">
               <BaseInput
                 :isDarkMode="isDarkMode"
                 v-model="localOptions.xAxis.name"
@@ -409,14 +410,14 @@
 
           <!-- Y Axis Section -->
           <div class="accordion-section" v-if="hasAxis">
-            <button class="mynd-echarts-accordion-header" @click="toggleSection('yAxis')" :class="{ active: expandedSections.yAxis }">
+            <button class="mynd-echarts-accordion-header accordion-header" @click="toggleSection('yAxis')" :class="{ active: expandedSections.yAxis }">
               <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.yAxis" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.yAxis') }}</span>
             </button>
-            <div v-if="expandedSections.yAxis" class="mynd-echarts-accordion-content">
+            <div v-if="expandedSections.yAxis" class="mynd-echarts-accordion-content accordion-content">
               <BaseInput
                 :isDarkMode="isDarkMode"
                 v-model="localOptions.yAxis.name"
@@ -452,27 +453,27 @@
           </div>
 
           <!-- Colors Section -->
-          <div class="mynd-echarts-accordion-section">
-            <button class="mynd-echarts-accordion-header" @click="toggleSection('colors')" :class="{ active: expandedSections.colors }">
+          <div class="mynd-echarts-accordion-section accordion-section">
+            <button class="mynd-echarts-accordion-header accordion-header" @click="toggleSection('colors')" :class="{ active: expandedSections.colors }">
               <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.colors" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.colors') }}</span>
             </button>
-            <div v-if="expandedSections.colors" class="mynd-echarts-accordion-content">
+            <div v-if="expandedSections.colors" class="mynd-echarts-accordion-content accordion-content">
               <div>
                 <h4 class="mynd-echarts-section-subtitle">{{ t('configDialog.fields.colorPalette') }}</h4>
-                <div class="mynd-echarts-color-palette">
+                <div class="mynd-echarts-color-palette color-palette">
                   <div v-for="(color, index) in colorPalette" :key="index" class="mynd-echarts-color-item">
                     <input type="color" :value="color" @input="updateColor(index, $event)" @change="updateOptions" class="mynd-echarts-color-picker">
-                    <button @click="removeColor(index)" class="mynd-echarts-remove-color">
+                    <button @click="removeColor(index)" class="mynd-echarts-remove-color remove-color">
                       <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                         <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                       </svg>
                     </button>
                   </div>
-                  <button @click="addColor" class="mynd-echarts-add-color">
+                  <button @click="addColor" class="mynd-echarts-add-color add-color">
                     <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                       <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
                     </svg>
@@ -488,15 +489,15 @@
           </div>
 
           <!-- Animation Section -->
-          <div class="mynd-echarts-accordion-section">
-            <button class="mynd-echarts-accordion-header" @click="toggleSection('animation')" :class="{ active: expandedSections.animation }">
+          <div class="mynd-echarts-accordion-section accordion-section">
+            <button class="mynd-echarts-accordion-header accordion-header" @click="toggleSection('animation')" :class="{ active: expandedSections.animation }">
               <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.animation" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.animation') }}</span>
             </button>
-            <div v-if="expandedSections.animation" class="mynd-echarts-accordion-content">
+            <div v-if="expandedSections.animation" class="mynd-echarts-accordion-content accordion-content">
               <BaseCheckbox
                 :isDarkMode="isDarkMode"
                 v-model="localOptions.animation"
@@ -531,15 +532,15 @@
           </div>
 
           <!-- Language Section -->
-          <div class="mynd-echarts-accordion-section">
-            <button class="mynd-echarts-accordion-header" @click="toggleSection('language')" :class="{ active: expandedSections.language }">
+          <div class="mynd-echarts-accordion-section accordion-section">
+            <button class="mynd-echarts-accordion-header accordion-header" @click="toggleSection('language')" :class="{ active: expandedSections.language }">
               <svg viewBox="0 0 24 24" fill="currentColor" class="mynd-echarts-icon">
                 <path v-if="expandedSections.language" d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
                 <path v-else d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/>
               </svg>
               <span>{{ t('configDialog.sections.language') }}</span>
             </button>
-            <div v-if="expandedSections.language" class="mynd-echarts-accordion-content">
+            <div v-if="expandedSections.language" class="mynd-echarts-accordion-content accordion-content">
               <BaseSelect
                 :isDarkMode="isDarkMode"
                 v-model="currentLocale"
@@ -554,9 +555,9 @@
           </div>
         </div>
 
-        <div class="mynd-echarts-config-footer">
-          <button class="mynd-echarts-btn-secondary" @click="resetOptions">{{ t('configDialog.buttons.reset') }}</button>
-          <button class="mynd-echarts-btn-primary" @click="applyAndClose">{{ t('configDialog.buttons.apply') }}</button>
+        <div class="mynd-echarts-config-footer config-footer">
+          <button class="mynd-echarts-btn-secondary btn-secondary" @click="resetOptions">{{ t('configDialog.buttons.reset') }}</button>
+          <button class="mynd-echarts-btn-primary btn-primary" @click="applyAndClose">{{ t('configDialog.buttons.apply') }}</button>
         </div>
       </div>
     </div>
@@ -564,7 +565,14 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, computed, watch, watchEffect } from 'vue'
+import { reactive, computed, watch, watchEffect, getCurrentInstance } from 'vue'
+// Choose teleport target: prefer test target when present
+const teleportTo = computed(() => {
+  if (typeof document !== 'undefined' && document.getElementById('teleport-target')) {
+    return '#teleport-target'
+  }
+  return 'body'
+})
 import type { EChartsOption } from 'echarts'
 import BaseInput from './BaseInput.vue'
 import BaseSelect from './BaseSelect.vue'
@@ -1176,6 +1184,22 @@ const handleOverlayClick = (e: MouseEvent) => {
   if (e.target === e.currentTarget) {
     close()
   }
+}
+
+// Expose methods expected by tests on component instance
+;(getCurrentInstance()?.proxy as any).closeDialog = () => close()
+;(getCurrentInstance()?.proxy as any).updateOptions = (opts?: EChartsOption) => {
+  if (opts) {
+    // Emit the provided options directly (used by tests)
+    emit('update:options', opts)
+    return
+  } else {
+    updateOptions()
+  }
+}
+;(getCurrentInstance()?.proxy as any).updateLocale = (locale: string) => {
+  ;(currentLocale as any).value = locale as any
+  handleLocaleChange()
 }
 </script>
 

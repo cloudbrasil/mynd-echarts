@@ -1,5 +1,5 @@
 <template>
-  <div class="mynd-echarts-wrapper" :data-theme="isDarkMode ? 'dark' : 'light'">
+  <div class="mynd-echarts-wrapper" :data-theme="isDarkMode ? 'dark' : 'light'" :class="computedClass">
     <!-- Custom Header -->
     <div v-if="chartTitle || chartSubtitle" class="mynd-echarts-header">
       <div class="mynd-echarts-title-section">
@@ -40,7 +40,7 @@
     
     <!-- Chart Container -->
     <div class="mynd-echarts-container" @mousedown.stop @touchstart.stop>
-      <div ref="chartRef" class="mynd-echarts-chart" :style="computedStyle" :class="computedClass"></div>
+      <div ref="chartRef" class="mynd-echarts-chart" :style="computedStyle"></div>
     </div>
     <!-- Zoom bar under the chart -->
     <ZoomBar
@@ -346,12 +346,20 @@ const { chartInstance, setOption: rawSetOption, resize, dispose, clear, getOptio
   onReady: async (instance) => {
     // Set initial options immediately when chart is ready
     if (props.options) {
-      const processed = processChartOptions(props.options)
-      instance.setOption(processed, {
-        notMerge: true,
-        lazyUpdate: props.lazyUpdate,
-        silent: props.silent
-      })
+      try {
+        // Pass through original options and honor notMerge prop
+        rawSetOption(props.options, {
+          notMerge: props.notMerge,
+          lazyUpdate: props.lazyUpdate,
+          silent: props.silent
+        })
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    // Respect initial loading state
+    if (props.loading) {
+      instance.showLoading('default', props.loadingOptions)
     }
     
     emit('ready', instance)
@@ -667,8 +675,8 @@ watch(
       
       // Set options if chart instance exists
       if (chartInstance.value && !chartInstance.value.isDisposed()) {
-        setOption(newOptions, {
-          notMerge: true,
+        rawSetOption(newOptions, {
+          notMerge: props.notMerge,
           lazyUpdate: props.lazyUpdate,
           silent: props.silent
         })
@@ -689,7 +697,8 @@ watch(
         chartInstance.value.hideLoading()
       }
     }
-  }
+  },
+  { immediate: true }
 )
 
 // Theme changes are now handled by the useECharts composable
@@ -730,7 +739,7 @@ onMounted(async () => {
 // Cleanup on unmount
 onUnmounted(() => {
   // Dispose the chart
-  dispose()
+  try { dispose() } catch (e) { console.error(e) }
   
   // Clean up dark mode observer
   if (darkModeObserver) {
@@ -763,7 +772,7 @@ const disposeWithCleanup = () => {
 
 // Expose chart methods for external use
 defineExpose({
-  chartInstance,
+  get chartInstance() { return chartInstance.value },
   setOption,
   getOption,
   resize: resizeWithFix,

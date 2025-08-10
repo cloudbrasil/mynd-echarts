@@ -30,7 +30,7 @@ export function mountWithLocale(
     }
   })
 
-  const wrapper = mount(Wrapper, {
+  const rootWrapper = mount(Wrapper, {
     ...options,
     props: undefined, // Props are passed directly to the component
     attachTo: document.body,
@@ -44,18 +44,20 @@ export function mountWithLocale(
     }
   })
 
-  // Clean up function
-  const unmount = wrapper.unmount.bind(wrapper)
-  wrapper.unmount = () => {
-    unmount()
-    // Clean up teleport target
+  // Return the inner component wrapper so emitted() and vm map to the component
+  const inner = rootWrapper.findComponent(component as any)
+
+  // Clean up function delegated to root wrapper
+  const rootUnmount = rootWrapper.unmount.bind(rootWrapper)
+  ;(inner as any).unmount = () => {
+    rootUnmount()
     const target = document.getElementById('teleport-target')
     if (target) {
       document.body.removeChild(target)
     }
   }
 
-  return wrapper
+  return inner as any
 }
 
 /**

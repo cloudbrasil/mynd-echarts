@@ -1,8 +1,8 @@
 <template>
-  <div class="mynd-echarts-base-input" :class="{ 'mynd-echarts-has-icon': $slots.icon }" :data-theme="isDarkMode ? 'dark' : 'light'">
-    <label v-if="label" class="mynd-echarts-input-label" :for="inputId">{{ label }}</label>
-    <div class="mynd-echarts-input-wrapper">
-      <div v-if="$slots.icon" class="mynd-echarts-input-icon">
+  <div class="mynd-echarts-base-input base-input" :class="{ 'mynd-echarts-has-icon has-icon': $slots.icon }" :data-theme="isDarkMode ? 'dark' : 'light'">
+    <label v-if="label" class="mynd-echarts-input-label input-label" :for="inputId">{{ label }}</label>
+    <div class="mynd-echarts-input-wrapper input-wrapper">
+      <div v-if="$slots.icon" class="mynd-echarts-input-icon input-icon">
         <slot name="icon"></slot>
       </div>
       <input
@@ -20,7 +20,7 @@
         @change="$emit('change', $event)"
         @focus="$emit('focus', $event)"
         @blur="$emit('blur', $event)"
-        class="mynd-echarts-input-field"
+        class="mynd-echarts-input-field input-field"
         :class="inputClass"
       />
       <textarea
@@ -35,14 +35,14 @@
         @change="$emit('change', $event)"
         @focus="$emit('focus', $event)"
         @blur="$emit('blur', $event)"
-        class="mynd-echarts-input-field mynd-echarts-textarea-field"
+        class="mynd-echarts-input-field mynd-echarts-textarea-field input-field textarea-field"
         :class="inputClass"
       ></textarea>
-      <div v-if="$slots.suffix" class="mynd-echarts-input-suffix">
+      <div v-if="$slots.suffix" class="mynd-echarts-input-suffix input-suffix">
         <slot name="suffix"></slot>
       </div>
     </div>
-    <div v-if="helpText" class="mynd-echarts-input-help">{{ helpText }}</div>
+    <div v-if="helpText" class="mynd-echarts-input-help input-help">{{ helpText }}</div>
   </div>
 </template>
 

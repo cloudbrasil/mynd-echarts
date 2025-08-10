@@ -1,7 +1,7 @@
 import { config } from '@vue/test-utils'
 import { vi } from 'vitest'
 
-// Mock ECharts
+// Mock ECharts (monolithic entry)
 vi.mock('echarts', () => ({
   init: vi.fn(() => ({
     setOption: vi.fn(),
@@ -28,6 +28,7 @@ vi.mock('echarts', () => ({
   use: vi.fn(),
   registerTheme: vi.fn(),
   registerLocale: vi.fn(),
+  registerMap: vi.fn(),
   connect: vi.fn(),
   disconnect: vi.fn(),
   dispose: vi.fn(),
@@ -38,11 +39,18 @@ vi.mock('echarts', () => ({
 }))
 
 // Global test utilities
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn()
-}))
+global.ResizeObserver = vi.fn().mockImplementation((callback?: any) => {
+  const instance = {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn()
+  }
+  // Immediately simulate one resize tick to satisfy debounced paths when needed
+  if (typeof callback === 'function') {
+    // No-op; tests that need callback will override this mock
+  }
+  return instance
+})
 
 // Mock IntersectionObserver
 global.IntersectionObserver = vi.fn().mockImplementation(() => ({

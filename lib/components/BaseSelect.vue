@@ -1,13 +1,13 @@
 <template>
-  <div class="mynd-echarts-base-select" :data-theme="isDarkMode ? 'dark' : 'light'">
-    <label v-if="label" class="mynd-echarts-select-label" :for="selectId">{{ label }}</label>
-    <div class="mynd-echarts-select-wrapper">
+  <div class="mynd-echarts-base-select base-select" :data-theme="isDarkMode ? 'dark' : 'light'">
+    <label v-if="label" class="mynd-echarts-select-label select-label" :for="selectId">{{ label }}</label>
+    <div class="mynd-echarts-select-wrapper select-wrapper">
       <select
         :id="selectId"
         :value="modelValue"
         :disabled="disabled"
         @change="handleChange"
-        class="mynd-echarts-select-field"
+        class="mynd-echarts-select-field select-field"
         :class="selectClass"
         v-bind="$attrs"
       >
@@ -20,13 +20,13 @@
           {{ getOptionLabel(option) }}
         </option>
       </select>
-      <div class="mynd-echarts-select-icon">
+      <div class="mynd-echarts-select-icon select-icon">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
     </div>
-    <div v-if="helpText" class="mynd-echarts-select-help">{{ helpText }}</div>
+    <div v-if="helpText" class="mynd-echarts-select-help select-help">{{ helpText }}</div>
   </div>
 </template>
 
