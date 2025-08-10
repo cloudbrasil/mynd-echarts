@@ -34,10 +34,23 @@ import {
   BarChart,
   ScatterChart,
   CandlestickChart,
-  EffectScatterChart
+  EffectScatterChart,
+  PieChart,
+  RadarChart,
+  HeatmapChart,
+  TreeChart,
+  GraphChart,
+  GaugeChart,
+  FunnelChart,
+  SankeyChart,
+  TreemapChart,
+  SunburstChart,
+  ParallelChart,
+  ThemeRiverChart
 } from 'echarts/charts'
 
 // Register required charts, components, axes, and renderers
+// Default registration of common charts/components. Consumers can extend via registerModules.
 echartsUse([
   // Charts
   LineChart,
@@ -45,6 +58,18 @@ echartsUse([
   ScatterChart,
   CandlestickChart,
   EffectScatterChart,
+  PieChart,
+  RadarChart,
+  HeatmapChart,
+  TreeChart,
+  GraphChart,
+  GaugeChart,
+  FunnelChart,
+  SankeyChart,
+  TreemapChart,
+  SunburstChart,
+  ParallelChart,
+  ThemeRiverChart,
   // Components
   GridComponent,
   TitleComponent,
@@ -99,6 +124,7 @@ export interface UseEChartsReturn {
   disconnect: (group: string) => void
   registerTheme: (name: string, theme: object) => void
   registerMap: (mapName: string, geoJson: any, specialAreas?: any) => void
+  registerModules: (modules: any[]) => void
 }
 
 export function useECharts(
@@ -317,6 +343,14 @@ export function useECharts(
     echartsRegisterMap(mapName, geoJson, specialAreas)
   }
 
+  const registerModules = (modules: any[]) => {
+    try {
+      echartsUse(modules as any)
+    } catch (err) {
+      console.warn('[mynd-echarts] Failed to register ECharts modules:', err)
+    }
+  }
+
   const dispose = () => {
     // Clean up resize observer
     if (resizeObserver) {
@@ -409,6 +443,7 @@ export function useECharts(
     connect,
     disconnect,
     registerTheme,
-    registerMap
+    registerMap,
+    registerModules
   }
 }

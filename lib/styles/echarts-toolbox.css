@@ -1,5 +1,6 @@
 /* ECharts Toolbox CSS Fixes */
-/* These styles ensure proper display of ECharts toolbox icons */
+/* Deprecated: native toolbox UI is not used by MyndEcharts anymore.
+   Keeping file for reference only; no longer applied automatically. */
 
 /* Ensure toolbox container uses flexbox layout */
 .ec-toolbox-feature {

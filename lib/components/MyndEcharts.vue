@@ -82,115 +82,26 @@ import ConfigDialog from './ConfigDialog.vue'
 import ChartToolbox from './ChartToolbox.vue'
 import ZoomBar from './ZoomBar.vue'
 import DataViewDialog from './DataViewDialog.vue'
+import type { MyndEchartsProps as CoreMyndEchartsProps, MyndEchartsEmits as CoreMyndEchartsEmits } from '../types/component'
 
-export interface MyndEchartsProps {
-  /**
-   * ECharts options configuration object
-   */
-  options: EChartsOption
-  /**
-   * Chart theme - can be a string name or custom theme object
-   */
-  theme?: string | object
-  /**
-   * Locale for chart UI elements (toolbox, etc.)
-   */
+type ExtendedMyndEchartsProps = CoreMyndEchartsProps & {
+  /** Locale for chart UI elements (toolbox, etc.) */
   locale?: string
-  /**
-   * Show loading animation
-   */
-  loading?: boolean
-  /**
-   * Loading text
-   */
-  loadingOptions?: {
-    text?: string
-    color?: string
-    textColor?: string
-    maskColor?: string
-    zlevel?: number
-    fontSize?: number
-    showSpinner?: boolean
-    spinnerRadius?: number
-    lineWidth?: number
-  }
-  /**
-   * Custom inline styles
-   */
-  style?: CSSProperties
-  /**
-   * CSS class name(s)
-   */
-  className?: string | string[] | Record<string, boolean>
-  /**
-   * Enable automatic resize on container size change
-   */
-  autoResize?: boolean
-  /**
-   * Rendering mode
-   */
-  renderer?: 'canvas' | 'svg'
-  /**
-   * Chart initialization options
-   */
-  initOptions?: {
-    devicePixelRatio?: number
-    renderer?: 'canvas' | 'svg'
-    width?: number | string
-    height?: number | string
-    locale?: string
-  }
-  /**
-   * Merge options instead of replacing
-   */
-  notMerge?: boolean
-  /**
-   * Lazy update for better performance with frequent updates
-   */
-  lazyUpdate?: boolean
-  /**
-   * Update options silently (no animation)
-   */
-  silent?: boolean
-  /**
-   * Group name for chart connection
-   */
-  group?: string
-  /**
-   * Toolbox display mode
-   * - 'auto': Use options from chart configuration
-   * - 'fixed': Force specific positioning with static values
-   * - 'disabled': Don't render toolbox
-   */
-  toolboxMode?: 'auto' | 'fixed' | 'disabled'
-  /**
-   * Toolbox position (numeric values only for JSON serialization)
-   */
-  toolboxPosition?: {
-    right?: number
-    left?: number
-    top?: number
-    bottom?: number
-  }
-  /**
-   * Automatically fix toolbox overlap issues
-   */
-  fixToolboxOverlap?: boolean
-  /**
-   * Enable debug mode for toolbox troubleshooting
-   */
-  debugToolbox?: boolean
-  /**
-   * Show custom toolbox in header
-   */
+  /** Show custom toolbox in header */
   showToolbox?: boolean
-  /**
-   * Toolbox display style
-   */
+  /** Toolbox display style */
   toolboxStyle?: 'toolbar' | 'menu'
+  /** @deprecated Native toolbox mode no longer used */
+  toolboxMode?: 'auto' | 'fixed' | 'disabled'
+  /** @deprecated Native toolbox position no longer used */
+  toolboxPosition?: { right?: number; left?: number; top?: number; bottom?: number }
+  /** @deprecated Native toolbox overlap fix no longer used */
+  fixToolboxOverlap?: boolean
+  /** @deprecated Debug toolbox diagnostics no longer used */
+  debugToolbox?: boolean
 }
 
-const props = withDefaults(defineProps<MyndEchartsProps>(), {
+const props = withDefaults(defineProps<ExtendedMyndEchartsProps>(), {
   theme: 'default',
   locale: 'en',
   loading: false,
@@ -199,62 +110,22 @@ const props = withDefaults(defineProps<MyndEchartsProps>(), {
   notMerge: false,
   lazyUpdate: false,
   silent: false,
-  toolboxMode: 'auto',
-  toolboxPosition: () => ({ right: 10, top: 10 }),
-  fixToolboxOverlap: true,
-  debugToolbox: false,
   showToolbox: true,
   toolboxStyle: 'toolbar'
 })
 
-const emit = defineEmits<{
-  ready: [instance: ECharts]
-  click: [params: any]
-  dblclick: [params: any]
-  mousedown: [params: any]
-  mousemove: [params: any]
-  mouseup: [params: any]
-  mouseover: [params: any]
-  mouseout: [params: any]
-  globalout: [params: any]
-  contextmenu: [params: any]
-  highlight: [params: any]
-  downplay: [params: any]
-  selectchanged: [params: any]
-  legendselectchanged: [params: any]
-  legendselected: [params: any]
-  legendunselected: [params: any]
-  legendselectall: [params: any]
-  legendinverseselect: [params: any]
-  legendscroll: [params: any]
-  datazoom: [params: any]
-  datarangeselected: [params: any]
-  graphroam: [params: any]
-  georoam: [params: any]
-  treeroam: [params: any]
-  timelinechanged: [params: any]
-  timelineplaychanged: [params: any]
-  restore: [params: any]
-  dataviewchanged: [params: any]
-  magictypechanged: [params: any]
-  pieselectchanged: [params: any]
-  pieselected: [params: any]
-  pieunselected: [params: any]
-  mapselected: [params: any]
-  mapunselected: [params: any]
-  axisareaselected: [params: any]
-  brush: [params: any]
-  brushEnd: [params: any]
-  brushselected: [params: any]
-  globalcursortaken: [params: any]
-  rendered: [params: any]
-  finished: [params: any]
-  'update:options': [options: EChartsOption]
-  'update:locale': [locale: string]
-  'toolbox-rendered': [info: { dom: HTMLElement, config: any }]
-  'toolbox-overlap-detected': [info: { elements: number, measurements: any }]
-  'toolbox-fixed': [info: { method: string, success: boolean }]
-}>()
+type ExtendedEmits = CoreMyndEchartsEmits & {
+  'update:options': (options: EChartsOption) => void
+  'update:locale': (locale: string) => void
+  /** @deprecated Emitted only in legacy debug mode; no longer used */
+  'toolbox-rendered': (info: { dom: HTMLElement, config: any }) => void
+  /** @deprecated Emitted only in legacy debug mode; no longer used */
+  'toolbox-overlap-detected': (info: { elements: number, measurements: any }) => void
+  /** @deprecated Emitted only in legacy debug mode; no longer used */
+  'toolbox-fixed': (info: { method: string, success: boolean }) => void
+}
+
+const emit = defineEmits<ExtendedEmits>()
 
 // Dark mode detection
 const isDarkMode = ref(false)
@@ -280,10 +151,7 @@ const showZoomBar = ref(false)
 const zoomStart = ref(0)
 const zoomEnd = ref(100)
 
-// Observer refs
-let resizeObserver: ResizeObserver | null = null
-let mutationObserver: MutationObserver | null = null
-let resizeTimer: ReturnType<typeof setTimeout> | null = null
+// Resize/mutation observers removed; handled by useECharts
 
 // Extract title configuration from options
 const extractTitleConfig = (options: EChartsOption) => {
@@ -488,30 +356,7 @@ const { chartInstance, setOption: rawSetOption, resize, dispose, clear, getOptio
     
     emit('ready', instance)
     
-    // Debug: emit toolbox-rendered event
-    if (props.debugToolbox) {
-      const chartDom = instance.getDom()
-      // Now it's safe to get options since we've set them
-      const currentOpts = instance.getOption()
-      const toolboxConfig = currentOpts.toolbox?.[0]
-      
-      if (toolboxConfig?.show !== false) {
-        debugLog('Render', 'Toolbox rendered', toolboxConfig)
-        emit('toolbox-rendered', {
-          dom: chartDom,
-          config: toolboxConfig
-        })
-        
-        // Check for overlap after render
-        setTimeout(() => {
-          checkToolboxOverlap()
-          addDebugBorder()
-        }, 100)
-      }
-    }
-    
-    // Set up observers after chart is ready
-    setupObservers()
+    // Observers handled in useECharts; nothing extra needed here
   },
   events: {
     click: (params) => emit('click', params),
@@ -557,62 +402,7 @@ const { chartInstance, setOption: rawSetOption, resize, dispose, clear, getOptio
   }
 })
 
-// Debug logging helper
-const debugLog = (category: string, message: string, data?: any) => {
-  if (props.debugToolbox) {
-    console.log(`[MyndEcharts Debug - ${category}]`, message, data || '')
-  }
-}
-
-// Check for toolbox overlap
-const checkToolboxOverlap = () => {
-  if (!chartInstance.value || !props.debugToolbox) return
-
-  try {
-    const chartDom = chartInstance.value.getDom()
-    const toolboxElements = chartDom.querySelectorAll('[id*="toolbox"] > g, .echarts-toolbox > *')
-    
-    if (toolboxElements.length > 1) {
-      const measurements: any[] = []
-      let hasOverlap = false
-      
-      toolboxElements.forEach((el, index) => {
-        const rect = (el as HTMLElement).getBoundingClientRect?.() || 
-                     (el as SVGElement).getBBox?.()
-        if (rect) {
-          measurements.push({
-            index,
-            x: rect.x || rect.left,
-            y: rect.y || rect.top,
-            width: rect.width,
-            height: rect.height
-          })
-          
-          // Check for overlap with previous elements
-          if (index > 0) {
-            const prev = measurements[index - 1]
-            if (Math.abs(prev.y - (rect.y || rect.top)) < 5) {
-              // Elements are on same line, check horizontal overlap
-              if (prev.x + prev.width > (rect.x || rect.left)) {
-                hasOverlap = true
-              }
-            }
-          }
-        }
-      })
-      
-      if (hasOverlap) {
-        debugLog('Overlap', 'Toolbox overlap detected!', measurements)
-        emit('toolbox-overlap-detected', {
-          elements: toolboxElements.length,
-          measurements
-        })
-      }
-    }
-  } catch (error) {
-    debugLog('Error', 'Failed to check toolbox overlap', error)
-  }
-}
+// Removed debug helpers and overlap checks – native toolbox UI not used
 
 // Process options to ensure JSON serializability and apply toolbox fixes
 const processChartOptions = (options: EChartsOption): EChartsOption => {
@@ -699,140 +489,9 @@ const setOption = (options: EChartsOption, opts?: any, skipProcessing = false) =
   rawSetOption(processed, opts)
 }
 
-// Set up observers for resize and DOM changes
-const setupObservers = () => {
-  if (!chartRef.value || !chartInstance.value) return
+// Removed local observer setup/cleanup – handled in useECharts
 
-  // ResizeObserver to handle container size changes
-  if (typeof ResizeObserver !== 'undefined') {
-    let isFirstResize = true
-    resizeObserver = new ResizeObserver((entries) => {
-      // Skip the first resize trigger which happens immediately when observer is attached
-      if (isFirstResize) {
-        isFirstResize = false
-        return
-      }
-      
-      // Clear any pending resize timer
-      if (resizeTimer) {
-        clearTimeout(resizeTimer)
-      }
-
-      // Only resize if chart has been properly initialized with options
-      if (chartInstance.value && !chartInstance.value.isDisposed()) {
-        // Use a small debounce to avoid too many resize calls
-        resizeTimer = setTimeout(() => {
-          if (chartInstance.value && !chartInstance.value.isDisposed()) {
-            chartInstance.value.resize()
-          }
-        }, 100)
-      }
-    })
-
-    resizeObserver.observe(chartRef.value)
-  }
-
-  // MutationObserver to detect toolbox DOM changes
-  if (typeof MutationObserver !== 'undefined' && chartInstance.value) {
-    const chartDom = chartInstance.value.getDom()
-    
-    mutationObserver = new MutationObserver((mutations) => {
-      // Check if any mutation affects the toolbox
-      const toolboxChanged = mutations.some(mutation => {
-        const target = mutation.target as HTMLElement
-        // Check if the mutation is related to toolbox elements
-        return target.closest?.('[id*="toolbox"]') || 
-               target.querySelector?.('[id*="toolbox"]') ||
-               mutation.addedNodes.length > 0 && 
-               Array.from(mutation.addedNodes).some((node: any) => 
-                 node.id?.includes?.('toolbox') || 
-                 node.querySelector?.('[id*="toolbox"]')
-               )
-      })
-
-      if (toolboxChanged) {
-        // No longer need to fix toolbox position since we use custom toolbox
-      }
-    })
-
-    // Observe the chart DOM for changes
-    mutationObserver.observe(chartDom, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['style', 'class', 'transform']
-    })
-  }
-}
-
-// Clean up observers
-const cleanupObservers = () => {
-  // Clear any pending timer
-  if (resizeTimer) {
-    clearTimeout(resizeTimer)
-    resizeTimer = null
-  }
-
-  // Disconnect ResizeObserver
-  if (resizeObserver) {
-    resizeObserver.disconnect()
-    resizeObserver = null
-  }
-
-  // Disconnect MutationObserver
-  if (mutationObserver) {
-    mutationObserver.disconnect()
-    mutationObserver = null
-  }
-}
-
-// Fix toolbox positioning - NO LONGER NEEDED since we use custom toolbox
-const fixToolboxPosition = async () => {
-  // This function is deprecated - we now use a custom toolbox in the header
-  // Keeping it as a no-op for backward compatibility
-  if (props.debugToolbox) {
-    debugLog('Fix', 'fixToolboxPosition called but no longer needed - using custom toolbox')
-  }
-}
-
-// Add visual debug border to toolbox
-const addDebugBorder = () => {
-  if (!props.debugToolbox || !chartInstance.value) return
-  
-  try {
-    const chartDom = chartInstance.value.getDom()
-    const toolboxElements = chartDom.querySelectorAll('[id*="toolbox"], .echarts-toolbox')
-    
-    toolboxElements.forEach((element: Element) => {
-      const el = element as HTMLElement
-      if (el.style) {
-        el.style.border = '2px solid red'
-        el.style.boxShadow = '0 0 10px rgba(255, 0, 0, 0.5)'
-      }
-    })
-    
-    // For SVG elements, add a rect with stroke
-    const svgToolboxes = chartDom.querySelectorAll('svg g[id*="toolbox"]')
-    svgToolboxes.forEach((group: Element) => {
-      const bbox = (group as SVGGraphicsElement).getBBox()
-      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-      rect.setAttribute('x', String(bbox.x - 2))
-      rect.setAttribute('y', String(bbox.y - 2))
-      rect.setAttribute('width', String(bbox.width + 4))
-      rect.setAttribute('height', String(bbox.height + 4))
-      rect.setAttribute('fill', 'none')
-      rect.setAttribute('stroke', 'red')
-      rect.setAttribute('stroke-width', '2')
-      rect.setAttribute('stroke-dasharray', '5,5')
-      rect.setAttribute('data-debug', 'toolbox-border')
-      group.appendChild(rect)
-    })
-    
-    debugLog('Visual', 'Debug borders added to toolbox')
-  } catch (error) {
-    debugLog('Error', 'Failed to add debug borders', error)
-  }
-}
+// Removed deprecated toolbox functions and visual debug borders
 
 // Config dialog methods
 const openConfig = () => {
@@ -1040,17 +699,7 @@ watchEffect(() => {
   }
 })
 
-// Watch for chart instance changes to re-setup observers
-watch(chartInstance, (newInstance, oldInstance) => {
-  if (oldInstance && oldInstance !== newInstance) {
-    // Clean up old observers
-    cleanupObservers()
-  }
-  if (newInstance) {
-    // Set up new observers
-    setupObservers()
-  }
-})
+// No local observers to manage; handled by useECharts
 
 // Initialize chart on mount
 onMounted(async () => {
@@ -1073,18 +722,12 @@ onMounted(async () => {
     })
   }
   
-  // Options are now set in the onReady callback to ensure proper initialization order
-  // Just ensure observers are set up if needed
-  if (chartInstance.value) {
-    setupObservers()
-  }
+  // Options are set in the onReady callback
 })
 
 // Cleanup on unmount
 onUnmounted(() => {
-  // Clean up observers first
-  cleanupObservers()
-  // Then dispose the chart
+  // Dispose the chart
   dispose()
   
   // Clean up dark mode observer
@@ -1101,88 +744,7 @@ const resizeWithFix = async (opts?: Parameters<ECharts['resize']>[0]) => {
 }
 
 
-// Manually refresh toolbox by directly manipulating DOM
-const refreshToolbox = () => {
-  if (!chartInstance.value || chartInstance.value.isDisposed()) {
-    console.warn('[mynd-echarts] Cannot refresh toolbox: chart not initialized')
-    return false
-  }
-
-  try {
-    const chartDom = chartInstance.value.getDom()
-    if (!chartDom) return false
-
-    // Find toolbox elements in the chart DOM
-    const toolboxElements = chartDom.querySelectorAll('[id*="toolbox"], .echarts-toolbox, g[id*="group_toolbox"]')
-    
-    toolboxElements.forEach((element: Element) => {
-      const el = element as HTMLElement
-      
-      // Apply CSS fixes directly to the element
-      if (el.style) {
-        el.style.display = 'flex'
-        el.style.flexDirection = 'row'
-        el.style.alignItems = 'center'
-        el.style.gap = '10px'
-      }
-
-      // Fix child elements layout
-      const children = el.children
-      for (let i = 0; i < children.length; i++) {
-        const child = children[i] as HTMLElement
-        if (child.style) {
-          child.style.display = 'inline-block'
-          child.style.verticalAlign = 'middle'
-          child.style.marginRight = i < children.length - 1 ? '10px' : '0'
-        }
-      }
-    })
-
-    // Also check for SVG toolbox groups
-    const svgGroups = chartDom.querySelectorAll('svg g[id*="toolbox"]')
-    svgGroups.forEach((group: Element) => {
-      // For SVG elements, we need to adjust transform attributes
-      const children = group.children
-      let xOffset = 0
-      
-      for (let i = 0; i < children.length; i++) {
-        const child = children[i] as SVGElement
-        
-        // Check if it's a group element containing toolbox items
-        if (child.tagName === 'g' || child.tagName === 'rect' || child.tagName === 'path') {
-          // Apply horizontal spacing using transform
-          if (i > 0) {
-            xOffset += 25 // Add spacing between items
-          }
-          
-          const currentTransform = child.getAttribute('transform') || ''
-          // Parse and update transform to ensure horizontal layout
-          if (!currentTransform.includes('translate') || i > 0) {
-            child.setAttribute('transform', `translate(${xOffset}, 0)`)
-          }
-        }
-      }
-    })
-
-    // Force a reflow to ensure changes are applied
-    void chartDom.offsetHeight
-
-    // No longer need to fix toolbox position since we use custom toolbox
-
-    if (props.debugToolbox) {
-      debugLog('Refresh', 'Manual toolbox refresh completed')
-      emit('toolbox-fixed', { method: 'refreshToolbox', success: true })
-    }
-
-    return true
-  } catch (error) {
-    console.error('[mynd-echarts] Error refreshing toolbox:', error)
-    if (props.debugToolbox) {
-      emit('toolbox-fixed', { method: 'refreshToolbox', success: false })
-    }
-    return false
-  }
-}
+// Removed manual toolbox DOM refresh – native toolbox UI not used
 
 // Get the raw ECharts instance for advanced users
 const getChartInstance = (): ECharts | undefined => {
@@ -1192,9 +754,8 @@ const getChartInstance = (): ECharts | undefined => {
   return chartInstance.value
 }
 
-// Override dispose to include observer cleanup
+// Override dispose – no local observers anymore
 const disposeWithCleanup = () => {
-  cleanupObservers()
   dispose()
 }
 
@@ -1207,8 +768,6 @@ defineExpose({
   dispose: disposeWithCleanup,
   clear,
   openConfig,
-  fixToolboxPosition,
-  refreshToolbox,
   getChartInstance,
   getWidth: () => chartInstance.value?.getWidth(),
   getHeight: () => chartInstance.value?.getHeight(),

@@ -13,5 +13,4 @@ export * from './generics'
 // Utility functions and types
 export * from './utilities'
 
-// Re-export component props for backward compatibility
-export type { MyndEchartsProps } from '../components/MyndEcharts.vue'
+// Component props/emits/interfaces are defined here; import from this module

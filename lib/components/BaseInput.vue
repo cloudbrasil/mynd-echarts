@@ -184,7 +184,7 @@ const handleInput = (event: Event) => {
 }
 
 /* Dark mode support */
-.mynd-echarts-base-input[data-theme="dark"] .input-field {
+.mynd-echarts-base-input[data-theme="dark"] .mynd-echarts-input-field {
   background-color: var(--bg-secondary, #1e293b);
   border-color: var(--border-color, #334155);
   color: var(--text-primary, #f1f5f9);
@@ -203,29 +203,29 @@ const handleInput = (event: Event) => {
 }
 
 /* Special styling for color inputs */
-.input-field[type="color"] {
+.mynd-echarts-input-field[type="color"] {
   width: 3rem;
   height: 3rem;
   padding: 0.25rem;
   cursor: pointer;
 }
 
-.input-field[type="color"]::-webkit-color-swatch-wrapper {
+.mynd-echarts-input-field[type="color"]::-webkit-color-swatch-wrapper {
   padding: 0;
 }
 
-.input-field[type="color"]::-webkit-color-swatch {
+.mynd-echarts-input-field[type="color"]::-webkit-color-swatch {
   border: none;
   border-radius: 0.375rem;
 }
 
 /* Number input */
-.input-field[type="number"] {
+.mynd-echarts-input-field[type="number"] {
   -moz-appearance: textfield;
 }
 
-.input-field[type="number"]::-webkit-inner-spin-button,
-.input-field[type="number"]::-webkit-outer-spin-button {
+.mynd-echarts-input-field[type="number"]::-webkit-inner-spin-button,
+.mynd-echarts-input-field[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
