@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Zoom Fix - Better Handle Separation</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        #chart {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+        .info h3 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+        .info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .info li {
+            margin: 5px 0;
+        }
+        button {
+            margin: 10px 5px;
+            padding: 10px 20px;
+            background: #5470c6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #4060b6;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Zoom Fix Test - Better Handle Separation</h1>
+        
+        <div class="info">
+            <h3>What was fixed:</h3>
+            <ul>
+                <li><strong>Handle Separation:</strong> Increased minimum separation from 1% to 5% between zoom handles</li>
+                <li><strong>Initial Positioning:</strong> Changed default zoom area from 0-100% to 20-80% for better usability</li>
+                <li><strong>Better UX:</strong> Zoom handles are no longer "glued" together and provide a more reasonable initial view</li>
+                <li><strong>Smooth Spark Line:</strong> Zoom area now shows smooth, curved lines instead of straight segments</li>
+                <li><strong>Area Filling:</strong> Added subtle area fill to match the main chart appearance</li>
+                <li><strong>Data Point Markers:</strong> Small circles show exact data points for better precision</li>
+            </ul>
+        </div>
+
+        <div>
+            <button onclick="initChart()">Initialize Chart</button>
+            <button onclick="toggleZoom()">Toggle Zoom Bar</button>
+            <button onclick="resetZoom()">Reset Zoom</button>
+            <button onclick="updateData()">Update Data (See Smooth Curves)</button>
+        </div>
+        
+        <div id="chart"></div>
+        
+        <div class="status success" id="status">
+            Ready to test zoom functionality with better handle separation
+        </div>
+    </div>
+    
+    <script>
+        let myChart = null;
+        let hasZoom = false;
+        
+        function updateStatus(message, isError = false) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + (isError ? 'error' : 'success');
+        }
+        
+        function initChart() {
+            try {
+                if (myChart) {
+                    myChart.dispose();
+                }
+                
+                myChart = echarts.init(document.getElementById('chart'));
+                
+                const option = {
+                    title: {
+                        text: 'Sales Trend - Zoom Test',
+                        subtext: 'Try the zoom bar below for better handle separation and smooth curves'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: 'Sales (k)'
+                    },
+                    series: [{
+                        name: 'Sales',
+                        type: 'line',
+                        data: [120, 200, 150, 80, 70, 110, 130, 180, 160, 140, 190, 210],
+                        areaStyle: {
+                            opacity: 0.3
+                        },
+                        smooth: true
+                    }]
+                };
+                
+                myChart.setOption(option);
+                hasZoom = false;
+                updateStatus('Chart initialized successfully. Click "Toggle Zoom Bar" to see the improved zoom functionality.');
+            } catch (error) {
+                updateStatus('Error initializing chart: ' + error.message, true);
+            }
+        }
+        
+        function toggleZoom() {
+            if (!myChart) {
+                updateStatus('Please initialize chart first', true);
+                return;
+            }
+            
+            try {
+                setTimeout(() => {
+                    const currentOptions = myChart.getOption();
+                    
+                    if (!hasZoom) {
+                        // Add dataZoom with better positioning
+                        const dataZoomConfig = [
+                            {
+                                type: 'slider',
+                                show: true,
+                                xAxisIndex: [0],
+                                start: 20, // Better initial start position
+                                end: 80,   // Better initial end position
+                                bottom: 10,
+                                height: 20,
+                                realtime: true,
+                                filterMode: 'filter'
+                            },
+                            {
+                                type: 'inside',
+                                xAxisIndex: [0],
+                                start: 20, // Better initial start position
+                                end: 80,   // Better initial end position
+                                filterMode: 'filter'
+                            }
+                        ];
+                        
+                        myChart.setOption({
+                            dataZoom: dataZoomConfig
+                        }, {
+                            notMerge: false,
+                            lazyUpdate: false
+                        });
+                        
+                        hasZoom = true;
+                        updateStatus('Zoom bar added! Notice the handles are now positioned at 20% and 80% with better separation.');
+                    } else {
+                        // Remove dataZoom
+                        myChart.setOption({
+                            dataZoom: []
+                        }, { replaceMerge: ['dataZoom'] });
+                        
+                        hasZoom = false;
+                        updateStatus('Zoom bar removed. Click "Toggle Zoom Bar" again to see the improved positioning.');
+                    }
+                }, 50);
+            } catch (error) {
+                updateStatus('Error toggling zoom: ' + error.message, true);
+            }
+        }
+        
+        function resetZoom() {
+            if (!myChart) {
+                updateStatus('Please initialize chart first', true);
+                return;
+            }
+            
+            try {
+                if (hasZoom) {
+                    myChart.setOption({
+                        dataZoom: [{
+                            type: 'slider',
+                            show: true,
+                            xAxisIndex: [0],
+                            start: 20,
+                            end: 80,
+                            bottom: 10,
+                            height: 20,
+                            realtime: true,
+                            filterMode: 'filter'
+                        }]
+                    });
+                    updateStatus('Zoom reset to 20-80% range with better handle separation.');
+                } else {
+                    updateStatus('No zoom bar active. Toggle zoom first.');
+                }
+            } catch (error) {
+                updateStatus('Error resetting zoom: ' + error.message, true);
+            }
+        }
+        
+        function updateData() {
+            if (!myChart) {
+                updateStatus('Please initialize chart first', true);
+                return;
+            }
+            
+            try {
+                // Generate new random data with more variation to show smooth curves
+                const newData = Array.from({length: 12}, () => Math.floor(Math.random() * 300) + 50);
+                
+                myChart.setOption({
+                    series: [{
+                        data: newData
+                    }]
+                });
+                
+                updateStatus('Data updated! Notice how the spark line in the zoom area smoothly curves through the new data points.');
+            } catch (error) {
+                updateStatus('Error updating data: ' + error.message, true);
+            }
+        }
+        
+        // Initialize on load
+        window.onload = () => {
+            initChart();
+        };
+    </script>
+</body>
+</html>

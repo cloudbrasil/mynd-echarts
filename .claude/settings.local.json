@@ -38,7 +38,8 @@
       "Bash(bash:*)",
       "Bash(vercel:*)",
       "Bash(sed:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }
