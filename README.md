@@ -467,6 +467,9 @@ const chartOptions = computed<EChartsOption>(() => ({
 ```typescript
 const { isDarkMode } = useAppTheme()
 const theme = computed(() => isDarkMode.value ? 'dark' : 'light')
+// Ensure internal UI matches chart theme
+// Pass both theme and explicit dark mode flag
+// <MyndEcharts :theme="theme" :is-dark-mode="isDarkMode" />
 ```
 
 ## ⚡ Performance Tips

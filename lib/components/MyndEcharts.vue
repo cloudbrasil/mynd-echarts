@@ -1,5 +1,5 @@
 <template>
-  <div class="mynd-echarts-wrapper" :data-theme="isDarkMode ? 'dark' : 'light'" :class="computedClass">
+  <div class="mynd-echarts-wrapper" :data-theme="effectiveDarkMode ? 'dark' : 'light'" :class="computedClass">
     <!-- Custom Header -->
     <div v-if="props.renderHeader && (chartTitle || chartSubtitle)" class="mynd-echarts-header">
       <div class="mynd-echarts-title-section">
@@ -33,7 +33,7 @@
         :toolbox-config="toolboxConfig"
         :options="props.options"
         :locale="props.locale"
-        :is-dark-mode="isDarkMode"
+        :is-dark-mode="effectiveDarkMode"
         @action="handleToolboxAction"
       />
     </div>
@@ -48,7 +48,7 @@
       :options="props.options"
       :start="zoomStart"
       :end="zoomEnd"
-      :is-dark-mode="isDarkMode"
+      :is-dark-mode="effectiveDarkMode"
       @change="handleZoomBarChange"
     />
     
@@ -56,7 +56,7 @@
       v-if="showConfig"
       v-model="showConfig" 
       :options="currentOptions"
-      :is-dark-mode="isDarkMode"
+      :is-dark-mode="effectiveDarkMode"
       @update:options="handleConfigUpdate"
       @update:locale="handleLocaleUpdate"
     />
@@ -67,7 +67,7 @@
       :options="props.options"
       :chart-instance="chartInstance"
       :locale="props.locale as SupportedLocale"
-      :is-dark-mode="isDarkMode"
+      :is-dark-mode="effectiveDarkMode"
     />
   </div>
 </template>
@@ -132,6 +132,18 @@ const emit = defineEmits<ExtendedEmits>()
 
 // Dark mode detection
 const isDarkMode = ref(false)
+const effectiveDarkMode = computed(() => {
+  // 1) Explicit prop override
+  if (typeof props.isDarkMode === 'boolean') return props.isDarkMode
+  // 2) Theme name hint
+  if (typeof props.theme === 'string') {
+    const t = props.theme.toLowerCase()
+    if (t === 'dark') return true
+    if (t === 'light') return false
+  }
+  // 3) Fallback to DOM detection
+  return isDarkMode.value
+})
 
 const updateDarkMode = () => {
   if (typeof document !== 'undefined') {
@@ -343,8 +355,24 @@ const initOptionsWithDefaults = computed(() => ({
   ...props.initOptions
 }))
 
+const resolvedTheme = computed(() => {
+  const themeProp = props.theme
+  // If a theme object is provided, use it as-is
+  if (themeProp && typeof themeProp === 'object') {
+    return themeProp
+  }
+  const themeName = (themeProp as string | undefined)?.toLowerCase()
+  // If explicit dark/light provided, respect it
+  if (themeName === 'dark' || themeName === 'light') {
+    return themeName
+  }
+  // Map default/undefined to current effective dark mode
+  // so chart content follows UI theme
+  return effectiveDarkMode.value ? 'dark' : 'light'
+})
+
 const { chartInstance, setOption: rawSetOption, resize, dispose, clear, getOption } = useECharts(chartRef, {
-  theme: computed(() => props.theme),
+  theme: resolvedTheme,
   locale: computed(() => props.locale),
   renderer: props.renderer,
   autoResize: props.autoResize,
@@ -432,11 +460,54 @@ const processChartOptions = (options: EChartsOption): EChartsOption => {
     processedOpts = { ...options }
   }
   
-  // Remove title from options since we're displaying it in custom header
-  if (props.renderHeader) delete (processedOpts as any).title
+  // Remove title/toolbox from options since we're displaying them in custom header
+  if (props.renderHeader) {
+    delete (processedOpts as any).title
+    delete processedOpts.toolbox
+  }
 
-  // Remove native toolbox since we handle it in custom header
-  if (props.renderHeader) delete processedOpts.toolbox
+  // If preferThemeDefaults is enabled, strip color-like overrides so theme can apply
+  if (props.preferThemeDefaults) {
+    try {
+      // Top-level color palette
+      if ('color' in processedOpts) delete (processedOpts as any).color
+      // Clean title colors in case header rendering is disabled
+      const titles = Array.isArray((processedOpts as any).title) ? (processedOpts as any).title : [(processedOpts as any).title]
+      titles.filter(Boolean).forEach((t: any) => {
+        if (t?.textStyle?.color) delete t.textStyle.color
+        if (t?.subtextStyle?.color) delete t.subtextStyle.color
+      })
+      // Legend/tooltip colors
+      if ((processedOpts as any).legend?.textStyle?.color) delete (processedOpts as any).legend.textStyle.color
+      if ((processedOpts as any).tooltip?.textStyle?.color) delete (processedOpts as any).tooltip.textStyle.color
+      if ((processedOpts as any).tooltip?.backgroundColor) delete (processedOpts as any).tooltip.backgroundColor
+      // Axis label and split line colors
+      const normalizeAxis = (axis: any) => Array.isArray(axis) ? axis : (axis ? [axis] : [])
+      normalizeAxis((processedOpts as any).xAxis).forEach((ax: any) => {
+        if (ax?.axisLabel?.color) delete ax.axisLabel.color
+        if (ax?.axisLine?.lineStyle?.color) delete ax.axisLine.lineStyle.color
+        if (ax?.splitLine?.lineStyle?.color) delete ax.splitLine.lineStyle.color
+      })
+      normalizeAxis((processedOpts as any).yAxis).forEach((ay: any) => {
+        if (ay?.axisLabel?.color) delete ay.axisLabel.color
+        if (ay?.axisLine?.lineStyle?.color) delete ay.axisLine.lineStyle.color
+        if (ay?.splitLine?.lineStyle?.color) delete ay.splitLine.lineStyle.color
+      })
+      // Series item/line/area color overrides
+      const seriesArr = Array.isArray((processedOpts as any).series) ? (processedOpts as any).series : ((processedOpts as any).series ? [(processedOpts as any).series] : [])
+      seriesArr.forEach((s: any) => {
+        if (!s) return
+        if ('color' in s) delete s.color
+        if (s?.itemStyle?.color) delete s.itemStyle.color
+        if (s?.lineStyle?.color) delete s.lineStyle.color
+        if (s?.areaStyle?.color) delete s.areaStyle.color
+      })
+      // Restore original shape
+      if (!Array.isArray((processedOpts as any).series) && seriesArr.length) {
+        ;(processedOpts as any).series = seriesArr[0]
+      }
+    } catch {}
+  }
   
   // Ensure a valid coordinate system exists for common cartesian series
   try {
@@ -724,7 +795,7 @@ watchEffect(() => {
 
 // Initialize chart on mount
 onMounted(async () => {
-  // Setup dark mode detection
+  // Setup dark mode detection (fallback when no explicit prop/theme provided)
   updateDarkMode()
   
   if (typeof document !== 'undefined') {

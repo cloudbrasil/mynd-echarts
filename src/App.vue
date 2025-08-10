@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{ dark: isDarkMode }">
     <ToastContainer />
     <!-- Header Component -->
     <AppHeader 
@@ -101,6 +101,8 @@
               <MyndEcharts
                 :options="chart.options"
                 :theme="currentTheme"
+                :is-dark-mode="isDarkMode"
+                :prefer-theme-defaults="true"
                 style="height: 100%; width: 100%; min-height: 400px"
                 :key="`${chart.id}-${themeKey}`"
                 :show-toolbox="true"
@@ -179,6 +181,8 @@
                 ref="previewChartRef"
                 :options="enhanceOptionsWithTheme(previewOptions)"
                 :theme="currentTheme"
+                :is-dark-mode="isDarkMode"
+                :prefer-theme-defaults="true"
                 v-model:locale="chartLocale"
                 :show-toolbox="true"
                 :toolbox-style="'menu'"
@@ -259,6 +263,8 @@
               <MyndEcharts
                 :options="example.options"
                 :theme="currentTheme"
+                :is-dark-mode="isDarkMode"
+                :prefer-theme-defaults="true"
                 style="height: 600px; width: 100%; max-width: 1400px"
                 :key="`${example.id}-${themeKey}`"
                 :show-toolbox="true"

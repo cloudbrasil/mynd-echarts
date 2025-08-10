@@ -51,6 +51,19 @@ export interface MyndEchartsProps {
   theme?: string | object
 
   /**
+   * Explicit dark mode override for component UI (header, dialogs, inputs).
+   * If set, this takes precedence over theme and document class detection.
+   */
+  isDarkMode?: boolean
+
+  /**
+   * When true, strip common hard-coded color fields from the provided options
+   * so that the active ECharts theme (light/dark) can fully style the chart.
+   * Defaults to false to preserve exact user styling.
+   */
+  preferThemeDefaults?: boolean
+
+  /**
    * Show loading animation
    * @default false
    */
