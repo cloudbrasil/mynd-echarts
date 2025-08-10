@@ -890,7 +890,7 @@ onUnmounted(() => {
   --shadow-lg: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-:global(.dark) {
+.dark {
   --bg-primary: #1a202c;
   --bg-secondary: #2d3748;
   --bg-tertiary: #374151;
@@ -994,12 +994,12 @@ onUnmounted(() => {
 }
 
 /* Ensure backdrop is hidden in dark mode when not hovered */
-:global(.dark) .cta-backdrop {
+.dark .cta-backdrop {
   opacity: 0 !important;
   pointer-events: none !important;
 }
 
-:global(.dark) .myndagents-cta:hover .cta-backdrop {
+.dark .myndagents-cta:hover .cta-backdrop {
   opacity: 1 !important;
   pointer-events: auto !important;
 }

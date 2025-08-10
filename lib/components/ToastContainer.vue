@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body">
-    <div class="mynd-echarts-toast-container">
+    <div class="mynd-echarts-toast-container" :data-theme="isDarkMode ? 'dark' : 'light'">
       <TransitionGroup name="mynd-echarts-toast" tag="div">
         <div
           v-for="toast in toasts"
@@ -34,6 +34,7 @@
 <script setup lang="ts">
 import { useToast } from '../composables/useToast'
 
+const props = defineProps<{ isDarkMode?: boolean }>()
 const { toasts, removeToast } = useToast()
 
 // Icon logic is now handled directly in the template with v-if/v-else-if
@@ -226,30 +227,30 @@ const { toasts, removeToast } = useToast()
   }
 }
 
-/* Dark mode support */
-:global(.dark) .mynd-echarts-toast {
+/* Dark mode support without leaking global .dark styles */
+.mynd-echarts-toast-container[data-theme="dark"] .mynd-echarts-toast {
   background: #1e293b;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
-:global(.dark) .mynd-echarts-toast-message {
+.mynd-echarts-toast-container[data-theme="dark"] .mynd-echarts-toast-message {
   color: #f1f5f9;
 }
 
-:global(.dark) .mynd-echarts-toast-close {
+.mynd-echarts-toast-container[data-theme="dark"] .mynd-echarts-toast-close {
   color: #94a3b8;
 }
 
-:global(.dark) .mynd-echarts-toast-close:hover {
+.mynd-echarts-toast-container[data-theme="dark"] .mynd-echarts-toast-close:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #f1f5f9;
 }
 
 /* Dark mode type variants keep their colors */
-:global(.dark) .mynd-echarts-toast-success,
-:global(.dark) .mynd-echarts-toast-warning,
-:global(.dark) .mynd-echarts-toast-danger,
-:global(.dark) .mynd-echarts-toast-info {
+.mynd-echarts-toast-container[data-theme="dark"] .mynd-echarts-toast-success,
+.mynd-echarts-toast-container[data-theme="dark"] .mynd-echarts-toast-warning,
+.mynd-echarts-toast-container[data-theme="dark"] .mynd-echarts-toast-danger,
+.mynd-echarts-toast-container[data-theme="dark"] .mynd-echarts-toast-info {
   /* Keep the same as light mode */
 }
 </style>

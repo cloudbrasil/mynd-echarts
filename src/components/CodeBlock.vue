@@ -106,16 +106,16 @@ const copyCode = async () => {
   color: var(--text-primary, #2c3e50);
 }
 
-/* Dark mode support */
-:global(.dark) .code-block {
+/* Dark mode support scoped for embedded usage */
+.dark .code-block {
   background: var(--bg-primary);
 }
 
-:global(.dark) .code-content {
+.dark .code-content {
   background: var(--bg-secondary);
 }
 
-:global(.dark) .code-content code {
+.dark .code-content code {
   color: var(--text-primary);
 }
 </style>
