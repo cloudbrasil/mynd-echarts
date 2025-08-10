@@ -148,8 +148,8 @@ const processedOptionsCache = ref<EChartsOption | null>(null)
 // Store base options for custom zoom windowing
 const zoomBaseOptions = ref<EChartsOption | null>(null)
 const showZoomBar = ref(false)
-const zoomStart = ref(0)
-const zoomEnd = ref(100)
+const zoomStart = ref(20) // Changed from 0 to 20 for better initial positioning
+const zoomEnd = ref(80) // Changed from 100 to 80 for better initial positioning
 
 // Resize/mutation observers removed; handled by useECharts
 
@@ -533,8 +533,8 @@ const handleToolboxAction = (action: string, payload?: any) => {
         })
         // Reset zoom state and hide zoom bar
         zoomBaseOptions.value = null
-        zoomStart.value = 0
-        zoomEnd.value = 100
+        zoomStart.value = 20 // Changed from 0 to 20 for better initial positioning
+        zoomEnd.value = 80 // Changed from 100 to 80 for better initial positioning
         showZoomBar.value = false
       }
       break
@@ -589,7 +589,7 @@ const handleToolboxAction = (action: string, payload?: any) => {
       }
       break
       
-    case 'magicType':
+    case 'magicType': {
       // Switch between configured types or default line/bar
       const opts = chartInstance.value.getOption()
       const currentSeries = opts.series as any[]
@@ -616,8 +616,9 @@ const handleToolboxAction = (action: string, payload?: any) => {
         }, { notMerge: true })
       }
       break
+    }
       
-    case 'brush':
+    case 'brush': {
       // Toggle brush selection
       const brushOpts = chartInstance.value.getOption()
       const hasBrush = brushOpts.brush && brushOpts.brush.length > 0
@@ -637,6 +638,7 @@ const handleToolboxAction = (action: string, payload?: any) => {
         }, { notMerge: true })
       }
       break
+    }
   }
 }
 

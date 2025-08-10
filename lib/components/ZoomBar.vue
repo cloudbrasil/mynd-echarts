@@ -23,8 +23,8 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits<{ (e: 'change', payload: { start: number, end: number }): void }>()
 
-const startLocal = ref(props.start ?? 0)
-const endLocal = ref(props.end ?? 100)
+const startLocal = ref(props.start ?? 20) // Changed from 0 to 20 for better initial positioning
+const endLocal = ref(props.end ?? 80) // Changed from 100 to 80 for better initial positioning
 const sparkCanvas = ref<HTMLCanvasElement | null>(null)
 const trackEl = ref<HTMLDivElement | null>(null)
 let emitTimer: number | null = null
@@ -34,6 +34,11 @@ let upListener: any = null
 
 watch(() => props.start, v => { if (typeof v === 'number') startLocal.value = v })
 watch(() => props.end, v => { if (typeof v === 'number') endLocal.value = v })
+
+// Watch for options changes to redraw spark line
+watch(() => props.options, () => {
+  nextTick(drawSpark)
+}, { deep: true })
 
 const commit = () => emit('change', { start: startLocal.value, end: endLocal.value })
 
@@ -52,7 +57,7 @@ const scheduleEmit = () => {
   emitTimer = window.setTimeout(() => commit(), 60)
 }
 
-const TRACK_PADDING = 10 // px, must match CSS padding
+const TRACK_PADDING = 20 // px, must match CSS padding
 const VISUAL_OFFSET_PCT = 2
 const percentFromEvent = (evt: MouseEvent | TouchEvent) => {
   const track = trackEl.value
@@ -69,16 +74,16 @@ const percentFromEvent = (evt: MouseEvent | TouchEvent) => {
   return Math.max(0, Math.min(100, mapped))
 }
 
-const beginDrag = (which: 'start' | 'end', evt: MouseEvent | TouchEvent) => {
+const beginDrag = (which: 'start' | 'end', _evt: MouseEvent | TouchEvent) => {
   activeHandleZ.value = 4
   dragging = which
   const move = (e: MouseEvent | TouchEvent) => {
     const pct = percentFromEvent(e)
     if (pct === null) return
     if (dragging === 'start') {
-      startLocal.value = Math.min(pct, endLocal.value - 1)
+      startLocal.value = Math.min(pct, endLocal.value - 5) // Increased from 1% to 5% minimum separation
     } else if (dragging === 'end') {
-      endLocal.value = Math.max(pct, startLocal.value + 1)
+      endLocal.value = Math.max(pct, startLocal.value + 5) // Increased from 1% to 5% minimum separation
     }
     scheduleEmit()
   }
@@ -115,25 +120,110 @@ const drawSpark = () => {
     canvas.width = width
     canvas.height = height
     ctx.clearRect(0, 0, width, height)
+    
     const series = (props.options as any)?.series
     const seriesArr = Array.isArray(series) ? series : (series ? [series] : [])
     const first = seriesArr.find((s: any) => Array.isArray(s?.data))
     const data: number[] = first?.data || []
     if (!data.length) return
+    
     const min = Math.min(...data)
     const max = Math.max(...data)
     const range = max - min || 1
-    ctx.lineWidth = 1.5
-    ctx.strokeStyle = '#8292cc'
-    ctx.beginPath()
+    
+    // Calculate points with padding
+    const points: { x: number; y: number }[] = []
     data.forEach((v, i) => {
-      const x = (i / (data.length - 1)) * (width - 2) + 1
-      const y = height - ((v - min) / range) * (height - 4) - 2
-      if (i === 0) ctx.moveTo(x, y)
-      else ctx.lineTo(x, y)
+      const x = (i / (data.length - 1)) * (width - 4) + 2
+      const y = height - ((v - min) / range) * (height - 8) - 4
+      points.push({ x, y })
     })
+    
+    if (points.length < 2) return
+    
+    // Draw area fill first (behind the line)
+    ctx.fillStyle = 'rgba(84, 112, 198, 0.15)'
+    ctx.beginPath()
+    ctx.moveTo(points[0].x, height - 4) // Start at bottom
+    ctx.lineTo(points[0].x, points[0].y) // Go to first data point
+    
+    // Create smooth curve through all points
+    for (let i = 0; i < points.length - 1; i++) {
+      const current = points[i]
+      const next = points[i + 1]
+      
+      if (i === 0) {
+        // First segment: use quadratic curve
+        const cpX = current.x + (next.x - current.x) * 0.5
+        const cpY = current.y
+        ctx.quadraticCurveTo(cpX, cpY, next.x, next.y)
+      } else if (i === points.length - 2) {
+        // Last segment: use quadratic curve
+        const cpX = current.x + (next.x - current.x) * 0.5
+        const cpY = next.y
+        ctx.quadraticCurveTo(cpX, cpY, next.x, next.y)
+      } else {
+        // Middle segments: use smooth curve with control points
+        const prev = points[i - 1]
+        const cp1X = current.x + (next.x - prev.x) * 0.25
+        const cp1Y = current.y
+        const cp2X = next.x - (next.x - prev.x) * 0.25
+        const cp2Y = next.y
+        ctx.bezierCurveTo(cp1X, cp1Y, cp2X, cp2Y, next.x, next.y)
+      }
+    }
+    
+    ctx.lineTo(points[points.length - 1].x, height - 4) // Go to bottom
+    ctx.closePath()
+    ctx.fill()
+    
+    // Draw the main line on top
+    ctx.strokeStyle = '#8292cc'
+    ctx.lineWidth = 1.5
+    ctx.lineCap = 'round'
+    ctx.lineJoin = 'round'
+    ctx.beginPath()
+    ctx.moveTo(points[0].x, points[0].y)
+    
+    // Create smooth curve for the line
+    for (let i = 0; i < points.length - 1; i++) {
+      const current = points[i]
+      const next = points[i + 1]
+      
+      if (i === 0) {
+        // First segment: use quadratic curve
+        const cpX = current.x + (next.x - current.x) * 0.5
+        const cpY = current.y
+        ctx.quadraticCurveTo(cpX, cpY, next.x, next.y)
+      } else if (i === points.length - 2) {
+        // Last segment: use quadratic curve
+        const cpX = current.x + (next.x - current.x) * 0.5
+        const cpY = next.y
+        ctx.quadraticCurveTo(cpX, cpY, next.x, next.y)
+      } else {
+        // Middle segments: use smooth curve with control points
+        const prev = points[i - 1]
+        const cp1X = current.x + (next.x - prev.x) * 0.25
+        const cp1Y = current.y
+        const cp2X = next.x - (next.x - prev.x) * 0.25
+        const cp2Y = next.y
+        ctx.bezierCurveTo(cp1X, cp1Y, cp2X, cp2Y, next.x, next.y)
+      }
+    }
+    
     ctx.stroke()
-  } catch {}
+    
+    // Add subtle data point markers
+    ctx.fillStyle = '#8292cc'
+    points.forEach(point => {
+      ctx.beginPath()
+      ctx.arc(point.x, point.y, 1.5, 0, 2 * Math.PI)
+      ctx.fill()
+    })
+    
+  } catch {
+    // Ignore errors in spark drawing
+  }
 }
 
 onMounted(() => nextTick(drawSpark))
@@ -157,7 +247,7 @@ onBeforeUnmount(() => {
   background: #f7f9fc;
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
-  padding: 0 10px; /* matches TRACK_PADDING in script */
+  padding: 0 20px; /* matches TRACK_PADDING in script */
 }
 .mynd-echarts-zoombar-spark {
   position: absolute;
