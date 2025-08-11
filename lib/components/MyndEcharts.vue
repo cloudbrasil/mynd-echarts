@@ -1,5 +1,5 @@
 <template>
-  <div class="mynd-echarts-wrapper" :data-theme="effectiveDarkMode ? 'dark' : 'light'" :class="computedClass">
+  <div ref="rootRef" class="mynd-echarts-wrapper" :data-theme="effectiveDarkMode ? 'dark' : 'light'" :class="computedClass">
     <!-- Custom Header -->
     <div v-if="props.renderHeader && (chartTitle || chartSubtitle)" class="mynd-echarts-header">
       <div class="mynd-echarts-title-section">
@@ -103,7 +103,7 @@ type ExtendedMyndEchartsProps = CoreMyndEchartsProps & {
   debugToolbox?: boolean
 }
 
-const props = withDefaults(defineProps<ExtendedMyndEchartsProps & { chartHeight?: number }>(), {
+const props = withDefaults(defineProps<ExtendedMyndEchartsProps & { chartHeight?: number; aspectRatio?: number | string }>(), {
   theme: 'default',
   locale: 'en',
   loading: false,
@@ -115,7 +115,8 @@ const props = withDefaults(defineProps<ExtendedMyndEchartsProps & { chartHeight?
   showToolbox: true,
   toolboxStyle: 'toolbar',
   renderHeader: true,
-  chartHeight: 400
+  chartHeight: 400,
+  aspectRatio: undefined
 })
 
 type ExtendedEmits = CoreMyndEchartsEmits & {
@@ -335,7 +336,7 @@ watch(() => props.locale, (newLocale) => {
 
 const containerStyle = computed<CSSProperties>(() => ({
   width: '100%',
-  minHeight: `${props.chartHeight}px`,
+  minHeight: `${computedChartHeight.value}px`,
   position: 'relative',
 }))
 
@@ -345,6 +346,42 @@ const computedStyle = computed<CSSProperties>(() => ({
   position: 'relative',
   ...props.style
 }))
+
+// Responsive chart height based on aspect ratio
+const rootRef = ref<HTMLElement | null>(null)
+const computedChartHeight = ref<number>(props.chartHeight)
+let ro: ResizeObserver | null = null
+
+function parseAspectRatio(ar?: number | string): number | undefined {
+  if (!ar) return undefined
+  if (typeof ar === 'number' && isFinite(ar) && ar > 0) return ar
+  if (typeof ar === 'string') {
+    const m = ar.match(/^(\d+)\s*[:/]\s*(\d+)$/)
+    if (m) {
+      const w = parseFloat(m[1]); const h = parseFloat(m[2])
+      if (h > 0) return w / h
+    }
+    const n = parseFloat(ar)
+    if (isFinite(n) && n > 0) return n
+  }
+  return undefined
+}
+
+function updateResponsiveHeight() {
+  const ratio = parseAspectRatio(props.aspectRatio)
+  const root = rootRef.value
+  if (!root) { computedChartHeight.value = props.chartHeight; return }
+  if (!ratio) { computedChartHeight.value = props.chartHeight; return }
+  const width = root.clientWidth || 0
+  if (width > 0) {
+    const target = Math.max(200, Math.round(width / ratio))
+    if (Math.abs(target - (computedChartHeight.value || 0)) > 1) {
+      computedChartHeight.value = target
+      // Reschedule resize after DOM updates
+      setTimeout(() => resizeWithFix(), 0)
+    }
+  }
+}
 
 const computedClass = computed(() => {
   if (typeof props.className === 'string') {
@@ -397,6 +434,8 @@ const { chartInstance, setOption: rawSetOption, resize, dispose, clear, getOptio
       try {
         // Respect renderHeader behavior
         const initialOptions = props.renderHeader ? processedOptions.value : props.options
+        // Ensure native dataZoom is cleared to avoid SliderZoomView errors
+        try { rawSetOption({ dataZoom: [] } as any, { notMerge: true, silent: true } as any) } catch {}
         rawSetOption(initialOptions, {
           notMerge: props.notMerge,
           lazyUpdate: props.lazyUpdate,
@@ -591,6 +630,8 @@ const processChartOptions = (options: EChartsOption): EChartsOption => {
 // Wrapped setOption that always processes options
 const setOption = (options: EChartsOption, opts?: any, skipProcessing = false) => {
   const processed = skipProcessing ? options : processChartOptions(options)
+  // Clear any native dataZoom before applying processed options
+  try { rawSetOption({ dataZoom: [] } as any, { notMerge: true, silent: true } as any) } catch {}
   rawSetOption(processed, opts)
 }
 
@@ -632,6 +673,7 @@ const handleToolboxAction = (action: string, payload?: any) => {
         // Process options fresh to ensure we have clean state
         const processed = processChartOptions(props.options)
         // Use rawSetOption to avoid double processing
+        try { rawSetOption({ dataZoom: [] } as any, { notMerge: true, silent: true } as any) } catch {}
         rawSetOption(processed, {
           notMerge: true,
           lazyUpdate: false
@@ -773,6 +815,7 @@ watch(
       // Set options if chart instance exists
       if (chartInstance.value && !chartInstance.value.isDisposed()) {
         const nextOptions = props.renderHeader ? processedOptions.value : newOptions
+        try { rawSetOption({ dataZoom: [] } as any, { notMerge: true, silent: true } as any) } catch {}
         rawSetOption(nextOptions, {
           notMerge: props.notMerge,
           lazyUpdate: props.lazyUpdate,
@@ -814,6 +857,14 @@ watchEffect(() => {
 onMounted(async () => {
   // Setup dark mode detection (fallback when no explicit prop/theme provided)
   updateDarkMode()
+  // Aspect ratio responsive height
+  try {
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => updateResponsiveHeight())
+      if (rootRef.value) ro.observe(rootRef.value)
+    }
+    updateResponsiveHeight()
+  } catch {}
   
   if (typeof document !== 'undefined') {
     darkModeObserver = new MutationObserver(() => {
@@ -844,6 +895,7 @@ onUnmounted(() => {
     darkModeObserver.disconnect()
     darkModeObserver = null
   }
+  if (ro) { try { ro.disconnect() } catch {}; ro = null }
 })
 
 // Override resize
