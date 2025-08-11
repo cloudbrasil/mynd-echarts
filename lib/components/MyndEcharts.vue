@@ -476,6 +476,11 @@ const processChartOptions = (options: EChartsOption): EChartsOption => {
   if (props.renderHeader) {
     delete (processedOpts as any).title
     delete processedOpts.toolbox
+    // When using custom header/toolbox + external ZoomBar, remove native ECharts dataZoom
+    // to avoid SliderZoomView errors and layout conflicts.
+    if (processedOpts.dataZoom) {
+      delete processedOpts.dataZoom
+    }
   }
 
   // If preferThemeDefaults is enabled, strip color-like overrides so theme can apply
