@@ -39,7 +39,7 @@
     </div>
     
     <!-- Chart Container -->
-    <div class="mynd-echarts-container" @mousedown.stop @touchstart.stop>
+    <div class="mynd-echarts-container" :style="containerStyle" @mousedown.stop @touchstart.stop>
       <div ref="chartRef" class="mynd-echarts-chart" :style="computedStyle" :class="computedClass"></div>
     </div>
     <!-- Zoom bar under the chart -->
@@ -103,7 +103,7 @@ type ExtendedMyndEchartsProps = CoreMyndEchartsProps & {
   debugToolbox?: boolean
 }
 
-const props = withDefaults(defineProps<ExtendedMyndEchartsProps>(), {
+const props = withDefaults(defineProps<ExtendedMyndEchartsProps & { chartHeight?: number }>(), {
   theme: 'default',
   locale: 'en',
   loading: false,
@@ -114,7 +114,8 @@ const props = withDefaults(defineProps<ExtendedMyndEchartsProps>(), {
   silent: false,
   showToolbox: true,
   toolboxStyle: 'toolbar',
-  renderHeader: true
+  renderHeader: true,
+  chartHeight: 400
 })
 
 type ExtendedEmits = CoreMyndEchartsEmits & {
@@ -163,6 +164,11 @@ const processedOptionsCache = ref<EChartsOption | null>(null)
 // Store base options for custom zoom windowing
 const zoomBaseOptions = ref<EChartsOption | null>(null)
 const showZoomBar = ref(false)
+// Ensure a resize after zoom bar toggles to preserve chart area height
+watch(showZoomBar, async () => {
+  await nextTick()
+  setTimeout(() => resizeWithFix(), 0)
+})
 const zoomStart = ref(20) // Changed from 0 to 20 for better initial positioning
 const zoomEnd = ref(80) // Changed from 100 to 80 for better initial positioning
 
@@ -326,6 +332,12 @@ watch(() => props.locale, (newLocale) => {
     localeContext.setLocale(newLocale as SupportedLocale)
   }
 })
+
+const containerStyle = computed<CSSProperties>(() => ({
+  width: '100%',
+  minHeight: `${props.chartHeight}px`,
+  position: 'relative',
+}))
 
 const computedStyle = computed<CSSProperties>(() => ({
   width: '100%',
