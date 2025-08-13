@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Coordinate System Fix Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #chart { width: 800px; height: 400px; margin: 20px auto; border: 1px solid #ccc; }
+        .buttons { text-align: center; margin: 20px; }
+        button { padding: 10px 20px; margin: 0 10px; }
+        #log { margin: 20px; padding: 10px; background: #f0f0f0; max-height: 200px; overflow-y: auto; }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Coordinate System Fix Test</h1>
+    <p>Testing the proper way to add dataZoom without coordinate system errors</p>
+    
+    <div class="buttons">
+        <button onclick="addDataZoomProper()">Add DataZoom (Proper Way)</button>
+        <button onclick="addDataZoomBroken()">Add DataZoom (Broken Way)</button>
+        <button onclick="removeDataZoom()">Remove DataZoom</button>
+        <button onclick="recreateChart()">Recreate Chart</button>
+        <button onclick="switchChartType()">Switch Chart Type</button>
+        <button onclick="clearLog()">Clear Log</button>
+    </div>
+    <div id="chart"></div>
+    <div id="log"></div>
+
+    <script>
+        const chartDom = document.getElementById('chart');
+        let myChart = null;
+        const logDiv = document.getElementById('log');
+        let chartType = 0;
+        
+        function log(msg, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = type;
+            entry.textContent = new Date().toLocaleTimeString() + ': ' + msg;
+            logDiv.appendChild(entry);
+            console.log(msg);
+        }
+        
+        function clearLog() {
+            logDiv.innerHTML = '';
+        }
+        
+        const lineChartOption = {
+            title: { text: 'Line Chart' },
+            tooltip: { trigger: 'axis' },
+            xAxis: {
+                type: 'category',
+                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Temperature (°C)'
+            },
+            series: [{
+                name: 'Temperature',
+                type: 'line',
+                data: [20, 22, 21, 23, 25, 26, 23],
+                smooth: true
+            }]
+        };
+        
+        const pieChartOption = {
+            title: { text: 'Pie Chart' },
+            series: [{
+                type: 'pie',
+                radius: '50%',
+                data: [
+                    { value: 335, name: 'Direct' },
+                    { value: 310, name: 'Email' },
+                    { value: 234, name: 'Union Ads' }
+                ]
+            }]
+        };
+        
+        function initChart() {
+            if (myChart) {
+                myChart.dispose();
+            }
+            
+            myChart = echarts.init(chartDom);
+            const option = chartType === 0 ? lineChartOption : pieChartOption;
+            myChart.setOption(option);
+            log('Chart initialized with ' + (chartType === 0 ? 'Line' : 'Pie') + ' chart', 'success');
+        }
+        
+        // Proper way - ensure chart is ready and has cartesian coordinate system
+        function addDataZoomProper() {
+            if (!myChart) {
+                log('No chart instance', 'error');
+                return;
+            }
+            
+            try {
+                // First check if we have a cartesian coordinate system
+                const option = myChart.getOption();
+                
+                if (!option.xAxis || !option.yAxis) {
+                    log('Chart does not have cartesian coordinate system, cannot add dataZoom', 'error');
+                    return;
+                }
+                
+                log('Chart has cartesian system, adding dataZoom', 'info');
+                
+                // Method 1: Use dispatchAction to ensure chart is ready
+                myChart.dispatchAction({
+                    type: 'takeGlobalCursor',
+                    key: 'dataZoomSelect',
+                    dataZoomSelectActive: true
+                });
+                
+                // Wait for next frame to ensure chart has processed the action
+                requestAnimationFrame(() => {
+                    myChart.setOption({
+                        dataZoom: [{
+                            id: 'dataZoomX',
+                            type: 'slider',
+                            show: true,
+                            start: 0,
+                            end: 100,
+                            xAxisIndex: 0,
+                            filterMode: 'filter'
+                        }]
+                    }, {
+                        notMerge: false,
+                        lazyUpdate: false
+                    });
+                    
+                    log('DataZoom added successfully (proper way)', 'success');
+                });
+                
+            } catch (e) {
+                log('Error adding dataZoom: ' + e.message, 'error');
+            }
+        }
+        
+        // Broken way - add immediately without checks
+        function addDataZoomBroken() {
+            if (!myChart) {
+                log('No chart instance', 'error');
+                return;
+            }
+            
+            try {
+                log('Adding dataZoom immediately (broken way)', 'info');
+                
+                myChart.setOption({
+                    dataZoom: [{
+                        type: 'slider',
+                        show: true,
+                        start: 0,
+                        end: 100,
+                        xAxisIndex: [0]  // Array form can sometimes cause issues
+                    }]
+                }, {
+                    notMerge: false
+                });
+                
+                log('DataZoom added (broken way) - might cause errors when interacting', 'info');
+                
+            } catch (e) {
+                log('Error adding dataZoom: ' + e.message, 'error');
+            }
+        }
+        
+        function removeDataZoom() {
+            if (!myChart) {
+                log('No chart instance', 'error');
+                return;
+            }
+            
+            try {
+                // Properly remove dataZoom
+                myChart.setOption({
+                    dataZoom: []
+                }, {
+                    notMerge: false,
+                    lazyUpdate: false
+                });
+                
+                log('DataZoom removed', 'success');
+            } catch (e) {
+                log('Error removing dataZoom: ' + e.message, 'error');
+            }
+        }
+        
+        function recreateChart() {
+            log('Recreating chart', 'info');
+            initChart();
+        }
+        
+        function switchChartType() {
+            chartType = chartType === 0 ? 1 : 0;
+            log('Switching to ' + (chartType === 0 ? 'Line' : 'Pie') + ' chart', 'info');
+            initChart();
+        }
+        
+        // Listen for errors
+        window.addEventListener('error', function(e) {
+            log('Global error: ' + e.message, 'error');
+        });
+        
+        // Initialize on load
+        initChart();
+        
+        // Monitor chart events
+        myChart.on('finished', function() {
+            log('Chart finished rendering', 'info');
+        });
+        
+        myChart.on('rendered', function() {
+            log('Chart rendered', 'info');
+        });
+    </script>
+</body>
+</html>

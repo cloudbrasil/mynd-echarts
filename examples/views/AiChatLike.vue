@@ -29,9 +29,11 @@
         ref="chartRef" 
         :options="chartOption" 
         :theme="isDark ? 'dark' : 'default'" 
+        :is-dark-mode="isDark"
         :auto-resize="true"
         :render-header="true"
         :show-toolbox="true"
+        :show-zoom-bar="dataZoomVisible"
         :style="{ width: '100%', height: '100%' }" 
         class="chart" 
         @click="onChartClick"
@@ -312,26 +314,11 @@ const chartOption = computed(() => {
       }
     }
     
-    // Toolbox-driven dataZoom visibility handling
-    const ensureSlider = () => ({
-      type: 'slider', show: true, start: 0, end: 100, height: 36, bottom: 0, xAxisIndex: [0], filterMode: 'filter', realtime: true
-    })
-    let dzArray: any[] = []
-    if (Array.isArray(option.dataZoom)) dzArray = option.dataZoom.slice()
-    else if (option.dataZoom) dzArray = [option.dataZoom]
-
-    if (dataZoomVisible.value) {
-      const hasSlider = dzArray.some(z => (z.type === 'slider' || !z.type))
-      if (!hasSlider) dzArray.push(ensureSlider())
-      // If legend at bottom, nudge slider up a bit
-      if (option.legend?.bottom !== undefined) {
-        dzArray = dzArray.map((z: any) => (z.type === 'slider' || !z.type) ? { bottom: 40, ...z } : z)
-      }
-    } else if (dzArray.length) {
-      // Hide sliders when toggled off
-      dzArray = dzArray.map((z: any) => (z.type === 'slider' || !z.type) ? { ...z, show: false } : z)
+    // Don't add dataZoom to initial options - will be handled separately
+    // This prevents coordinate system errors during initialization
+    if (option.dataZoom) {
+      delete option.dataZoom
     }
-    if (dzArray.length) option.dataZoom = dzArray
     
     error.value = null
     
@@ -353,11 +340,18 @@ function onChartClick(params: any) {
 function onToolboxAction(evt: any) {
   const { action } = evt || {}
   if (action === 'dataZoom') {
+    // Toggle the zoom bar visibility
     dataZoomVisible.value = !dataZoomVisible.value
+    clog('[AiChatLike] DataZoom toggled:', dataZoomVisible.value)
   } else if (action === 'restore') {
+    // Hide zoom bar on restore
     dataZoomVisible.value = false
+    clog('[AiChatLike] DataZoom hidden via restore')
   }
 }
+
+// These functions are no longer needed since MyndEcharts handles zoom bar internally
+// The custom zoom bar implementation avoids the coordinate system errors entirely
 
 function toggleTheme() {
   isDark.value = !isDark.value
@@ -374,6 +368,8 @@ function toggleIsolation() {
 function switchChart() {
   currentChartIndex.value = (currentChartIndex.value + 1) % chartDataOptions.length
   clog('[AiChatLike] switchChart - changed to chart', currentChartIndex.value)
+  // Reset dataZoom state when switching charts
+  dataZoomVisible.value = false
   // No need to manually resize - options change triggers resize
 }
 

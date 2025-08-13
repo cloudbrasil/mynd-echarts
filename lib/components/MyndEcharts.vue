@@ -58,15 +58,14 @@
         @finished="(p:any)=>emit('finished',p)"
       />
     </div>
-    <!-- Zoom bar disabled - using native ECharts dataZoom instead -->
-    <!-- <ZoomBar
+    <ZoomBar
       v-if="showZoomBar"
       :options="props.options"
       :start="zoomStart"
       :end="zoomEnd"
       :is-dark-mode="effectiveDarkMode"
       @change="handleZoomBarChange"
-    /> -->
+    />
     
     <ConfigDialog 
       v-if="showConfig"
@@ -109,6 +108,8 @@ type ExtendedMyndEchartsProps = CoreMyndEchartsProps & {
   toolboxStyle?: 'toolbar' | 'menu'
   /** Render custom header (title/toolbox) instead of ECharts native */
   renderHeader?: boolean
+  /** Show custom bottom zoom bar (native ECharts dataZoom is disabled) */
+  showZoomBar?: boolean
   /** @deprecated Native toolbox mode no longer used */
   toolboxMode?: 'auto' | 'fixed' | 'disabled'
   /** @deprecated Native toolbox position no longer used */
@@ -131,6 +132,7 @@ const props = withDefaults(defineProps<ExtendedMyndEchartsProps & { chartHeight?
   showToolbox: true,
   toolboxStyle: 'toolbar',
   renderHeader: true,
+  showZoomBar: false,
   chartHeight: 400,
   aspectRatio: undefined
 })
@@ -192,7 +194,7 @@ const currentOptions = ref<EChartsOption>(props.options || {})
 const processedOptionsCache = ref<EChartsOption | null>(null)
 // Store base options for custom zoom windowing
 const zoomBaseOptions = ref<EChartsOption | null>(null)
-const showZoomBar = ref(false)
+const showZoomBar = ref<boolean>(props.showZoomBar)
 // Ensure a resize after zoom bar toggles to preserve chart area height
 watch(showZoomBar, async () => {
   await nextTick()
@@ -475,7 +477,7 @@ const resolvedTheme = computed(() => {
 const hasToolboxDataZoom = ref(false)
 const toolboxDataZoomConfig = ref<any>(null)
 
-// Canvas options: only strip native header when using custom header
+// Canvas options: strip native title/toolbox and disable native dataZoom; apply custom slicing when zoom bar is shown
 const canvasOptions = computed(() => {
   try {
     const opts: any = JSON.parse(JSON.stringify(props.options || {}))
@@ -483,11 +485,72 @@ const canvasOptions = computed(() => {
       delete opts.title
       delete opts.toolbox
     }
+    // Always disable native dataZoom to avoid conflicts with custom zoom bar
+    if (opts.dataZoom) delete opts.dataZoom
+
+    // Apply custom windowing when zoom bar is visible and xAxis has categories
+    try {
+      if (showZoomBar.value && opts && opts.xAxis) {
+        const xAxisOpt = Array.isArray(opts.xAxis) ? opts.xAxis[0] : opts.xAxis
+        const categories: any[] = xAxisOpt?.data || []
+        const total = categories.length
+        if (total > 0) {
+          let s = Math.max(0, Math.min(100, zoomStart.value))
+          let e = Math.max(0, Math.min(100, zoomEnd.value))
+          if (s > e) { const t = s; s = e; e = t }
+          const startIdx = Math.floor((s / 100) * (total - 1))
+          const endIdx = Math.floor((e / 100) * (total - 1))
+          const slicedCats = categories.slice(startIdx, endIdx + 1)
+          if (Array.isArray(opts.xAxis)) opts.xAxis = [{ ...xAxisOpt, data: slicedCats }]
+          else opts.xAxis = { ...(xAxisOpt || {}), data: slicedCats }
+          const seriesOpt = opts.series
+          const seriesArr = (Array.isArray(seriesOpt) ? seriesOpt : (seriesOpt ? [seriesOpt] : [])).filter(Boolean)
+          const newSeries = seriesArr.map((srs: any) => {
+            const sData = srs?.data
+            if (Array.isArray(sData) && sData.length === total) {
+              return { ...srs, data: sData.slice(startIdx, endIdx + 1) }
+            }
+            return { ...srs }
+          })
+          opts.series = Array.isArray(seriesOpt) ? newSeries : newSeries[0]
+        }
+      }
+    } catch {}
+
+    // Safeguard: ensure cartesian axes and clamp series axis indexes
+    try {
+      const seriesOpt = opts.series
+      const seriesArr = Array.isArray(seriesOpt) ? seriesOpt : (seriesOpt ? [seriesOpt] : [])
+      const isCartesianType = (t: any) => ['line','bar','scatter','candlestick','effectScatter'].includes(t)
+      const hasCartesian = seriesArr.some((s: any) => s && isCartesianType(s.type))
+      if (hasCartesian) {
+        // Ensure axes exist
+        if (!opts.xAxis) opts.xAxis = { type: 'category' }
+        if (!opts.yAxis) opts.yAxis = { type: 'value' }
+        const normalizeAxis = (ax: any) => Array.isArray(ax) ? ax : (ax ? [ax] : [])
+        const xAxes = normalizeAxis(opts.xAxis)
+        const yAxes = normalizeAxis(opts.yAxis)
+        const clampIndex = (idx: any, max: number) => {
+          const n = typeof idx === 'number' ? idx : 0
+          return n >= 0 && n < max ? n : 0
+        }
+        const clamped = seriesArr.map((s: any) => {
+          if (!s || !isCartesianType(s.type)) return s
+          const ni: any = { ...s }
+          if (xAxes.length && ni.xAxisIndex !== undefined) ni.xAxisIndex = clampIndex(ni.xAxisIndex, xAxes.length)
+          if (yAxes.length && ni.yAxisIndex !== undefined) ni.yAxisIndex = clampIndex(ni.yAxisIndex, yAxes.length)
+          return ni
+        })
+        opts.series = Array.isArray(seriesOpt) ? clamped : clamped[0]
+        if (!opts.grid) opts.grid = {}
+      }
+    } catch {}
     processedOptionsCache.value = opts
     return opts as EChartsOption
   } catch {
     const shallow: any = { ...(props.options || {}) }
     if (props.renderHeader) { delete shallow.title; delete shallow.toolbox }
+    if (shallow.dataZoom) delete shallow.dataZoom
     processedOptionsCache.value = shallow
     return shallow as EChartsOption
   }
@@ -524,13 +587,31 @@ const handleLocaleUpdate = (newLocale: string) => {
 const handleToolboxAction = (action: string, payload?: any) => {
   if (action === 'dataView') {
     showDataView.value = true
+  } else if (action === 'dataZoom') {
+    // Toggle custom zoom bar
+    showZoomBar.value = !showZoomBar.value
+    // When turning off, reset to full window
+    if (!showZoomBar.value) {
+      zoomStart.value = 0
+      zoomEnd.value = 100
+    } else {
+      // Reset to reasonable initial window when enabling
+      zoomStart.value = 20
+      zoomEnd.value = 80
+    }
+  } else if (action === 'restore') {
+    // Hide custom zoom bar and reset window
+    showZoomBar.value = false
+    zoomStart.value = 0
+    zoomEnd.value = 100
   }
   emit('toolbox-action' as any, { action, payload })
 }
 
 // Handle change events from bottom ZoomBar
 const handleZoomBarChange = (payload: { start: number, end: number }) => {
-  handleToolboxAction('dataZoomSet', payload)
+  zoomStart.value = Math.max(0, Math.min(100, payload.start))
+  zoomEnd.value = Math.max(0, Math.min(100, payload.end))
 }
 
 // Track if initial options have been set

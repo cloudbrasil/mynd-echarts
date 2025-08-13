@@ -47,7 +47,8 @@
       "Bash(open /Users/augustopissarra/dev/docbrasil/gits/mynd-echarts/test-datazoom-debug.html)",
       "Bash(open:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(git clone:*)"
     ],
     "deny": []
   }

@@ -141,8 +141,8 @@ const drawSpark = () => {
     
     if (points.length < 2) return
     
-    // Draw area fill first (behind the line)
-    ctx.fillStyle = 'rgba(84, 112, 198, 0.15)'
+    // Draw area fill first (behind the line) - adapt for dark mode
+    ctx.fillStyle = props.isDarkMode ? 'rgba(147, 197, 253, 0.25)' : 'rgba(84, 112, 198, 0.15)'
     ctx.beginPath()
     ctx.moveTo(points[0].x, height - 4) // Start at bottom
     ctx.lineTo(points[0].x, points[0].y) // Go to first data point
@@ -177,8 +177,8 @@ const drawSpark = () => {
     ctx.closePath()
     ctx.fill()
     
-    // Draw the main line on top
-    ctx.strokeStyle = '#8292cc'
+    // Draw the main line on top - adapt for dark mode
+    ctx.strokeStyle = props.isDarkMode ? '#93c5fd' : '#8292cc'
     ctx.lineWidth = 1.5
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
@@ -213,8 +213,8 @@ const drawSpark = () => {
     
     ctx.stroke()
     
-    // Add subtle data point markers
-    ctx.fillStyle = '#8292cc'
+    // Add subtle data point markers - adapt for dark mode
+    ctx.fillStyle = props.isDarkMode ? '#93c5fd' : '#8292cc'
     points.forEach(point => {
       ctx.beginPath()
       ctx.arc(point.x, point.y, 1.5, 0, 2 * Math.PI)

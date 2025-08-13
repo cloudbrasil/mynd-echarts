@@ -300,13 +300,24 @@ onUnmounted(() => {
 /* Dark mode variables */
 .mynd-echarts-toolbox[data-theme="dark"] {
   --toolbox-icon-color: #ffffff;
-  --toolbox-icon-hover-color: #ffffff;
+  --toolbox-icon-hover-color: #e0e0e0;
   --toolbox-bg-hover: rgba(255, 255, 255, 0.1);
   --toolbox-menu-bg: #1f2937;
   --toolbox-menu-border: #374151;
   --toolbox-menu-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   --toolbox-menu-item-color: #ffffff;
   --toolbox-menu-item-hover: rgba(255, 255, 255, 0.1);
+}
+
+/* Ensure SVG icons are white in dark mode */
+.mynd-echarts-toolbox[data-theme="dark"] .mynd-echarts-toolbox-icon {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+.mynd-echarts-toolbox[data-theme="dark"] .mynd-echarts-toolbox-btn:hover .mynd-echarts-toolbox-icon {
+  color: #e0e0e0 !important;
+  fill: #e0e0e0 !important;
 }
 
 /* Toolbar Style */
@@ -353,12 +364,13 @@ onUnmounted(() => {
   display: block;
   flex-shrink: 0;
   pointer-events: none;
-  fill: currentColor;
+  color: var(--toolbox-icon-color);
+  fill: var(--toolbox-icon-color);
 }
 
 .mynd-echarts-toolbox-btn .mynd-echarts-toolbox-icon {
-  color: currentColor;
-  fill: currentColor;
+  color: var(--toolbox-icon-color);
+  fill: var(--toolbox-icon-color);
 }
 
 /* Zoom control inline UI */
@@ -404,6 +416,8 @@ onUnmounted(() => {
 .mynd-echarts-toolbox-menu-trigger .mynd-echarts-toolbox-icon {
   width: 20px;
   height: 20px;
+  color: var(--toolbox-icon-color);
+  fill: var(--toolbox-icon-color);
 }
 
 .mynd-echarts-toolbox-menu-dropdown {
@@ -458,7 +472,8 @@ onUnmounted(() => {
 .mynd-echarts-toolbox-menu-item .mynd-echarts-toolbox-icon {
   width: 18px;
   height: 18px;
-  color: var(--toolbox-icon-color);
+  color: var(--toolbox-menu-item-color);
+  fill: var(--toolbox-menu-item-color);
   flex-shrink: 0;
 }
 
