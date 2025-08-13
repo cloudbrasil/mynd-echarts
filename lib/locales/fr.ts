@@ -180,6 +180,5 @@ export const fr: LocaleMessages = {
     dataView: 'Vue des Données',
     dataZoom: 'Zoom',
     magicType: 'Changer le Type de Graphique',
-    brush: 'Sélection au Pinceau'
   }
 }

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Native ECharts DataZoom Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        #chart { width: 800px; height: 400px; margin: 50px auto; }
+        body { font-family: Arial, sans-serif; }
+        h1 { text-align: center; }
+        .buttons { text-align: center; margin: 20px; }
+        button { padding: 10px 20px; margin: 0 10px; }
+    </style>
+</head>
+<body>
+    <h1>Native ECharts DataZoom Test</h1>
+    <div class="buttons">
+        <button onclick="toggleDataZoom()">Toggle DataZoom</button>
+        <button onclick="showCurrentOption()">Show Current Options</button>
+    </div>
+    <div id="chart"></div>
+
+    <script>
+        const chartDom = document.getElementById('chart');
+        const myChart = echarts.init(chartDom);
+        
+        const option = {
+            title: {
+                text: 'Sales Data'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            xAxis: {
+                type: 'category',
+                data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name: 'Sales',
+                    type: 'line',
+                    data: [120, 132, 101, 134, 90, 230, 210, 220, 182, 191, 234, 260]
+                }
+            ]
+        };
+        
+        myChart.setOption(option);
+        
+        function toggleDataZoom() {
+            const currentOptions = myChart.getOption();
+            const hasDataZoom = currentOptions.dataZoom && currentOptions.dataZoom.length > 0 && currentOptions.dataZoom.some(z => (z.type === 'slider' || !z.type) && z.show !== false);
+            
+            if (hasDataZoom) {
+                console.log('Hiding dataZoom');
+                const dz = (currentOptions.dataZoom || []).map(z => (z.type === 'slider' || !z.type) ? ({ ...z, show: false }) : z);
+                myChart.setOption({ dataZoom: dz }, { notMerge: false });
+            } else {
+                console.log('Showing dataZoom');
+                myChart.setOption({ dataZoom: [{ type: 'slider', show: true, xAxisIndex: [0], start: 0, end: 100 }] }, { notMerge: false });
+            }
+        }
+        
+        function showCurrentOption() {
+            const opts = myChart.getOption();
+            console.log('Current options:', opts);
+            console.log('DataZoom:', opts.dataZoom);
+        }
+    </script>
+</body>
+</html>

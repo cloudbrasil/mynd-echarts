@@ -39,7 +39,15 @@
       "Bash(vercel:*)",
       "Bash(sed:*)",
       "Bash(python3:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(for file in /Users/augustopissarra/dev/docbrasil/gits/mynd-echarts/lib/locales/{en,es,fr,pt-BR,zh-CN}.ts)",
+      "Bash(do)",
+      "Bash(open http://localhost:3000/test-aichat-like.html)",
+      "Bash(open /Users/augustopissarra/dev/docbrasil/gits/mynd-echarts/test-native-datazoom.html)",
+      "Bash(open /Users/augustopissarra/dev/docbrasil/gits/mynd-echarts/test-datazoom-debug.html)",
+      "Bash(open:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": []
   }

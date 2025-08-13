@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Coordinate System Error Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #app { max-width: 1200px; margin: 0 auto; }
+        .chart-wrapper { 
+            width: 100%; 
+            height: 500px; 
+            border: 1px solid #ccc; 
+            margin: 20px 0;
+            background: white;
+        }
+        #chart { width: 100%; height: 100%; }
+        .controls { margin: 20px 0; }
+        button { padding: 10px 20px; margin-right: 10px; }
+        .log { 
+            background: #f0f0f0; 
+            padding: 10px; 
+            margin: 20px 0; 
+            max-height: 300px; 
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .error { color: red; font-weight: bold; }
+        .info { color: blue; }
+        .warn { color: orange; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Coordinate System Error Test</h1>
+        <p>Testing the exact sequence that causes the coordinate system error</p>
+        
+        <div class="controls">
+            <button @click="toggleTheme">Toggle Theme</button>
+            <button @click="switchChart">Switch Chart</button>
+            <button @click="triggerResize">Manual Resize</button>
+            <button @click="recreateChart">Recreate Chart</button>
+            <button @click="clearLog">Clear Log</button>
+        </div>
+        
+        <div class="chart-wrapper" ref="wrapperRef">
+            <div id="chart" ref="chartRef"></div>
+        </div>
+        
+        <div class="log">
+            <div v-for="entry in log" :key="entry.id" :class="entry.type">
+                {{ entry.time }}: {{ entry.msg }}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, watch, onMounted, onUnmounted, nextTick } = Vue;
+        
+        createApp({
+            setup() {
+                const chartRef = ref(null);
+                const wrapperRef = ref(null);
+                const isDark = ref(false);
+                const currentChartIndex = ref(0);
+                const log = ref([]);
+                let chart = null;
+                let logId = 0;
+                let resizeObserver = null;
+                
+                const addLog = (msg, type = 'info') => {
+                    const entry = {
+                        id: ++logId,
+                        time: new Date().toLocaleTimeString() + '.' + new Date().getMilliseconds(),
+                        msg: msg,
+                        type: type
+                    };
+                    log.value.push(entry);
+                    console.log(`[${type.toUpperCase()}] ${msg}`);
+                };
+                
+                const clearLog = () => {
+                    log.value = [];
+                };
+                
+                const chartDataOptions = [
+                    {
+                        title: { text: 'Line Chart' },
+                        xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] },
+                        yAxis: { type: 'value' },
+                        series: [{ type: 'line', data: [120, 132, 101, 134, 90] }]
+                    },
+                    {
+                        title: { text: 'Bar Chart' },
+                        xAxis: { type: 'category', data: ['A', 'B', 'C', 'D', 'E'] },
+                        yAxis: { type: 'value' },
+                        series: [{ type: 'bar', data: [320, 240, 360, 180, 220] }]
+                    },
+                    {
+                        title: { text: 'Pie Chart' },
+                        series: [{
+                            type: 'pie',
+                            data: [
+                                { value: 335, name: 'Direct' },
+                                { value: 310, name: 'Email' },
+                                { value: 234, name: 'Union Ads' }
+                            ]
+                        }]
+                    }
+                ];
+                
+                const currentChartData = computed(() => {
+                    addLog(`Computing chart data for index ${currentChartIndex.value}`, 'info');
+                    return chartDataOptions[currentChartIndex.value];
+                });
+                
+                const chartOptions = computed(() => {
+                    addLog('chartOptions computed triggered', 'info');
+                    const data = currentChartData.value;
+                    
+                    // Deep clone to simulate AiChatLike
+                    const options = JSON.parse(JSON.stringify(data));
+                    
+                    // Add theme-specific styling
+                    if (options.title) {
+                        options.title.textStyle = {
+                            color: isDark.value ? '#fff' : '#000'
+                        };
+                    }
+                    
+                    return options;
+                });
+                
+                const initChart = () => {
+                    addLog('initChart called', 'info');
+                    
+                    if (!chartRef.value) {
+                        addLog('No chart element found', 'error');
+                        return;
+                    }
+                    
+                    if (chart && !chart.isDisposed()) {
+                        addLog('Disposing existing chart', 'info');
+                        chart.dispose();
+                    }
+                    
+                    try {
+                        addLog('Creating new chart instance', 'info');
+                        chart = echarts.init(chartRef.value, isDark.value ? 'dark' : 'light');
+                        
+                        addLog('Setting initial options', 'info');
+                        chart.setOption(chartOptions.value);
+                        
+                        addLog('Chart initialized successfully', 'success');
+                    } catch (e) {
+                        addLog('Error initializing chart: ' + e.message, 'error');
+                        console.error(e);
+                    }
+                };
+                
+                const resizeChart = () => {
+                    addLog('resizeChart called', 'info');
+                    
+                    if (!chart || chart.isDisposed()) {
+                        addLog('No chart to resize', 'warn');
+                        return;
+                    }
+                    
+                    try {
+                        const currentOpts = chart.getOption();
+                        addLog(`Before resize - chart state: xAxis=${!!currentOpts.xAxis}, yAxis=${!!currentOpts.yAxis}, polar=${!!currentOpts.polar}`, 'info');
+                        
+                        chart.resize();
+                        addLog('Chart resized successfully', 'success');
+                    } catch (e) {
+                        addLog('Error during resize: ' + e.message, 'error');
+                        console.error(e);
+                    }
+                };
+                
+                const toggleTheme = () => {
+                    addLog('toggleTheme called', 'info');
+                    isDark.value = !isDark.value;
+                    
+                    // This triggers the computed and the watcher
+                    addLog('Theme changed, will trigger watcher', 'info');
+                };
+                
+                const switchChart = () => {
+                    addLog('switchChart called', 'info');
+                    currentChartIndex.value = (currentChartIndex.value + 1) % chartDataOptions.length;
+                    
+                    // Schedule resize after chart switch (mimics AiChatLike)
+                    nextTick(() => {
+                        addLog('switchChart nextTick - calling resize', 'info');
+                        resizeChart();
+                    });
+                };
+                
+                const triggerResize = () => {
+                    addLog('Manual resize triggered', 'info');
+                    resizeChart();
+                };
+                
+                const recreateChart = () => {
+                    addLog('Recreating chart', 'info');
+                    initChart();
+                };
+                
+                // Watch for theme changes (mimics MyndEcharts theme watcher)
+                watch(isDark, (newVal, oldVal) => {
+                    addLog(`Theme watcher triggered: ${oldVal} -> ${newVal}`, 'info');
+                    
+                    if (chart && !chart.isDisposed()) {
+                        const currentOpts = chart.getOption();
+                        
+                        addLog('Disposing chart for theme change', 'info');
+                        chart.dispose();
+                        
+                        // Use nextTick to ensure DOM updates (mimics useECharts)
+                        nextTick(() => {
+                            addLog('Theme change nextTick - recreating chart', 'info');
+                            initChart();
+                            
+                            // Try to restore options
+                            if (chart && !chart.isDisposed()) {
+                                try {
+                                    addLog('Restoring options after theme change', 'info');
+                                    chart.setOption(currentOpts, { notMerge: true });
+                                    addLog('Options restored successfully', 'success');
+                                } catch (e) {
+                                    addLog('Error restoring options: ' + e.message, 'error');
+                                }
+                            }
+                        });
+                    }
+                });
+                
+                // Watch for option changes (mimics MyndEcharts options watcher)
+                watch(chartOptions, (newOptions) => {
+                    addLog('Options watcher triggered', 'info');
+                    
+                    if (chart && !chart.isDisposed()) {
+                        try {
+                            addLog('Applying new options', 'info');
+                            chart.setOption(newOptions, { notMerge: true });
+                            addLog('Options applied successfully', 'success');
+                        } catch (e) {
+                            addLog('Error applying options: ' + e.message, 'error');
+                        }
+                    }
+                }, { deep: true });
+                
+                // Watch for isDark changes and call resize (mimics AiChatLike)
+                watch(isDark, () => {
+                    addLog('isDark watcher (AiChatLike style) - calling resize', 'info');
+                    resizeChart();
+                });
+                
+                onMounted(() => {
+                    addLog('Component mounted', 'info');
+                    
+                    // Initialize chart
+                    initChart();
+                    
+                    // Setup ResizeObserver (mimics AiChatLike)
+                    const ensureReady = () => {
+                        if (!wrapperRef.value) return false;
+                        
+                        const hasSize = wrapperRef.value.clientWidth > 0;
+                        if (hasSize) {
+                            addLog('Container has size, scheduling resize', 'info');
+                            nextTick(() => {
+                                addLog('Container ready nextTick - calling resize', 'info');
+                                resizeChart();
+                            });
+                            return true;
+                        }
+                        return false;
+                    };
+                    
+                    if (!ensureReady()) {
+                        addLog('Setting up ResizeObserver', 'info');
+                        resizeObserver = new ResizeObserver(() => {
+                            addLog('ResizeObserver triggered', 'info');
+                            if (ensureReady() && resizeObserver) {
+                                resizeObserver.disconnect();
+                                resizeObserver = null;
+                            }
+                        });
+                        if (wrapperRef.value) {
+                            resizeObserver.observe(wrapperRef.value);
+                        }
+                    }
+                });
+                
+                onUnmounted(() => {
+                    addLog('Component unmounting', 'info');
+                    if (chart && !chart.isDisposed()) {
+                        chart.dispose();
+                    }
+                    if (resizeObserver) {
+                        resizeObserver.disconnect();
+                    }
+                });
+                
+                // Listen for global errors
+                window.addEventListener('error', (e) => {
+                    addLog('Global error: ' + e.message, 'error');
+                });
+                
+                window.addEventListener('unhandledrejection', (e) => {
+                    addLog('Unhandled rejection: ' + e.reason, 'error');
+                });
+                
+                return {
+                    chartRef,
+                    wrapperRef,
+                    isDark,
+                    currentChartIndex,
+                    log,
+                    toggleTheme,
+                    switchChart,
+                    triggerResize,
+                    recreateChart,
+                    clearLog
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

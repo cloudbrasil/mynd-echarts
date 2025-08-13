@@ -45,6 +45,7 @@
     "test:coverage": "vitest run --coverage",
     "test:coverage:ui": "vitest --ui --coverage",
     "test:watch": "vitest watch",
+    "smoke": "node scripts/smoke/smoke.js",
     "prepublishOnly": "npm run build:lib"
   },
   "peerDependencies": {

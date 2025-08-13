@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyndEcharts - Aichat-like Test (External Zoom Footer)</title>
+  <script>
+    // Suppress Chrome extension errors
+    const originalError = console.error;
+    console.error = function(...args) {
+      const errorStr = args.join(' ');
+      if (errorStr.includes('message channel closed') || 
+          errorStr.includes('Extension context invalidated') ||
+          errorStr.includes('Cannot access a chrome:// URL')) {
+        return;
+      }
+      originalError.apply(console, args);
+    };
+    window.addEventListener('error', (e) => {
+      if (e.message && (
+        e.message.includes('message channel closed') ||
+        e.message.includes('Extension context invalidated') ||
+        e.message.includes('Cannot access a chrome:// URL')
+      )) {
+        e.preventDefault();
+        return false;
+      }
+    });
+    window.addEventListener('unhandledrejection', (e) => {
+      if (e.reason && e.reason.message && (
+        e.reason.message.includes('message channel closed') ||
+        e.reason.message.includes('Extension context invalidated')
+      )) {
+        e.preventDefault();
+        return false;
+      }
+    });
+  </script>
+  <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://cdn.jsdelivr.net/npm/vue@3.4.29/dist/vue.esm-browser.prod.js"
+      }
+    }
+  </script>
+  <style>
+    html, body { margin: 0; padding: 0; font-family: Inter, Arial, sans-serif; background: #0f1115; color: #e5e7eb; }
+    .page { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+    .card { background: #141824; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 0; overflow: hidden; }
+    .card-header { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-weight: 600; color: #e5e7eb; }
+    .slot { padding: 16px; }
+    .footer { padding: 16px; border-top: 1px solid rgba(255,255,255,0.06); color: #94a3b8; font-size: 14px; }
+    .chart-wrap { padding: 16px; }
+    .toolbar { display: flex; align-items: center; gap: 8px; }
+    .btn { background: #1f2937; color: #e5e7eb; border: 1px solid rgba(255,255,255,0.1); padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+    .btn:hover { background: #273244; }
+  </style>
+  <!-- ECharts (keep CDN for standalone runs) -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+  <!-- Load library build and styles (stable filenames) -->
+  <script type="module">
+    import "/dist/style.css";
+  </script>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Akamai Chat - Aichat-like Graph Test</div>
+        <div class="toolbar">
+          <button class="btn" id="toggleZoom">Toggle Zoom</button>
+          <button class="btn" id="restore">Restore</button>
+          <button class="btn" id="toggleTheme">Toggle Theme</button>
+          <button class="btn" id="dataView">Data View</button>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <!-- MyndEcharts component root -->
+        <div id="demo-root"></div>
+      </div>
+      <div class="footer">Graph explanation: This page replicates the external footer ZoomBar scenario with a responsive aspect ratio. No native dataZoom.</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { MyndEcharts } from "/dist/mynd-echarts.js";
+    // Use the same Vue instance as the library via import map
+    import { createApp, h } from "vue";
+
+    const chartOptions = {
+      backgroundColor: '#141823',
+      title: { text: "Monthly Website Traffic by Device Type" },
+      tooltip: { trigger: 'axis' },
+      legend: { data: ['Desktop', 'Mobile', 'Tablet'], bottom: 10 },
+      grid: { left: '12%', right: '12%', top: 8, bottom: 56, containLabel: true },
+      xAxis: { type: 'category', data: [
+        'Jan 2023','Feb 2023','Mar 2023','Apr 2023','May 2023','Jun 2023','Jul 2023','Aug 2023','Sep 2023','Oct 2023'
+      ] },
+      yAxis: { type: 'value', name: 'Traffic (Thousands)' },
+      series: [
+        { name: 'Desktop', type: 'line', smooth: true, areaStyle: {}, data: [40,42,44,43,46,50,53,54,56,56] },
+        { name: 'Mobile',  type: 'line', smooth: true, areaStyle: {}, data: [28,32,37,36,39,41,43,44,48,46] },
+        { name: 'Tablet',  type: 'line', smooth: true, areaStyle: {}, data: [8,9,9,9,10,12,12,12,12,12] }
+      ],
+      // Enable Data View and Data Zoom tools
+      toolbox: {
+        feature: {
+          saveAsImage: { show: true },
+          restore: { show: true },
+          dataView: { show: true, readOnly: false },
+          dataZoom: { show: true }
+        }
+      }
+    };
+
+    const App = {
+      data: () => ({ dark: true, chartVisible: false }),
+      mounted() {
+        // Delay chart visibility to ensure DOM is ready
+        setTimeout(() => {
+          this.chartVisible = true;
+        }, 50);
+      },
+      methods: {
+        toggleTheme() {
+          this.dark = !this.dark;
+          chartOptions.backgroundColor = this.dark ? '#141823' : '#ffffff';
+          document.documentElement.classList.toggle('dark', this.dark);
+          document.body.classList.toggle('dark', this.dark);
+        }
+      },
+      render() {
+        if (!this.chartVisible) return h('div', 'Loading...');
+        return h(MyndEcharts, {
+          options: chartOptions,
+          theme: this.dark ? 'dark' : 'light',
+          isDarkMode: this.dark,
+          preferThemeDefaults: true,
+          renderHeader: true,
+          showToolbox: true,
+          aspectRatio: '16:9',
+          chartHeight: 420,
+          onReady: (inst) => { 
+            window.__chart = inst;
+            // Force resize after ready
+            setTimeout(() => inst.resize(), 100);
+          },
+        });
+      }
+    };
+
+    const app = createApp(App);
+    app.mount('#demo-root');
+
+    // Controls
+    document.getElementById('toggleZoom').addEventListener('click', () => {
+      const vm = app._instance?.proxy;
+      if (!vm) return;
+      // Dispatch the same action used by toolbox to toggle external ZoomBar
+      vm.handleToolboxAction?.('dataZoom');
+    });
+    document.getElementById('restore').addEventListener('click', () => {
+      const vm = app._instance?.proxy;
+      if (!vm) return;
+      vm.handleToolboxAction?.('restore');
+    });
+    document.getElementById('toggleTheme').addEventListener('click', () => {
+      const vm = app._instance?.proxy; if (!vm) return; vm.toggleTheme?.();
+    });
+    document.getElementById('dataView').addEventListener('click', () => {
+      const vm = app._instance?.proxy; if (!vm) return; vm.handleToolboxAction?.('dataView');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vue + ECharts DataZoom Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #app { max-width: 1000px; margin: 0 auto; }
+        #chart { width: 100%; height: 400px; border: 1px solid #ccc; margin: 20px 0; }
+        .buttons { margin: 20px 0; }
+        button { padding: 10px 20px; margin-right: 10px; }
+        .log { background: #f0f0f0; padding: 10px; margin: 20px 0; max-height: 200px; overflow-y: auto; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Vue + ECharts DataZoom Test</h1>
+        <p>This simulates what happens in MyndEcharts when options change</p>
+        
+        <div class="buttons">
+            <button @click="toggleTheme">Toggle Theme (triggers computed)</button>
+            <button @click="addDataZoom">Add DataZoom</button>
+            <button @click="updateChartData">Update Chart Data</button>
+            <button @click="clearLog">Clear Log</button>
+        </div>
+        
+        <div>Theme: {{ isDark ? 'Dark' : 'Light' }}</div>
+        <div>Has DataZoom: {{ hasDataZoom }}</div>
+        
+        <div id="chart" ref="chartRef"></div>
+        
+        <div class="log">
+            <div v-for="entry in log" :key="entry.id" :class="entry.type">
+                {{ entry.time }}: {{ entry.msg }}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, watch, onMounted, nextTick } = Vue;
+        
+        createApp({
+            setup() {
+                const chartRef = ref(null);
+                const isDark = ref(false);
+                const hasDataZoom = ref(false);
+                const log = ref([]);
+                let chart = null;
+                let logId = 0;
+                
+                const addLog = (msg, type = 'info') => {
+                    log.value.push({
+                        id: ++logId,
+                        time: new Date().toLocaleTimeString(),
+                        msg: msg,
+                        type: type
+                    });
+                    console.log(msg);
+                };
+                
+                const clearLog = () => {
+                    log.value = [];
+                };
+                
+                // Simulate MyndEcharts computed options
+                const chartOptions = computed(() => {
+                    addLog('Computed chartOptions triggered (theme: ' + isDark.value + ')');
+                    return {
+                        title: {
+                            text: 'Test Chart',
+                            textStyle: {
+                                color: isDark.value ? '#fff' : '#000'
+                            }
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [{
+                            name: 'Data',
+                            type: 'line',
+                            data: [120, 132, 101, 134, 90, 230, 210]
+                        }]
+                    };
+                });
+                
+                // Simulate MyndEcharts options watcher
+                watch(chartOptions, (newOptions) => {
+                    addLog('Options watcher triggered');
+                    
+                    if (hasDataZoom.value) {
+                        addLog('SKIPPING options update because hasDataZoom is true', 'info');
+                        return;
+                    }
+                    
+                    if (chart) {
+                        addLog('Applying new options to chart');
+                        try {
+                            chart.setOption(newOptions, { notMerge: true });
+                            addLog('Options applied successfully');
+                        } catch (e) {
+                            addLog('Error applying options: ' + e.message, 'error');
+                        }
+                    }
+                }, { deep: true });
+                
+                const toggleTheme = () => {
+                    isDark.value = !isDark.value;
+                    addLog('Theme toggled to: ' + (isDark.value ? 'Dark' : 'Light'));
+                };
+                
+                const addDataZoom = () => {
+                    if (!chart) return;
+                    
+                    addLog('Adding dataZoom via options update (pass-through)');
+                    hasDataZoom.value = true;
+                    try {
+                        const opts = chart.getOption();
+                        const dz = Array.isArray(opts.dataZoom) ? opts.dataZoom.slice() : (opts.dataZoom ? [opts.dataZoom] : []);
+                        const hasSlider = dz.some(z => (z.type === 'slider' || !z.type));
+                        if (!hasSlider) dz.push({ type: 'slider', show: true, start: 0, end: 100 });
+                        chart.setOption({ dataZoom: dz }, { notMerge: false });
+                        addLog('DataZoom added successfully');
+                    } catch (e) {
+                        addLog('Error adding dataZoom: ' + e.message, 'error');
+                    }
+                };
+                
+                const updateChartData = () => {
+                    if (!chart) return;
+                    
+                    addLog('Updating chart data');
+                    try {
+                        chart.setOption({
+                            series: [{
+                                data: [150, 100, 200, 180, 120, 250, 190]
+                            }]
+                        }, { notMerge: false });
+                        addLog('Data updated successfully');
+                    } catch (e) {
+                        addLog('Error updating data: ' + e.message, 'error');
+                    }
+                };
+                
+                onMounted(() => {
+                    chart = echarts.init(chartRef.value);
+                    chart.setOption(chartOptions.value);
+                    addLog('Chart initialized');
+                    
+                    // Listen for chart errors
+                    window.addEventListener('error', (e) => {
+                        addLog('Global error: ' + e.message, 'error');
+                    });
+                });
+                
+                return {
+                    chartRef,
+                    isDark,
+                    hasDataZoom,
+                    log,
+                    toggleTheme,
+                    addDataZoom,
+                    updateChartData,
+                    clearLog
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

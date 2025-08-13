@@ -1,6 +1,6 @@
 # mynd-echarts
 
-A powerful Vue 3 wrapper component for Apache ECharts with full TypeScript support and advanced toolbox management.
+A powerful Vue 3 wrapper component for Apache ECharts with full TypeScript support.
 
 [![npm version](https://badge.fury.io/js/@docbrasil%2Fmynd-echarts.svg)](https://www.npmjs.com/package/@docbrasil/mynd-echarts)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -15,8 +15,8 @@ A powerful Vue 3 wrapper component for Apache ECharts with full TypeScript suppo
 - 🔧 **TypeScript** - Comprehensive type definitions and IntelliSense support
 - ⚡ **Performance** - Optimized rendering with lazy loading and debouncing
 - 🎯 **Developer Friendly** - Intuitive API with Vue-style props and events
-- 🛠️ **Toolbox Fix** - Automatic detection and correction of toolbox icon overlap issues
-- 🐛 **Debug Mode** - Built-in debugging tools for development
+- 🛠️ **Custom Header/Toolbox** - Optional header UI; you manage options
+- 🐛 **Diagnostics Logs** - Opt-in JSON logs for debugging
 - 📦 **CSS Isolation** - Proper style encapsulation to prevent conflicts
 
 ## 📦 Installation
@@ -155,9 +155,16 @@ Most failures are related to:
 ✅ **CSS Isolation** - All styles are scoped and use data-theme attributes
 ✅ **No Global Dependencies** - Components don't rely on site-level `.dark` class
 
-## 🛠️ Toolbox Management (New!)
+## 🧱 Architecture (New!)
 
-MyndEcharts includes automatic toolbox overlap detection and fixing:
+MyndEcharts now wraps a minimal, stable core (`EChartsCoreView`) responsible for init, setOption, and resize. `MyndEcharts` focuses on optional header/toolbox UI and forwards events. Options are passed through without mutation.
+
+### Migration from <= pre-core (breaking changes)
+
+- Options are no longer mutated by the component. If you previously relied on `MyndEcharts` to add/remove `dataZoom`, toolboxes, colors, or axes, move that logic into your component state and update `:options` yourself.
+- Toolbox actions do not change options automatically. Listen for `@toolbox-action` (e.g., `{ action: 'dataZoom' }`) and modify `:options` accordingly.
+- The internal toolbox overlap “fix” routines were removed. The header toolbox is lightweight; prefer layout-friendly container styles.
+- Theme/locale changes reinitialize the chart internally and restore last options automatically.
 
 ```vue
 <template>
@@ -192,16 +199,14 @@ const handleOverlap = (event) => {
 </script>
 ```
 
-### Toolbox Props
+### Toolbox handling
 
-- `toolbox-mode`: `'auto' | 'fixed' | 'disabled'` - Control toolbox rendering mode
-- `toolbox-position`: Position object with numeric values
-- `fix-toolbox-overlap`: Automatically fix icon overlap issues
-- `debug-toolbox`: Enable debug mode for troubleshooting
+- When `render-header` is enabled, toolbox UI is shown in the header.
+- The component doesn’t mutate options (including `dataZoom`). Handle toolbox intents via `@toolbox-action` and update your options.
 
-## 🎯 Enhanced Zoom Functionality (New!)
+## 🎯 Zoom
 
-MyndEcharts now includes improved zoom controls with better usability and visual appeal:
+Use native ECharts `dataZoom` in your options. Toggle visibility by updating options in your component state.
 
 ### Improved Handle Separation
 - **Better UX**: Zoom handles are no longer "glued" together
@@ -256,11 +261,9 @@ const handleZoomChange = ({ start, end }) => {
 - **Responsive Design**: Adapts to different screen sizes and data densities
 - **Touch Friendly**: Optimized for mobile and touch devices
 
-### Zoom Props
+### Events
 
-- **Default Range**: Zoom area starts at 20-80% for better initial view
-- **Handle Constraints**: Automatic separation enforcement prevents overlap
-- **Smooth Rendering**: High-quality curve rendering with proper anti-aliasing
+- `@toolbox-action` emits `{ action, payload }` (e.g., `dataZoom`, `restore`) so you can modify options.
 
 ## 📚 Documentation
 
@@ -485,17 +488,7 @@ See [DOCUMENTATION.md](./DOCUMENTATION.md#performance-optimization) for detailed
 ## 🛠️ Advanced Usage
 
 ### Using Composables
-```typescript
-import { useECharts, useChartTheme } from '@docbrasil/mynd-echarts'
-
-const elementRef = ref<HTMLElement>()
-const { setOption, resize, dispose } = useECharts(elementRef, {
-  theme: 'dark',
-  autoResize: true
-})
-
-const { currentTheme, setTheme } = useChartTheme()
-```
+`useECharts` remains available for advanced scenarios, but `MyndEcharts` uses a stable internal core and does not mutate options.
 
 ### Chart Interactions
 ```vue
@@ -576,6 +569,21 @@ npm test tests/unit/composables/useECharts.spec.ts
 npm run test:watch
 ```
 
+### Smoke Test (Puppeteer)
+
+Run a lightweight browser smoke against the examples app:
+
+```bash
+npm i -D puppeteer
+# Start examples app (adjust port as needed)
+npm run dev
+
+# In another terminal
+BASE_URL=http://localhost:4173 node scripts/smoke/smoke.js
+```
+
+This visits `/ai-chat-like` and `/stress`, captures screenshots, and fails on page/console errors.
+
 ### Test Stack
 
 - **Framework**: Vitest
@@ -595,26 +603,8 @@ Due to Node.js version compatibility (requires Node.js >=18.0.0), some automated
 
 ## 🔧 Troubleshooting
 
-### Toolbox Icons Overlapping
-```vue
-<!-- Solution 1: Use fixed mode -->
-<MyndEcharts 
-  :options="options"
-  toolbox-mode="fixed"
-  :fix-toolbox-overlap="true"
-/>
-
-<!-- Solution 2: Manual refresh -->
-<script setup>
-const chartRef = ref()
-
-onMounted(() => {
-  nextTick(() => {
-    chartRef.value?.refreshToolbox()
-  })
-})
-</script>
-```
+### Toolbox
+Use the header toolbox and handle `@toolbox-action` to update your own options.
 
 ### Styles Not Applied
 ```javascript

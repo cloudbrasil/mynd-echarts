@@ -180,6 +180,5 @@ export const ptBR: LocaleMessages = {
     dataView: 'Visualização de Dados',
     dataZoom: 'Zoom',
     magicType: 'Alterar Tipo de Gráfico',
-    brush: 'Seleção com Pincel'
   }
 }

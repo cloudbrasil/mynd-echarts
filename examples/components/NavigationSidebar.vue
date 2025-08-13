@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   modelValue: boolean
 }>()
 
@@ -42,57 +42,21 @@ const toggleSidebar = () => {
   emit('update:modelValue', !props.modelValue)
 }
 
-const props = defineProps<{
-  modelValue: boolean
-}>()
-
 const chartSections = [
   {
     title: 'Basic Charts',
     charts: [
       { name: 'Line Chart', path: '/line', icon: '📈' },
       { name: 'Bar Chart', path: '/bar', icon: '📊' },
-      { name: 'Pie Chart', path: '/pie', icon: '🥧' },
-      { name: 'Scatter Chart', path: '/scatter', icon: '⚪' },
-      { name: 'Area Chart', path: '/area', icon: '📉' }
+      { name: 'Pie Chart', path: '/pie', icon: '🥧' }
     ]
   },
   {
-    title: 'Statistical Charts',
+    title: 'Tools',
     charts: [
-      { name: 'Boxplot', path: '/boxplot', icon: '📦' },
-      { name: 'Candlestick', path: '/candlestick', icon: '🕯️' },
-      { name: 'Heatmap', path: '/heatmap', icon: '🔥' },
-      { name: 'Parallel', path: '/parallel', icon: '═' },
-      { name: 'ThemeRiver', path: '/themeriver', icon: '🌊' }
-    ]
-  },
-  {
-    title: 'Composition Charts',
-    charts: [
-      { name: 'Radar Chart', path: '/radar', icon: '🎯' },
-      { name: 'Funnel Chart', path: '/funnel', icon: '🔻' },
-      { name: 'Gauge Chart', path: '/gauge', icon: '🎚️' },
-      { name: 'Sunburst', path: '/sunburst', icon: '☀️' },
-      { name: 'Tree', path: '/tree', icon: '🌳' },
-      { name: 'Treemap', path: '/treemap', icon: '🗺️' }
-    ]
-  },
-  {
-    title: 'Relationship Charts',
-    charts: [
-      { name: 'Graph', path: '/graph', icon: '🔗' },
-      { name: 'Sankey', path: '/sankey', icon: '🔀' },
-      { name: 'Lines', path: '/lines', icon: '➰' }
-    ]
-  },
-  {
-    title: 'Special',
-    charts: [
-      { name: 'Mixed Charts', path: '/mixed', icon: '🎨' },
-      { name: 'Custom Chart', path: '/custom', icon: '🛠️' },
       { name: 'Option Editor', path: '/editor', icon: '✏️' },
-      { name: 'Performance Test', path: '/performance', icon: '⚡' }
+      { name: 'AI Chat-like', path: '/ai-chat-like', icon: '🤖' },
+      { name: 'Stress Demo', path: '/stress', icon: '🧪' }
     ]
   }
 ]

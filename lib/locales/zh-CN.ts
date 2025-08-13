@@ -180,6 +180,5 @@ export const zhCN: LocaleMessages = {
     dataView: '数据视图',
     dataZoom: '缩放',
     magicType: '切换图表类型',
-    brush: '刷选'
   }
 }

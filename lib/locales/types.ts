@@ -178,7 +178,6 @@ export interface LocaleMessages {
     dataView: string
     dataZoom: string
     magicType: string
-    brush: string
   }
 }
 

@@ -180,6 +180,5 @@ export const en: LocaleMessages = {
     dataView: 'Data View',
     dataZoom: 'Zoom',
     magicType: 'Switch Chart Type',
-    brush: 'Brush Select'
   }
 }

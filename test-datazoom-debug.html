@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DataZoom Debug Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #chart { width: 800px; height: 400px; margin: 20px auto; border: 1px solid #ccc; }
+        .buttons { text-align: center; margin: 20px; }
+        button { padding: 10px 20px; margin: 0 10px; }
+        #log { margin: 20px; padding: 10px; background: #f0f0f0; max-height: 200px; overflow-y: auto; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>DataZoom Debug Test</h1>
+    <div class="buttons">
+        <button onclick="addDataZoomMethod1()">Method 1: Simple setOption</button>
+        <button onclick="addDataZoomMethod2()">Method 2: Get options + modify + set</button>
+        <button onclick="addDataZoomMethod3()">Method 3: With notMerge true</button>
+        <button onclick="removeDataZoom()">Remove DataZoom</button>
+        <button onclick="clearLog()">Clear Log</button>
+    </div>
+    <div id="chart"></div>
+    <div id="log"></div>
+
+    <script>
+        const chartDom = document.getElementById('chart');
+        const myChart = echarts.init(chartDom);
+        const logDiv = document.getElementById('log');
+        
+        function log(msg, isError = false) {
+            const entry = document.createElement('div');
+            entry.className = isError ? 'error' : 'success';
+            entry.textContent = new Date().toLocaleTimeString() + ': ' + msg;
+            logDiv.appendChild(entry);
+            console.log(msg);
+        }
+        
+        function clearLog() {
+            logDiv.innerHTML = '';
+        }
+        
+        // Initial chart options - same structure as your examples
+        const baseOption = {
+            title: {
+                text: 'Weekly Temperature'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            xAxis: {
+                type: 'category',
+                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Temperature (°C)'
+            },
+            series: [
+                {
+                    name: 'Temperature',
+                    type: 'line',
+                    data: [20, 22, 21, 23, 25, 26, 23],
+                    smooth: true
+                }
+            ]
+        };
+        
+        myChart.setOption(baseOption);
+        log('Chart initialized');
+        
+        // Method 1: Simple setOption with notMerge false
+        function addDataZoomMethod1() {
+            try {
+                log('Method 1: Adding dataZoom with simple setOption');
+                myChart.setOption({
+                    dataZoom: [{
+                        type: 'slider',
+                        show: true,
+                        start: 0,
+                        end: 100
+                    }]
+                }, {
+                    notMerge: false
+                });
+                log('Method 1: Success!');
+            } catch (e) {
+                log('Method 1 Error: ' + e.message, true);
+            }
+        }
+        
+        // Method 2: Get current options, modify, and set back
+        function addDataZoomMethod2() {
+            try {
+                log('Method 2: Getting current options and modifying');
+                const opts = myChart.getOption();
+                const dz = Array.isArray(opts.dataZoom) ? opts.dataZoom.slice() : (opts.dataZoom ? [opts.dataZoom] : []);
+                const hasSlider = dz.some(z => (z.type === 'slider' || !z.type));
+                if (!hasSlider) dz.push({ type: 'slider', show: true, start: 0, end: 100 });
+                myChart.setOption({ dataZoom: dz }, { notMerge: false });
+                log('Method 2: Success!');
+            } catch (e) {
+                log('Method 2 Error: ' + e.message, true);
+            }
+        }
+        
+        // Method 3: Clone base options and add dataZoom
+        function addDataZoomMethod3() {
+            try {
+                log('Method 3: Using base options with dataZoom');
+                const newOpts = JSON.parse(JSON.stringify(baseOption));
+                newOpts.dataZoom = [{
+                    type: 'slider',
+                    show: true,
+                    start: 0,
+                    end: 100
+                }];
+                myChart.setOption(newOpts, { notMerge: true });
+                log('Method 3: Success!');
+            } catch (e) {
+                log('Method 3 Error: ' + e.message, true);
+            }
+        }
+        
+        function removeDataZoom() {
+            try {
+                log('Removing dataZoom');
+                const newOpts = JSON.parse(JSON.stringify(baseOption));
+                delete newOpts.dataZoom;
+                myChart.setOption(newOpts, { notMerge: true });
+                log('DataZoom removed');
+            } catch (e) {
+                log('Remove Error: ' + e.message, true);
+            }
+        }
+        
+        // Listen for errors
+        window.addEventListener('error', function(e) {
+            log('Global error: ' + e.message, true);
+        });
+    </script>
+</body>
+</html>

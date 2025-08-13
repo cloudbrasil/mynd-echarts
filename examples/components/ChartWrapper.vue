@@ -16,6 +16,8 @@
         :theme="theme"
         :loading="loading"
         :auto-resize="true"
+        :chart-height="parseIntHeight"
+        :aspect-ratio="aspectRatio"
         @ready="handleReady"
         @click="$emit('click', $event)"
         @finished="$emit('finished', $event)"
@@ -70,6 +72,12 @@ const chartRef = ref<InstanceType<typeof MyndEcharts>>()
 const showCode = ref(false)
 
 const chartOptions = computed(() => props.options)
+const parseIntHeight = computed(() => {
+  const v = props.chartHeight || '400px'
+  const n = parseInt(String(v), 10)
+  return isFinite(n) && n > 0 ? n : 400
+})
+const aspectRatio = '16:9'
 
 const formattedOptions = computed(() => {
   return JSON.stringify(props.options, null, 2)
@@ -142,6 +150,7 @@ onUnmounted(() => {
 .chart-container {
   margin-bottom: 1rem;
   min-height: 300px;
+  height: 100%;
 }
 
 .chart-actions {

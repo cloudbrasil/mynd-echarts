@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyndEcharts - AIChat-like Test</title>
+  <script>
+    // Suppress Chrome extension errors
+    const originalError = console.error;
+    console.error = function(...args) {
+      const errorStr = args.join(' ');
+      if (errorStr.includes('message channel closed') || 
+          errorStr.includes('Extension context invalidated') ||
+          errorStr.includes('Cannot access a chrome:// URL')) {
+        return;
+      }
+      originalError.apply(console, args);
+    };
+    window.addEventListener('error', (e) => {
+      if (e.message && (
+        e.message.includes('message channel closed') ||
+        e.message.includes('Extension context invalidated') ||
+        e.message.includes('Cannot access a chrome:// URL')
+      )) {
+        e.preventDefault();
+        return false;
+      }
+    });
+    window.addEventListener('unhandledrejection', (e) => {
+      if (e.reason && e.reason.message && (
+        e.reason.message.includes('message channel closed') ||
+        e.reason.message.includes('Extension context invalidated')
+      )) {
+        e.preventDefault();
+        return false;
+      }
+    });
+  </script>
+  <style>
+    html, body { margin: 0; padding: 0; font-family: Inter, Arial, sans-serif; background: #0f1115; color: #e5e7eb; }
+    .page { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+    .card { background: #141824; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; overflow: hidden; }
+    .card-header { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-weight: 600; color: #e5e7eb; }
+    .chart-wrap { padding: 16px; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">AIChat-like Graph Test</div>
+        <button id="toggleMode" class="mode-btn" title="Toggle dark/light">
+          🌙 Dark
+        </button>
+      </div>
+      <div class="chart-wrap">
+        <div id="app-root"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createApp, h, reactive } from 'vue'
+    import { MyndEcharts } from '/lib/index.ts'
+
+    const state = reactive({ dark: true, chartVisible: false })
+    
+    const options = reactive({
+      backgroundColor: state.dark ? '#141823' : '#ffffff',
+      title: { text: 'Monthly Website Traffic by Device Type' },
+      tooltip: { trigger: 'axis' },
+      legend: { data: ['Desktop', 'Mobile', 'Tablet'], bottom: 10 },
+      grid: { left: 60, right: 24, top: 40, bottom: 80, containLabel: true },
+      xAxis: { type: 'category', boundaryGap: false, data: [
+        'Jan 2023','Feb 2023','Mar 2023','Apr 2023','May 2023','Jun 2023','Jul 2023','Aug 2023','Sep 2023','Oct 2023'
+      ] },
+      yAxis: { 
+        type: 'value', 
+        name: 'Traffic (Thousands)',
+        nameLocation: 'middle',
+        nameGap: 48,
+        min: 'dataMin',
+        max: 'dataMax'
+      },
+      series: [
+        { name: 'Desktop', type: 'line', smooth: true, symbol: 'circle', symbolSize: 4, areaStyle: { opacity: 0.18 }, data: [40,42,44,43,46,50,53,54,56,56] },
+        { name: 'Mobile',  type: 'line', smooth: true, symbol: 'circle', symbolSize: 4, areaStyle: { opacity: 0.18 }, data: [28,32,37,36,39,41,43,44,48,46] },
+        { name: 'Tablet',  type: 'line', smooth: true, symbol: 'circle', symbolSize: 4, areaStyle: { opacity: 0.18 }, data: [8,9,9,9,10,12,12,12,12,12] }
+      ],
+      toolbox: {
+        feature: {
+          saveAsImage: { show: true },
+          restore: { show: true },
+          dataView: { show: true, readOnly: false },
+          dataZoom: { show: true }
+        }
+      }
+    })
+
+    const Root = {
+      setup() { return { state } },
+      render() {
+        if (!this.state.chartVisible) return h('div', 'Loading...')
+        return h(MyndEcharts, {
+          options,
+          theme: this.state.dark ? 'dark' : 'light',
+          isDarkMode: this.state.dark,
+          preferThemeDefaults: true,
+          renderHeader: true,
+          showToolbox: true,
+          aspectRatio: '16:9',
+          chartHeight: 440,
+          onReady: (instance) => {
+            // Force resize after ready
+            setTimeout(() => instance.resize(), 100)
+          }
+        })
+      }
+    }
+
+    const applyMode = () => {
+      document.documentElement.classList.toggle('dark', state.dark)
+      document.body.classList.toggle('dark', state.dark)
+      const btn = document.getElementById('toggleMode')
+      if (btn) btn.innerHTML = state.dark ? '🌙 Dark' : '☀️ Light'
+    }
+
+    applyMode()
+    const app = createApp(Root)
+    app.mount('#app-root')
+    
+    // Delay chart visibility to ensure DOM is ready
+    setTimeout(() => {
+      state.chartVisible = true
+    }, 50)
+
+    document.getElementById('toggleMode')?.addEventListener('click', () => {
+      state.dark = !state.dark
+      options.backgroundColor = state.dark ? '#141823' : '#ffffff'
+      applyMode()
+    })
+  </script>
+</body>
+</html>

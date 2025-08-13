@@ -151,6 +151,10 @@ export function useECharts(
     events = {}
   } = options
 
+  const logj = (obj: any) => { try { console.log(JSON.stringify(obj)) } catch { console.log(obj) } }
+  const warnj = (obj: any) => { try { console.warn(JSON.stringify(obj)) } catch { console.warn(obj) } }
+  const errorj = (obj: any) => { try { console.error(JSON.stringify(obj)) } catch { console.error(obj) } }
+
   const chartInstance = ref<ECharts>()
   let resizeObserver: ResizeObserver | null = null
   let resizeHandler: (() => void) | null = null
@@ -173,10 +177,16 @@ export function useECharts(
 
   const initChart = () => {
     const el = unref(elRef)
-    if (!el) return
+    logj({ tag: '[useECharts] initChart called', hasElement: !!el, theme: currentTheme.value, locale: currentLocale.value })
+    
+    if (!el) {
+      console.warn('[useECharts] No element to initialize chart')
+      return
+    }
 
     // Dispose existing instance if any
     if (chartInstance.value && !chartInstance.value.isDisposed()) {
+      logj({ tag: '[useECharts] Disposing existing chart instance' })
       if (onDispose) {
         onDispose(chartInstance.value)
       }
@@ -185,12 +195,15 @@ export function useECharts(
 
     // Initialize chart with merged options including locale
     try {
+      logj({ tag: '[useECharts] Initializing new chart instance' })
       chartInstance.value = echarts.init(el, currentTheme.value as any, {
         renderer,
         locale: currentLocale.value,
         ...initOptions
       })
+      logj({ tag: '[useECharts] Chart instance created successfully' })
     } catch (e) {
+      console.error('[useECharts] Failed to initialize chart:', e)
       if (onInitError) onInitError(e)
       else console.error(e)
       return
@@ -259,26 +272,37 @@ export function useECharts(
   }
 
   const setOption = (options: EChartsOption, opts?: SetOptionOpts) => {
+    logj({ tag: '[useECharts] setOption called', hasInstance: !!chartInstance.value, isDisposed: chartInstance.value?.isDisposed(), optionKeys: Object.keys(options), opts })
+    
     if (!chartInstance.value) {
       const el = unref(elRef)
       if (el) {
+        logj({ tag: '[useECharts] No chart instance, initializing' })
         initChart()
       }
     }
     
     if (chartInstance.value && !chartInstance.value.isDisposed()) {
       try {
+        logj({ tag: '[useECharts] Applying options to chart' })
         chartInstance.value.setOption(options, opts)
+        logj({ tag: '[useECharts] Options applied successfully' })
       } catch (error) {
+        errorj({ tag: '[useECharts] Error setting options', message: (error as any)?.message, stack: (error as any)?.stack })
         if (onSetOptionError) onSetOptionError(error)
         else console.warn('[mynd-echarts] Error setting options:', error)
         try {
+          logj({ tag: '[useECharts] Attempting to clear and retry' })
           chartInstance.value.clear()
           chartInstance.value.setOption(options, opts)
+          logj({ tag: '[useECharts] Retry successful after clear' })
         } catch (retryErr) {
+          errorj({ tag: '[useECharts] Retry failed', message: (retryErr as any)?.message })
           if (rethrowOnSetOptionError) throw retryErr
         }
       }
+    } else {
+      console.warn('[useECharts] Cannot set options - no valid chart instance')
     }
   }
 
@@ -286,10 +310,129 @@ export function useECharts(
     return chartInstance.value?.getOption()
   }
 
-  const resize = (opts?: Parameters<ECharts['resize']>[0]) => {
-    if (chartInstance.value && !chartInstance.value.isDisposed()) {
-      chartInstance.value.resize(opts)
+  // Helper function to check if chart is ready for operations
+  const isChartReady = (): boolean => {
+    if (!chartInstance.value || chartInstance.value.isDisposed()) {
+      return false
     }
+    
+    try {
+      const opts = chartInstance.value.getOption()
+      if (!opts || Object.keys(opts).length === 0) {
+        return false
+      }
+      
+      // Check if coordinate systems are initialized for charts that need them
+      if (opts.series && opts.series.length > 0) {
+        const needsCartesian = opts.series.some((s: any) => 
+          ['line', 'bar', 'scatter', 'candlestick', 'heatmap', 'effectScatter', 'boxplot'].includes(s.type)
+        )
+        
+        if (needsCartesian) {
+          // For cartesian charts, we need both axes to be present
+          if (!opts.xAxis || opts.xAxis.length === 0 || !opts.yAxis || opts.yAxis.length === 0) {
+            return false
+          }
+          // Check if axis data is actually initialized
+          const xAxis = opts.xAxis[0]
+          const yAxis = opts.yAxis[0]
+          if (!xAxis || !yAxis) {
+            return false
+          }
+        }
+        
+        const needsRadar = opts.series.some((s: any) => s.type === 'radar')
+        
+        if (needsRadar && !opts.radar) {
+          return false
+        }
+      }
+      
+      // Perform a safe operation to verify chart internals are ready
+      // This is the ultimate test - if this works, the chart is truly ready
+      try {
+        // Try to get the width/height - this should always work if chart is ready
+        const width = chartInstance.value.getWidth()
+        const height = chartInstance.value.getHeight()
+        if (!width || !height) {
+          return false
+        }
+        
+        // Try to convert a pixel coordinate - this will fail if coordinate systems aren't ready
+        // We use a safe coordinate in the middle of the chart
+        const testCoord = chartInstance.value.convertFromPixel({ seriesIndex: 0 }, [width / 2, height / 2])
+        // If this didn't throw, coordinate systems are ready
+        return true
+      } catch (e) {
+        // Coordinate system not ready yet
+        return false
+      }
+    } catch (e) {
+      return false
+    }
+  }
+  
+  // Wait for chart to be ready with polling
+  const waitForChartReady = (callback: () => void, maxAttempts = 100, interval = 10) => {
+    let attempts = 0
+    
+    const checkReady = () => {
+      attempts++
+      
+      if (isChartReady()) {
+    logj({ tag: '[useECharts] Chart ready', attempts, elapsedMs: attempts * interval }) 
+        callback()
+      } else if (attempts >= maxAttempts) {
+    warnj({ tag: '[useECharts] Chart not ready', maxAttempts, elapsedMs: maxAttempts * interval })
+        // Don't proceed if not ready - this prevents errors
+      } else {
+        setTimeout(checkReady, interval)
+      }
+    }
+    
+    checkReady()
+  }
+  
+  const resize = (opts?: Parameters<ECharts['resize']>[0]) => {
+    logj({ tag: '[useECharts] resize called', hasInstance: !!chartInstance.value, isDisposed: chartInstance.value?.isDisposed(), opts })
+    
+    if (!chartInstance.value || chartInstance.value.isDisposed()) {
+      console.warn('[useECharts] Skipping resize - no valid chart instance')
+      return
+    }
+    
+    // Queue the resize to run after current execution context
+    // This gives ECharts time to fully initialize its internal structures
+    Promise.resolve().then(() => {
+      // Wait for chart to be ready before resizing
+      waitForChartReady(() => {
+        try {
+          if (!chartInstance.value || chartInstance.value.isDisposed()) {
+            console.warn('[useECharts] Chart disposed during wait')
+            return
+          }
+          
+          const currentOpts = chartInstance.value.getOption()
+          // Pre-resize series sanitization to avoid undefined series crashes
+          try {
+            if (currentOpts && Array.isArray(currentOpts.series)) {
+              const cleaned = currentOpts.series.filter((s: any) => s && typeof s === 'object' && typeof s.type === 'string')
+              if (cleaned.length !== currentOpts.series.length) {
+                logj({ tag: '[useECharts] Sanitizing series before resize', before: currentOpts.series.length, after: cleaned.length })
+                chartInstance.value.setOption({ series: cleaned } as any, { notMerge: true, lazyUpdate: false, silent: true } as any)
+              }
+            }
+          } catch {}
+          logj({ tag: '[useECharts] Performing resize', hasOptions: !!currentOpts, optionKeys: currentOpts ? Object.keys(currentOpts) : [], hasXAxis: !!(currentOpts?.xAxis && currentOpts.xAxis.length > 0), hasYAxis: !!(currentOpts?.yAxis && currentOpts.yAxis.length > 0), seriesCount: currentOpts?.series?.length || 0 })
+          
+          chartInstance.value.resize(opts)
+          logj({ tag: '[useECharts] resize completed successfully' })
+        } catch (error) {
+          errorj({ tag: '[useECharts] Error during resize', message: (error as any)?.message, stack: (error as any)?.stack })
+          // Don't throw the error to prevent breaking the app
+        }
+      })
+    })
   }
 
   const clear = () => {
