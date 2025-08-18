@@ -1,7 +1,7 @@
 <template>
   <div ref="rootRef" class="mynd-echarts-wrapper" :data-theme="effectiveDarkMode ? 'dark' : 'light'" :class="computedClass">
     <!-- Custom Header -->
-    <div v-if="props.renderHeader && (chartTitle || chartSubtitle)" class="mynd-echarts-header">
+    <div v-if="props.renderHeader && (chartTitle || chartSubtitle || showToolbox)" class="mynd-echarts-header">
       <div class="mynd-echarts-title-section">
         <component 
           :is="titleLink ? 'a' : 'div'" 
@@ -26,7 +26,7 @@
       </div>
       <!-- Custom Toolbox -->
       <ChartToolbox
-        v-if="props.renderHeader && showToolbox"
+        v-if="showToolbox"
         :chart-instance="chartInstance"
         :chart-type="detectedChartTypes"
         :display-style="toolboxStyle"
@@ -167,7 +167,9 @@ const effectiveDarkMode = computed(() => {
 
 const updateDarkMode = () => {
   if (typeof document !== 'undefined') {
-    isDarkMode.value = document.documentElement.classList.contains('dark') || document.body.classList.contains('dark')
+    isDarkMode.value = document.documentElement.classList.contains('dark') || 
+                       document.body.classList.contains('dark') ||
+                       document.body.classList.contains('body--dark')
   }
 }
 
@@ -267,14 +269,9 @@ const titleStyle = computed(() => {
     style.fontSize = '14px'
   }
   
-  // Handle text alignment
-  if (config.left === 'center') {
-    style.textAlign = 'center'
-  } else if (config.left === 'right') {
-    style.textAlign = 'right'
-  } else {
-    style.textAlign = 'left'
-  }
+  // Force left alignment - ignore chart config for alignment
+  // The header should always be left-aligned
+  style.textAlign = 'left'
   
   return style
 })
@@ -545,12 +542,30 @@ const canvasOptions = computed(() => {
         if (!opts.grid) opts.grid = {}
       }
     } catch {}
+    
+    // Set backgroundColor based on dark mode - do this LAST to override any theme settings
+    if (effectiveDarkMode.value) {
+      // Set to #1a1a1a for dark mode (matching the header/container)
+      opts.backgroundColor = '#1a1a1a'
+    } else {
+      // Light mode: transparent to let parent decide
+      opts.backgroundColor = 'transparent'
+    }
+    
     processedOptionsCache.value = opts
     return opts as EChartsOption
   } catch {
     const shallow: any = { ...(props.options || {}) }
     if (props.renderHeader) { delete shallow.title; delete shallow.toolbox }
     if (shallow.dataZoom) delete shallow.dataZoom
+    
+    // Set backgroundColor in fallback case too
+    if (effectiveDarkMode.value) {
+      shallow.backgroundColor = '#1a1a1a'
+    } else {
+      shallow.backgroundColor = 'transparent'
+    }
+    
     processedOptionsCache.value = shallow
     return shallow as EChartsOption
   }
@@ -742,6 +757,8 @@ defineExpose({
   position: relative;
   width: 100%;
   height: 100%;
+  /* No background color - let parent component decide */
+  /* Parent can set background: #1a1a1a for dark mode if needed */
   /* Reset common properties that might be inherited */
   box-sizing: border-box;
   margin: 0;
