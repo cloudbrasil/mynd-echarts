@@ -12,6 +12,85 @@ import { OperationQueue } from '../../utils/operationQueue'
 import { sanitizeOptions } from '../../utils/optionSanitizer'
 import { throttle } from '../../utils/throttle'
 
+// Register custom dark theme with #121213 background
+const customDarkTheme = {
+  backgroundColor: '#121213',
+  textStyle: {
+    color: '#eee'
+  },
+  title: {
+    textStyle: {
+      color: '#eee'
+    },
+    subtextStyle: {
+      color: '#aaa'
+    }
+  },
+  tooltip: {
+    backgroundColor: 'rgba(50, 50, 50, 0.95)',
+    borderColor: '#333',
+    textStyle: {
+      color: '#fff'
+    }
+  },
+  legend: {
+    textStyle: {
+      color: '#ccc'
+    }
+  },
+  dataZoom: {
+    textStyle: {
+      color: '#ccc'
+    }
+  },
+  grid: {
+    borderColor: '#444'
+  },
+  xAxis: {
+    axisLine: {
+      lineStyle: {
+        color: '#666'
+      }
+    },
+    axisTick: {
+      lineStyle: {
+        color: '#666'
+      }
+    },
+    axisLabel: {
+      color: '#ccc'
+    },
+    splitLine: {
+      lineStyle: {
+        color: '#333'
+      }
+    }
+  },
+  yAxis: {
+    axisLine: {
+      lineStyle: {
+        color: '#666'
+      }
+    },
+    axisTick: {
+      lineStyle: {
+        color: '#666'
+      }
+    },
+    axisLabel: {
+      color: '#ccc'
+    },
+    splitLine: {
+      lineStyle: {
+        color: '#333'
+      }
+    }
+  }
+}
+
+// Register the custom dark theme
+echarts.registerTheme('mynd-dark', customDarkTheme)
+
 interface Props {
   options: EChartsOption
   theme?: 'dark' | 'light' | object
@@ -98,8 +177,10 @@ function initChart() {
   if (!el || chart.value) return
 
   try {
+    // Use custom dark theme when 'dark' is passed as string
+    const themeToUse = props.theme === 'dark' ? 'mynd-dark' : props.theme
     // Initialize chart even if size is 0 - ECharts will handle it
-    chart.value = echarts.init(el, props.theme as any, { locale: props.locale })
+    chart.value = echarts.init(el, themeToUse as any, { locale: props.locale })
     bindEvents(chart.value)
     emit('ready', chart.value)
     logj({ tag: '[EChartsCoreView] init ok' })

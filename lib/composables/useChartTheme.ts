@@ -46,6 +46,7 @@ export function useChartTheme(options: UseChartThemeOptions = {}) {
   const getRegisteredThemes = () => Array.from(registeredThemes.value)
 
   const createDarkTheme = () => ({
+    backgroundColor: '#121213',  // Custom dark background for mynd-aichat
     textStyle: {
       color: '#eee'
     },

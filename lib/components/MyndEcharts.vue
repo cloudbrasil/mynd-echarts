@@ -110,6 +110,8 @@ type ExtendedMyndEchartsProps = CoreMyndEchartsProps & {
   renderHeader?: boolean
   /** Show custom bottom zoom bar (native ECharts dataZoom is disabled) */
   showZoomBar?: boolean
+  /** Custom dark mode background color */
+  darkModeColor?: string
   /** @deprecated Native toolbox mode no longer used */
   toolboxMode?: 'auto' | 'fixed' | 'disabled'
   /** @deprecated Native toolbox position no longer used */
@@ -133,6 +135,7 @@ const props = withDefaults(defineProps<ExtendedMyndEchartsProps & { chartHeight?
   toolboxStyle: 'toolbar',
   renderHeader: true,
   showZoomBar: false,
+  darkModeColor: '#121213',
   chartHeight: 400,
   aspectRatio: undefined
 })
@@ -547,8 +550,8 @@ const canvasOptions = computed(() => {
     
     // Set backgroundColor based on dark mode - do this LAST to override any theme settings
     if (effectiveDarkMode.value) {
-      // Set to #121213 for dark mode (matching the app's dark theme)
-      opts.backgroundColor = '#121213'
+      // Use the darkModeColor prop for dark mode background
+      opts.backgroundColor = props.darkModeColor || '#121213'
     } else {
       // Light mode: transparent to let parent decide
       opts.backgroundColor = 'transparent'
