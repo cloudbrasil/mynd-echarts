@@ -1,22 +1,22 @@
 <template>
   <div ref="rootRef" class="mynd-echarts-wrapper" :data-theme="effectiveDarkMode ? 'dark' : 'light'" :class="computedClass">
     <!-- Custom Header -->
-    <div v-if="props.renderHeader && (chartTitle || chartSubtitle || showToolbox)" class="mynd-echarts-header">
+    <div v-if="props.renderHeader && (chartTitle || chartSubtitle || props.showToolbox)" class="mynd-echarts-header">
       <div class="mynd-echarts-title-section">
-        <component 
-          :is="titleLink ? 'a' : 'div'" 
-          v-if="chartTitle" 
-          class="mynd-echarts-title" 
+        <component
+          :is="titleLink ? 'a' : 'div'"
+          v-if="chartTitle"
+          class="mynd-echarts-title"
           :style="titleStyle"
           :href="titleLink"
           :target="titleTarget"
         >
           {{ chartTitle }}
         </component>
-        <component 
-          :is="subtitleLink ? 'a' : 'p'" 
-          v-if="chartSubtitle" 
-          class="mynd-echarts-subtitle" 
+        <component
+          :is="subtitleLink ? 'a' : 'p'"
+          v-if="chartSubtitle"
+          class="mynd-echarts-subtitle"
           :style="subtitleStyle"
           :href="subtitleLink"
           :target="subtitleTarget"
@@ -26,10 +26,10 @@
       </div>
       <!-- Custom Toolbox -->
       <ChartToolbox
-        v-if="showToolbox"
+        v-if="props.showToolbox"
         :chart-instance="chartInstance"
         :chart-type="detectedChartTypes"
-        :display-style="toolboxStyle"
+        :display-style="responsiveToolboxStyle"
         :toolbox-config="toolboxConfig"
         :options="props.options"
         :locale="props.locale"
@@ -170,11 +170,24 @@ const effectiveDarkMode = computed(() => {
 
 const updateDarkMode = () => {
   if (typeof document !== 'undefined') {
-    isDarkMode.value = document.documentElement.classList.contains('dark') || 
+    isDarkMode.value = document.documentElement.classList.contains('dark') ||
                        document.body.classList.contains('dark') ||
                        document.body.classList.contains('body--dark')
   }
 }
+
+// Mobile detection for responsive toolbox
+const isMobile = ref(false)
+const updateMobileStatus = () => {
+  if (typeof window !== 'undefined') {
+    isMobile.value = window.innerWidth <= 768
+  }
+}
+
+// Responsive toolbox style - menu on mobile, toolbar on desktop
+const responsiveToolboxStyle = computed(() => {
+  return isMobile.value ? 'menu' : (props.toolboxStyle || 'toolbar')
+})
 
 // Setup dark mode observer
 let darkModeObserver: MutationObserver | null = null
@@ -668,6 +681,8 @@ watchEffect(() => {
 onMounted(async () => {
   // Setup dark mode detection (fallback when no explicit prop/theme provided)
   updateDarkMode()
+  updateMobileStatus()
+
   // Aspect ratio responsive height
   try {
     if (typeof ResizeObserver !== 'undefined') {
@@ -676,17 +691,30 @@ onMounted(async () => {
     }
     updateResponsiveHeight()
   } catch {}
-  
+
+  // Listen for window resize to update mobile status
+  if (typeof window !== 'undefined') {
+    const handleResize = () => {
+      updateMobileStatus()
+    }
+    window.addEventListener('resize', handleResize)
+
+    // Store cleanup function
+    onUnmounted(() => {
+      window.removeEventListener('resize', handleResize)
+    })
+  }
+
   if (typeof document !== 'undefined') {
     darkModeObserver = new MutationObserver(() => {
       updateDarkMode()
     })
-    
+
     darkModeObserver.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class']
     })
-    
+
     darkModeObserver.observe(document.body, {
       attributes: true,
       attributeFilter: ['class']
