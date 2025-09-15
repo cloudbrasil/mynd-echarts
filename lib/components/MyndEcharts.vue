@@ -545,8 +545,8 @@ const canvasOptions = computed(() => {
     
     // Set backgroundColor based on dark mode - do this LAST to override any theme settings
     if (effectiveDarkMode.value) {
-      // Set to #1a1a1a for dark mode (matching the header/container)
-      opts.backgroundColor = '#1a1a1a'
+      // Set to #121213 for dark mode (matching the app's dark theme)
+      opts.backgroundColor = '#121213'
     } else {
       // Light mode: transparent to let parent decide
       opts.backgroundColor = 'transparent'
@@ -561,7 +561,7 @@ const canvasOptions = computed(() => {
     
     // Set backgroundColor in fallback case too
     if (effectiveDarkMode.value) {
-      shallow.backgroundColor = '#1a1a1a'
+      shallow.backgroundColor = '#121213'
     } else {
       shallow.backgroundColor = 'transparent'
     }
@@ -689,7 +689,7 @@ onMounted(async () => {
   }
   
   // CoreView sets options from props
-  try { console.log(JSON.stringify({ tag: '[MyndEcharts] Component mounted' })) } catch { console.log('[MyndEcharts] Component mounted') }
+  // try { console.log(JSON.stringify({ tag: '[MyndEcharts] Component mounted' })) } catch { console.log('[MyndEcharts] Component mounted') }
 })
 
 // Cleanup on unmount

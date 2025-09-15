@@ -178,6 +178,7 @@
             <div class="chart-preview-container">
               <MyndEcharts
                 v-if="validOptions && previewOptions"
+                v-show="playgroundTab === 'preview'"
                 ref="previewChartRef"
                 :options="enhanceOptionsWithTheme(previewOptions)"
                 :theme="currentTheme"
@@ -418,6 +419,7 @@ const selectedDocSection = ref('getting-started')
 const selectedSubsection = ref<string | null>(null)
 const isMobileDrawerOpen = ref(false)
 const markdownContentRef = ref<HTMLElement>()
+const isMounted = ref(false)
 
 // JSON parser composable
 const {
@@ -450,15 +452,21 @@ watch(isDarkMode, (newValue) => {
 })
 
 // Trigger chart resize when switching to preview tab
-watch(playgroundTab, async (newTab) => {
-  if (newTab === 'preview') {
+watch(playgroundTab, async (newTab, oldTab) => {
+  if (newTab === 'preview' && oldTab !== 'preview' && isMounted.value) {
     await nextTick()
-    // Small delay to ensure DOM is fully updated
-    setTimeout(() => {
-      if (previewChartRef.value) {
-        previewChartRef.value.resize()
-      }
-    }, 150)
+    // Use requestAnimationFrame for better timing in production
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        try {
+          if (isMounted.value && previewChartRef.value && previewChartRef.value.resize) {
+            previewChartRef.value.resize()
+          }
+        } catch (error) {
+          console.warn('Chart resize error in watcher:', error)
+        }
+      }, 250)
+    })
   }
 })
 
@@ -530,15 +538,22 @@ const selectChart = async (chart: any) => {
   const enhancedOptions = enhanceOptionsWithTheme(chart.options)
   editorContent.value = JSON.stringify(enhancedOptions, null, 2)
   activeView.value = 'playground'
+  playgroundTab.value = 'preview' // Ensure preview tab is active
   updatePreview()
 
   // Ensure the chart renders properly when loaded
   await nextTick()
-  setTimeout(() => {
-    if (previewChartRef.value) {
-      previewChartRef.value.resize()
-    }
-  }, 200)
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      try {
+        if (previewChartRef.value && previewChartRef.value.resize) {
+          previewChartRef.value.resize()
+        }
+      } catch (error) {
+        console.warn('Select chart resize error:', error)
+      }
+    }, 300)
+  })
 }
 
 const loadTemplate = () => {
@@ -629,17 +644,31 @@ const switchToPreviewTab = async () => {
   // Wait for the tab to switch and DOM to update
   await nextTick()
   // Trigger chart resize to fix rendering issues
-  setTimeout(() => {
-    if (previewChartRef.value) {
-      previewChartRef.value.resize()
-    }
-  }, 100)
+  // Use requestAnimationFrame for better timing in production
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      try {
+        if (previewChartRef.value && previewChartRef.value.resize) {
+          previewChartRef.value.resize()
+        }
+      } catch (error) {
+        console.warn('Chart resize error:', error)
+      }
+    }, 200)
+  })
 }
 
 const handleChartReady = (instance: any) => {
   // Force a resize to ensure chart renders properly
+  // Single resize call after chart is ready
   setTimeout(() => {
-    instance.resize()
+    try {
+      if (instance && instance.resize) {
+        instance.resize()
+      }
+    } catch (error) {
+      console.warn('Chart ready resize error:', error)
+    }
   }, 100)
 }
 
@@ -664,15 +693,22 @@ const useInPlayground = async (example: any) => {
   const enhancedOptions = enhanceOptionsWithTheme(example.options)
   editorContent.value = JSON.stringify(enhancedOptions, null, 2)
   activeView.value = 'playground'
+  playgroundTab.value = 'preview' // Ensure preview tab is active
   updatePreview()
 
   // Ensure the chart renders properly when loaded
   await nextTick()
-  setTimeout(() => {
-    if (previewChartRef.value) {
-      previewChartRef.value.resize()
-    }
-  }, 200)
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      try {
+        if (previewChartRef.value && previewChartRef.value.resize) {
+          previewChartRef.value.resize()
+        }
+      } catch (error) {
+        console.warn('Use in playground resize error:', error)
+      }
+    }, 300)
+  })
 }
 
 const formatJson = (obj: any) => {
@@ -924,12 +960,14 @@ watch(() => currentTheme.value, () => {
 
 // Initialize preview on mount
 onMounted(() => {
+  isMounted.value = true
   updatePreview()
   document.addEventListener('fullscreenchange', handleFullscreenChange)
 })
 
 // Cleanup
 onUnmounted(() => {
+  isMounted.value = false
   document.removeEventListener('fullscreenchange', handleFullscreenChange)
   // Reset body overflow if drawer was open
   document.body.style.overflow = ''
