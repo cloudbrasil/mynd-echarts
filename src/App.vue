@@ -133,16 +133,16 @@
         
         <!-- Tab Navigation -->
         <div class="playground-tabs">
-          <button 
-            @click="playgroundTab = 'preview'" 
+          <button
+            @click="switchToPreviewTab"
             :class="{ active: playgroundTab === 'preview' }"
             class="tab-button"
           >
             <span class="material-icons">visibility</span>
             Preview
           </button>
-          <button 
-            @click="playgroundTab = 'code'" 
+          <button
+            @click="playgroundTab = 'code'"
             :class="{ active: playgroundTab === 'code' }"
             class="tab-button"
           >
@@ -244,7 +244,15 @@
                 ❌ {{ editorError }}
               </div>
               <div v-else-if="validOptions" class="editor-success">
-                ✅ Valid JSON - <button @click="playgroundTab = 'preview'" class="inline-link">View Preview</button>
+                <div class="success-content">
+                  <span class="success-icon">✅</span>
+                  <span class="success-text">Valid JSON</span>
+                  <span v-if="hasFunctions" class="function-indicator" title="Contains functions">
+                    <span class="material-icons">functions</span>
+                    <span class="function-count">{{ functionPaths.length }}</span>
+                  </span>
+                  <button @click="switchToPreviewTab" class="inline-link">View Preview</button>
+                </div>
               </div>
             </div>
           </div>
@@ -354,6 +362,7 @@ import { documentationSections } from './data/documentationData'
 import { apiDocumentation } from './data/apiDocumentation'
 import { useAppTheme } from './composables/useAppTheme'
 import { parseMarkdown, mountCodeBlocks, unmountCodeBlocks } from './utils/markdown'
+import { useJSONWithFunctions } from './composables/useJSONWithFunctions'
 
 // State
 const activeView = ref<'showcase' | 'playground' | 'examples' | 'documentation'>('showcase')
@@ -410,6 +419,15 @@ const selectedSubsection = ref<string | null>(null)
 const isMobileDrawerOpen = ref(false)
 const markdownContentRef = ref<HTMLElement>()
 
+// JSON parser composable
+const {
+  hasFunctions,
+  functionPaths,
+  parseJSON,
+  stringifyJSON,
+  formatJSON
+} = useJSONWithFunctions()
+
 // Theme management
 const { isDarkMode, toggleTheme: toggleAppTheme } = useAppTheme()
 const { currentTheme, setTheme } = useChartTheme({
@@ -429,6 +447,19 @@ watch(isDarkMode, (newValue) => {
   setTheme(newTheme)
   themeKey.value++
   previewKey.value++
+})
+
+// Trigger chart resize when switching to preview tab
+watch(playgroundTab, async (newTab) => {
+  if (newTab === 'preview') {
+    await nextTick()
+    // Small delay to ensure DOM is fully updated
+    setTimeout(() => {
+      if (previewChartRef.value) {
+        previewChartRef.value.resize()
+      }
+    }, 150)
+  }
 })
 
 // Computed logo based on theme
@@ -493,13 +524,21 @@ const currentDocSection = computed(() => {
 })
 
 // Methods
-const selectChart = (chart: any) => {
+const selectChart = async (chart: any) => {
   selectedChart.value = chart
   // Apply theme enhancements when loading in playground
   const enhancedOptions = enhanceOptionsWithTheme(chart.options)
   editorContent.value = JSON.stringify(enhancedOptions, null, 2)
   activeView.value = 'playground'
   updatePreview()
+
+  // Ensure the chart renders properly when loaded
+  await nextTick()
+  setTimeout(() => {
+    if (previewChartRef.value) {
+      previewChartRef.value.resize()
+    }
+  }, 200)
 }
 
 const loadTemplate = () => {
@@ -520,12 +559,17 @@ const updatePreview = () => {
       previewOptions.value = null
       return
     }
-    
-    const parsed = JSON.parse(editorContent.value)
-    previewOptions.value = parsed
-    validOptions.value = true
-    editorError.value = ''
-    previewKey.value++
+
+    const parseResult = parseJSON(editorContent.value)
+    if (parseResult) {
+      previewOptions.value = parseResult.data
+      validOptions.value = true
+      editorError.value = ''
+      previewKey.value++
+    } else {
+      validOptions.value = false
+      previewOptions.value = null
+    }
   } catch (e: any) {
     validOptions.value = false
     editorError.value = e.message
@@ -534,13 +578,12 @@ const updatePreview = () => {
 }
 
 const formatCode = () => {
-  try {
-    const parsed = JSON.parse(editorContent.value)
-    editorContent.value = JSON.stringify(parsed, null, 2)
+  const formatted = formatJSON(editorContent.value, 2)
+  if (formatted) {
+    editorContent.value = formatted
     updatePreview()
-  } catch (e) {
-    // Keep content as is if invalid JSON
   }
+  // Keep content as is if invalid JSON
 }
 
 const copyCode = async () => {
@@ -581,6 +624,18 @@ const refreshPreview = () => {
   updatePreview()
 }
 
+const switchToPreviewTab = async () => {
+  playgroundTab.value = 'preview'
+  // Wait for the tab to switch and DOM to update
+  await nextTick()
+  // Trigger chart resize to fix rendering issues
+  setTimeout(() => {
+    if (previewChartRef.value) {
+      previewChartRef.value.resize()
+    }
+  }, 100)
+}
+
 const handleChartReady = (instance: any) => {
   // Force a resize to ensure chart renders properly
   setTimeout(() => {
@@ -597,19 +652,27 @@ const openConfigDialog = () => {
 const handleOptionsUpdate = (newOptions: EChartsOption) => {
   if (newOptions) {
     // Update the editor content with the new options
-    editorContent.value = JSON.stringify(newOptions, null, 2)
+    editorContent.value = stringifyJSON(newOptions, 2)
     previewOptions.value = newOptions
     validOptions.value = true
     editorError.value = ''
   }
 }
 
-const useInPlayground = (example: any) => {
+const useInPlayground = async (example: any) => {
   // Apply theme enhancements when loading in playground
   const enhancedOptions = enhanceOptionsWithTheme(example.options)
   editorContent.value = JSON.stringify(enhancedOptions, null, 2)
   activeView.value = 'playground'
   updatePreview()
+
+  // Ensure the chart renders properly when loaded
+  await nextTick()
+  setTimeout(() => {
+    if (previewChartRef.value) {
+      previewChartRef.value.resize()
+    }
+  }, 200)
 }
 
 const formatJson = (obj: any) => {
@@ -1696,9 +1759,39 @@ onUnmounted(() => {
   border-left: 3px solid #16a34a;
   margin-top: 0.5rem;
   border-radius: 4px;
+}
+
+.success-content {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.success-icon {
+  display: inline-flex;
+}
+
+.success-text {
+  margin-right: 0.25rem;
+}
+
+.function-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+  padding: 0.125rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+}
+
+.function-indicator .material-icons {
+  font-size: 1rem;
+}
+
+.function-count {
+  font-weight: 600;
 }
 
 .playground-layout {

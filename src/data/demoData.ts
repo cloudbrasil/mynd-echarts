@@ -685,6 +685,195 @@ export const showcaseCharts: ChartDemo[] = [
         ]
       }]
     }
+  },
+
+  // Charts with Formatter Functions
+  {
+    id: 'line-custom-tooltip',
+    name: 'Line with Custom Tooltip',
+    category: 'line',
+    type: 'Line Chart',
+    description: 'Line chart with custom tooltip formatter function',
+    options: {
+      title: { text: 'Temperature with Custom Tooltip', left: 'left', top: 10 },
+      tooltip: {
+        trigger: 'axis',
+        formatter: function(params) {
+          const param = params[0];
+          return `<div style="padding: 10px;">
+            <strong>${param.name}</strong><br/>
+            Temperature: <span style="color: ${param.color}; font-weight: bold;">${param.value}°C</span><br/>
+            <small>Status: ${param.value > 25 ? '🔥 Hot' : param.value > 20 ? '☀️ Warm' : '❄️ Cool'}</small>
+          </div>`;
+        }
+      },
+      grid: { top: 60, bottom: 60, left: 60, right: 60 },
+      xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Temperature',
+        axisLabel: {
+          formatter: '{value}°C'
+        }
+      },
+      series: [{
+        name: 'Temperature',
+        type: 'line',
+        data: [18, 22, 25, 28, 27, 21, 19],
+        smooth: true
+      }]
+    }
+  },
+  {
+    id: 'bar-formatted-labels',
+    name: 'Bar with Formatted Labels',
+    category: 'bar',
+    type: 'Bar Chart',
+    description: 'Bar chart with formatted axis labels and values',
+    options: {
+      title: { text: 'Sales Performance', left: 'left', top: 10 },
+      tooltip: {
+        trigger: 'axis',
+        formatter: function(params) {
+          return params[0].name + '<br/>' +
+            params.map(function(item) {
+              return item.marker + ' ' + item.seriesName + ': $' +
+                (item.value * 1000).toLocaleString();
+            }).join('<br/>');
+        }
+      },
+      grid: { top: 60, bottom: 60, left: 80, right: 60 },
+      xAxis: {
+        type: 'category',
+        data: ['Q1', 'Q2', 'Q3', 'Q4']
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Revenue (k)',
+        axisLabel: {
+          formatter: function(value) {
+            return '$' + value + 'k';
+          }
+        }
+      },
+      series: [{
+        name: 'Revenue',
+        type: 'bar',
+        data: [320, 430, 380, 520],
+        label: {
+          show: true,
+          position: 'top',
+          formatter: function(params) {
+            return '$' + (params.value * 1000).toLocaleString();
+          }
+        }
+      }]
+    }
+  },
+  {
+    id: 'pie-percentage-formatter',
+    name: 'Pie with Percentage Labels',
+    category: 'pie',
+    type: 'Pie Chart',
+    description: 'Pie chart with percentage calculation in formatter',
+    options: {
+      title: { text: 'Market Share Analysis', left: 'center', top: 10 },
+      tooltip: {
+        trigger: 'item',
+        formatter: function(params) {
+          return `<strong>${params.name}</strong><br/>
+            Value: ${params.value}<br/>
+            Percentage: ${params.percent}%<br/>
+            Rank: #${params.dataIndex + 1}`;
+        }
+      },
+      legend: {
+        orient: 'vertical',
+        left: 'left',
+        top: '15%'
+      },
+      series: [{
+        name: 'Market Share',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['60%', '50%'],
+        data: [
+          { value: 335, name: 'Product A' },
+          { value: 310, name: 'Product B' },
+          { value: 234, name: 'Product C' },
+          { value: 135, name: 'Product D' },
+          { value: 88, name: 'Product E' }
+        ],
+        label: {
+          formatter: function(params) {
+            return params.name + '\n' + params.percent + '%';
+          }
+        },
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }
+      }]
+    }
+  },
+  {
+    id: 'scatter-coordinate-formatter',
+    name: 'Scatter with Coordinate Display',
+    category: 'scatter',
+    type: 'Scatter Plot',
+    description: 'Scatter plot with coordinate formatter',
+    options: {
+      title: { text: 'Data Point Distribution', left: 'left', top: 10 },
+      tooltip: {
+        trigger: 'item',
+        formatter: function(params) {
+          return `Point ${params.dataIndex + 1}<br/>
+            X: ${params.value[0].toFixed(2)}<br/>
+            Y: ${params.value[1].toFixed(2)}<br/>
+            Size: ${params.value[2]}`;
+        }
+      },
+      grid: { top: 60, bottom: 60, left: 60, right: 60 },
+      xAxis: {
+        type: 'value',
+        axisLabel: {
+          formatter: function(value) {
+            return value.toFixed(1);
+          }
+        }
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: {
+          formatter: function(value) {
+            return value.toFixed(1);
+          }
+        }
+      },
+      series: [{
+        name: 'Data Points',
+        type: 'scatter',
+        symbolSize: function(data) {
+          return Math.sqrt(data[2]) * 5;
+        },
+        data: [
+          [10.5, 35.2, 100],
+          [15.3, 42.1, 150],
+          [20.8, 28.5, 200],
+          [25.2, 50.3, 120],
+          [30.1, 45.7, 180],
+          [35.5, 38.2, 250],
+          [40.2, 55.1, 140],
+          [45.8, 48.3, 190]
+        ]
+      }]
+    }
   }
 ]
 

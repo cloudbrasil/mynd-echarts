@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test JSON Functions Parser</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-case {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            margin-top: 0;
+        }
+        .input, .output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .function-indicator {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #4f46e5;
+        }
+    </style>
+</head>
+<body>
+    <h1>JSON with Functions Parser Test</h1>
+
+    <div class="test-case">
+        <h2>Test 1: Simple Formatter Function</h2>
+        <div class="input" id="test1-input"></div>
+        <button onclick="runTest('test1')">Parse JSON</button>
+        <div class="output" id="test1-output"></div>
+    </div>
+
+    <div class="test-case">
+        <h2>Test 2: Arrow Function</h2>
+        <div class="input" id="test2-input"></div>
+        <button onclick="runTest('test2')">Parse JSON</button>
+        <div class="output" id="test2-output"></div>
+    </div>
+
+    <div class="test-case">
+        <h2>Test 3: Complex Tooltip Formatter</h2>
+        <div class="input" id="test3-input"></div>
+        <button onclick="runTest('test3')">Parse JSON</button>
+        <div class="output" id="test3-output"></div>
+    </div>
+
+    <div class="test-case">
+        <h2>Test 4: Multiple Functions</h2>
+        <div class="input" id="test4-input"></div>
+        <button onclick="runTest('test4')">Parse JSON</button>
+        <div class="output" id="test4-output"></div>
+    </div>
+
+    <script type="module">
+        import { parseJSONWithFunctions, stringifyWithFunctions } from './src/utils/jsonWithFunctions.ts';
+
+        // Test cases
+        const testCases = {
+            test1: `{
+  "title": {
+    "text": "Simple Chart"
+  },
+  "yAxis": {
+    "axisLabel": {
+      "formatter": "{value} °C"
+    }
+  }
+}`,
+            test2: `{
+  "tooltip": {
+    "trigger": "axis",
+    "formatter": (params) => {
+      return params[0].name + ': ' + params[0].value;
+    }
+  }
+}`,
+            test3: `{
+  "tooltip": {
+    "formatter": function(params) {
+      const param = params[0];
+      return \`<div style="padding: 10px;">
+        <strong>\${param.name}</strong><br/>
+        Value: <span style="color: \${param.color};">\${param.value}</span>
+      </div>\`;
+    }
+  }
+}`,
+            test4: `{
+  "title": {
+    "text": "Chart with Multiple Functions"
+  },
+  "tooltip": {
+    "formatter": function(params) {
+      return params[0].name + ': ' + params[0].value;
+    }
+  },
+  "yAxis": {
+    "axisLabel": {
+      "formatter": function(value) {
+        return '$' + value + 'k';
+      }
+    }
+  },
+  "series": [{
+    "type": "scatter",
+    "symbolSize": function(data) {
+      return Math.sqrt(data[2]) * 5;
+    }
+  }]
+}`
+        };
+
+        // Display test inputs
+        Object.keys(testCases).forEach(testId => {
+            document.getElementById(testId + '-input').textContent = testCases[testId];
+        });
+
+        window.runTest = function(testId) {
+            const input = testCases[testId];
+            const outputEl = document.getElementById(testId + '-output');
+
+            try {
+                const result = parseJSONWithFunctions(input);
+
+                let output = '<span class="success">✅ Parse Successful</span>';
+
+                if (result.hasFunctions) {
+                    output += '<span class="function-indicator">Functions: ' + result.functionPaths.length + '</span>';
+                    output += '\n\nFunction paths:\n' + result.functionPaths.map(p => '  • ' + p).join('\n');
+                }
+
+                output += '\n\nParsed data:\n';
+                output += stringifyWithFunctions(result.data, 2);
+
+                // Test if functions work
+                if (result.hasFunctions) {
+                    output += '\n\nFunction test results:\n';
+
+                    // Test formatter functions if they exist
+                    if (result.data.tooltip?.formatter && typeof result.data.tooltip.formatter === 'function') {
+                        try {
+                            const testParams = [{name: 'Test', value: 100, color: '#5470c6'}];
+                            const formatterResult = result.data.tooltip.formatter(testParams);
+                            output += '  • tooltip.formatter: ' + formatterResult.substring(0, 50) + '...';
+                        } catch (e) {
+                            output += '  • tooltip.formatter: Error - ' + e.message;
+                        }
+                    }
+
+                    if (result.data.yAxis?.axisLabel?.formatter && typeof result.data.yAxis.axisLabel.formatter === 'function') {
+                        try {
+                            const formatterResult = result.data.yAxis.axisLabel.formatter(42);
+                            output += '\n  • yAxis.axisLabel.formatter(42): ' + formatterResult;
+                        } catch (e) {
+                            output += '\n  • yAxis.axisLabel.formatter: Error - ' + e.message;
+                        }
+                    }
+                }
+
+                outputEl.textContent = output;
+            } catch (error) {
+                outputEl.innerHTML = '<span class="error">❌ Parse Error</span>\n\n' + error.message;
+            }
+        };
+    </script>
+</body>
+</html>

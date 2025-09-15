@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Nested Function Parser</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .test-json {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            background: #f0f8ff;
+            border: 1px solid #b0d4ff;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #4f46e5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test Nested Function in JSON</h1>
+        <p>Testing JSON with function nested in series[0].itemStyle.color:</p>
+
+        <div class="test-json" id="input"></div>
+        <button onclick="testParse()">Parse JSON with Function</button>
+        <div id="result"></div>
+    </div>
+
+    <script type="module">
+        import { parseJSONWithFunctions } from './src/utils/jsonWithFunctions.ts';
+
+        const testJSON = `{
+  "title": {
+    "text": "Monthly Revenue for 2024",
+    "left": "center"
+  },
+  "tooltip": {
+    "trigger": "axis",
+    "axisPointer": {
+      "type": "shadow"
+    }
+  },
+  "xAxis": {
+    "type": "category",
+    "data": ["January", "February", "March", "April", "May", "June"],
+    "name": "Months",
+    "nameLocation": "middle",
+    "nameGap": 35
+  },
+  "yAxis": {
+    "type": "value",
+    "name": "Revenue (USD)",
+    "nameLocation": "middle",
+    "nameRotate": 90,
+    "nameGap": 50
+  },
+  "series": [
+    {
+      "type": "bar",
+      "data": [1200, 1350, 1600, 1550, 1700, 1800],
+      "itemStyle": {
+        "color": function(params) {
+          var colors = ['#5470c6', '#91cc75', '#fac758', '#5470c6', '#91cc75', '#fac758'];
+          if (params.dataIndex === 3) {
+            return '#c23531';
+          }
+          return colors[params.dataIndex % colors.length];
+        }
+      }
+    }
+  ]
+}`;
+
+        // Display the input
+        document.getElementById('input').textContent = testJSON;
+
+        window.testParse = function() {
+            const resultEl = document.getElementById('result');
+
+            try {
+                console.log('Starting parse...');
+                const result = parseJSONWithFunctions(testJSON);
+                console.log('Parse result:', result);
+
+                let output = '<div class="result">';
+                output += '<span class="success">✅ Parse Successful!</span><br><br>';
+
+                if (result.hasFunctions) {
+                    output += '<strong>Functions detected:</strong> ' + result.functionPaths.length + '<br>';
+                    output += '<strong>Function paths:</strong><br>';
+                    result.functionPaths.forEach(path => {
+                        output += '  • ' + path + '<br>';
+                    });
+
+                    // Test the function
+                    if (result.data.series && result.data.series[0] &&
+                        result.data.series[0].itemStyle &&
+                        typeof result.data.series[0].itemStyle.color === 'function') {
+
+                        output += '<br><strong>Testing the color function:</strong><br>';
+                        try {
+                            const testParams = { dataIndex: 0 };
+                            const color0 = result.data.series[0].itemStyle.color(testParams);
+                            output += '  • Color for index 0: ' + color0 + '<br>';
+
+                            testParams.dataIndex = 3;
+                            const color3 = result.data.series[0].itemStyle.color(testParams);
+                            output += '  • Color for index 3 (should be red): ' + color3 + '<br>';
+                        } catch (e) {
+                            output += '  • Error testing function: ' + e.message + '<br>';
+                        }
+                    }
+                } else {
+                    output += '<strong>No functions detected!</strong><br>';
+                }
+
+                output += '<br><strong>Parsed structure:</strong><br>';
+                output += '<pre>' + JSON.stringify(result.data, (key, value) => {
+                    if (typeof value === 'function') {
+                        return '[Function: ' + value.toString().substring(0, 50) + '...]';
+                    }
+                    return value;
+                }, 2) + '</pre>';
+
+                output += '</div>';
+                resultEl.innerHTML = output;
+
+            } catch (error) {
+                console.error('Parse error:', error);
+                resultEl.innerHTML = '<div class="result"><span class="error">❌ Parse Error:</span><br>' + error.message + '</div>';
+            }
+        };
+    </script>
+</body>
+</html>
