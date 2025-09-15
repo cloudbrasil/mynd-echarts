@@ -363,15 +363,17 @@ watch(() => props.locale, (newLocale) => {
 
 const containerStyle = computed<CSSProperties>(() => {
   // Use adaptive height when no explicit height is provided
-  const heightValue = computedChartHeight.value 
+  const heightValue = computedChartHeight.value
     ? `${computedChartHeight.value}px`
     : 'auto'
-    
+
   return {
     width: '100%',
     minHeight: '300px', // Ensure minimum height
     height: heightValue,
     position: 'relative',
+    // Set background color to match the chart's backgroundColor
+    backgroundColor: effectiveDarkMode.value ? '#121213' : 'transparent',
   }
 })
 
